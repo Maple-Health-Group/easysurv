@@ -11,8 +11,8 @@ Description: Functions to streamline the process of fitting parametric
     simple parametric modelling, mixture cure modelling and spline
     modelling.
 License: MIT + file LICENSE
-URL: https://github.com/BKievit1/easysurv/
-BugReports: https://github.com/BKievit1/easysurv/issues
+URL: https://github.com/Maple-Health-Group/easysurv
+BugReports: https://github.com/Maple-Health-Group/easysurv/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 
