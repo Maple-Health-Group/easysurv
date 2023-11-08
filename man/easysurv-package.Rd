@@ -12,8 +12,8 @@ Functions to streamline the process of fitting parametric models to extrapolate 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/BKievit1/easysurv/}
-  \item Report bugs at \url{https://github.com/BKievit1/easysurv/issues}
+  \item \url{https://github.com/Maple-Health-Group/easysurv}
+  \item Report bugs at \url{https://github.com/Maple-Health-Group/easysurv/issues}
 }
 
 }

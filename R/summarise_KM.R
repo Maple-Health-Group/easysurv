@@ -9,11 +9,7 @@
 #' (if multiple strata)
 #'
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr mutate
 #' @importFrom dplyr select
-#' @importFrom rlang .data
-#' @importFrom rlang f_rhs
-#' @importFrom survival survfit
 #'
 #' @export
 #'
@@ -43,7 +39,7 @@ summarise_KM <- function(fit, strata_labels = NULL) {
     out <- as.data.frame(t(summary(fit)$table))
   }
 
-  out <- out |> dplyr::select(-.data$n.max, -.data$n.start)
+  out <- out |> dplyr::select(-"n.max", -"n.start")
 
   return(out)
 }

@@ -36,8 +36,8 @@ get_fit_comparison <- function(mod) {
       BIC_rank = rank(.data$bic)
     ) |>
     dplyr::select("model",
-                  AIC = .data$aic,
-                  BIC = .data$bic,
+                  AIC = "aic",
+                  BIC = "bic",
                   "AIC_rank",
                   "BIC_rank")
 
