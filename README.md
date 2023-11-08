@@ -3,10 +3,15 @@
 
 # 🍁 easysurv 🍁
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml)
+<!-- badges: end -->
+
 ## Overview
 
-The easysurv R package provides tools to estimate and inspect
-parametric survival models.
+The easysurv R package provides tools to estimate and inspect parametric
+survival models.
 
 ## Installation
 
@@ -15,17 +20,12 @@ consider using [RStudio](https://www.rstudio.com/) as your integrated
 development environment (IDE).
 
 ``` r
-# You will need to have the remotes package installed.
-install.packages("remotes")
+# You will need to have the pak package installed.
+install.packages("pak")
 
 # Then, you can install easysurv with the following line of code.
-remotes::install_github("BKievit1/easysurv", auth_token = "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", build_vignettes = TRUE)
+pak::pkg_install("Maple-Health-Group/easysurv")
 ```
-
-<!-- 
-When we remove the auth_token, we will update from remotes to pak
-pak::pkg_install("BKievit1/easysurv")
--->
 
 ## Getting Started
 
