@@ -80,8 +80,6 @@ quick_KM <- function(data,
                      font.family = "Roboto Condensed",
                      # Optional arguments for plot_KM
                      ...) {
-
-
   if (!is.data.frame(data)) {
     stop(
       paste0(
@@ -98,7 +96,7 @@ quick_KM <- function(data,
       paste0(
         "quick_KM did not find the following columns in `data`: ",
         paste(setdiff(required_cols, colnames(data)),
-              collapse = ", "
+          collapse = ", "
         ), "."
       ),
       call. = FALSE
@@ -129,10 +127,12 @@ quick_KM <- function(data,
   # Keeping the above for future information.
 
   # The simpler alternative is survminer::surv_fit
-  KM_all <- survminer::surv_fit(formula = fit_joint,
-                                conf.int = 0.95,
-                                data = data,
-                                type = "kaplan-meier")
+  KM_all <- survminer::surv_fit(
+    formula = fit_joint,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
+  )
 
   if (add_time_0) {
     KM_all <- survival::survfit0(KM_all, start.time = 0)
@@ -148,9 +148,9 @@ quick_KM <- function(data,
     setNames(nested$data, strata_list),
     function(data) {
       surv_out <- survival::survfit(fit_separate,
-                                    conf.int = 0.95,
-                                    data = data,
-                                    type = "kaplan-meier"
+        conf.int = 0.95,
+        data = data,
+        type = "kaplan-meier"
       )
       if (add_time_0) {
         surv_out <- survival::survfit0(surv_out, start.time = 0)
@@ -179,6 +179,17 @@ quick_KM <- function(data,
 
   # Medians and 95% confidence limits
   KM_summary <- easysurv::summarise_KM(KM_all, strata_labels = my_labels)
+
+  KM_median_follow_up <- easysurv::median_FU(
+    data,
+    time,
+    event,
+    strata
+  )
+
+  KM_summary <- cbind(KM_summary, KM_median_follow_up)
+
+  rownames(KM_summary) <- my_labels
 
   names(KM_indiv) <-
     names(KM_stepped) <- my_labels
