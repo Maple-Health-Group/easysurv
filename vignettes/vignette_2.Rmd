@@ -351,7 +351,7 @@ wb <- openxlsx::createWorkbook()
 
 We can now use the `quick_to_XL` function to take each of the objects created by the *quick* functions and put them in the blank workbook. As with above, these are set up conditionally depending on what analyses were performed, so we can simply click through this section.
 
-```{r excel-export}
+```{r excel-export, eval = F}
 # The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
 # Note that plots will be reproduced at a different DPI setting for Excel.
 # This may make them appear strange in R temporarily.
