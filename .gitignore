@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.xlsx
 /doc/
 /Meta/
 easysurv_start.R

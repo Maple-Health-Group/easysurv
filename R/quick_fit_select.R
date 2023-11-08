@@ -233,6 +233,7 @@ quick_fit_select <- function(fit_type,
   goodness_of_fit <- list()
   surv_params <- list()
   predicted_fits <- list()
+  fit_averages <- list()
   cure_fractions <- list()
 
   # Joint models ----
@@ -316,6 +317,10 @@ quick_fit_select <- function(fit_type,
         hazard_plotly[tx] <- "Not generated. Use add_interactive_plots = TRUE."
       }
 
+      fit_averages[tx] <- list(
+        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_average))
+      )
+
       predicted_fits[tx] <- list(easysurv::predict_fits(
         fits = fits[[1]],
         t = times,
@@ -325,6 +330,7 @@ quick_fit_select <- function(fit_type,
 
     names(hazard_plots) <-
       names(hazard_plotly) <-
+      names(fit_averages) <-
       names(predicted_fits) <-
       my_labels
 
@@ -337,6 +343,7 @@ quick_fit_select <- function(fit_type,
       fit_plotly = fit_plotly,
       goodness_of_fit = goodness_of_fit,
       surv_params = surv_params,
+      fit_averages = fit_averages,
       predicted_fits = predicted_fits
     )
 
@@ -444,6 +451,11 @@ quick_fit_select <- function(fit_type,
       easysurv::predict_fits(fits = fits[[tx]], t = times)
     )
 
+    fit_averages[tx] <- list(
+      data.table::rbindlist(lapply(fits[[tx]]$models, get_fit_average))
+    )
+
+
     ## Interactive plots ----
     if (add_interactive_plots) {
       fit_plotly[tx] <- list(easysurv::plot_fits(
@@ -507,6 +519,7 @@ quick_fit_select <- function(fit_type,
     names(hazard_plotly) <-
     names(goodness_of_fit) <-
     names(surv_params) <-
+    names(fit_averages) <-
     names(predicted_fits) <-
     my_labels
 
@@ -523,6 +536,7 @@ quick_fit_select <- function(fit_type,
     if (add_interactive_plots) list(fit_plotly = fit_plotly),
     list(goodness_of_fit = goodness_of_fit),
     list(surv_params = surv_params),
+    list(fit_averages = fit_averages),
     if (fit_type == "cure") list(cure_fractions = cure_fractions),
     list(predicted_fits = predicted_fits)
   )

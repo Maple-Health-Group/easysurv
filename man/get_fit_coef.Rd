@@ -45,7 +45,7 @@ fit <- fit.models(Surv(time, status) ~ as.factor(sex),
   data = lung,
   distr = c("exponential", "weibull")
 )
-lapply(fit, get_fit_coef)
+lapply(fit$models, get_fit_coef)
 
 # Example using a flexsurv object
 fit <- flexsurvreg(Surv(time, status) ~ as.factor(sex),
