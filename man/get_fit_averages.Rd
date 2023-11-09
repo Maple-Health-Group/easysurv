@@ -11,9 +11,8 @@ get_fit_averages(mod)
 the \code{\link[survHE]{fit.models}} function.}
 }
 \value{
-A data frame containing the comparison of goodness-of-fit measures
-for the models. The data frame has columns for the model names, AIC values,
-BIC values, AIC ranks, and BIC ranks.
+A data frame containing the median, mean and restricted mean survival
+times (with 95\% confidence intervals) where calculable.
 }
 \description{
 This function obtains the median, mean, and restricted mean survival times

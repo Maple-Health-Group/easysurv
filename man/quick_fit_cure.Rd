@@ -72,6 +72,8 @@ parameter}
 distribution}
 \item{surv_params}{The flexsurv parameters for each model and their vcov
 matrix}
+\item{fit_averages}{The median, mean and restricted mean survival times for
+each distribution}
 \item{cure_fractions}{The cure fractions for each distribution, assuming a
 logistic link.}
 \item{predicted_fits}{A tibble showing predicted survival proportions over

@@ -254,6 +254,33 @@ quick_to_XL <- function(wb, quick_object) {
       )
     }
 
+    sheet_name <- switch(class_name,
+                         "quick_fit" = "Standard - Fit Averages",
+                         "quick_fit_joint" = "Joint - Fit Averages",
+                         "quick_fit_cure" = "MCM - Fit Averages",
+                         "quick_fit_splines" = "Splines - Fit Averages")
+    easysurv::add_sheet(wb, sheet_name)
+
+    for (tx in seq_along(quick_object$fit_averages)) {
+      # tx names
+      openxlsx::writeData(
+        wb = wb,
+        x = names(quick_object$fit_averages[tx]),
+        sheet = sheet_name,
+        startCol = 2 + (tx - 1) * 14,
+        startRow = 2
+      )
+
+      # fit_averages dataframe
+      openxlsx::writeData(
+        wb = wb,
+        x = quick_object$fit_averages[[tx]],
+        sheet = sheet_name,
+        startCol = 2 + (tx - 1) * 14,
+        startRow = 3
+      )
+    }
+
 
     for (tx in seq_along(quick_object$surv_params)) {
       sheet_name <- switch(class_name,

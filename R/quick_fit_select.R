@@ -54,6 +54,8 @@
 #' distribution}
 #' \item{surv_params}{The flexsurv parameters for each model and their vcov
 #' matrix}
+#' \item{fit_averages}{The median, mean and restricted mean survival times for
+#' each distribution}
 #' \item{predicted_fits}{Predicted survival proportions over the \code{times}
 #' parameter, if provided}
 #'
@@ -92,13 +94,13 @@ quick_fit_select <- function(fit_type,
                              font.family = "Roboto Condensed",
                              plot.theme = theme_easysurv(),
                              add_interactive_plots = FALSE) {
-
   # Validate argument inputs ----
   function_name <- switch(fit_type,
-                          "standard" = "`quick_fit`",
-                          "joint" = "`quick_fit_joint`",
-                          "cure" = "`quick_fit_cure`",
-                          "splines" = "`quick_fit_splines`")
+    "standard" = "`quick_fit`",
+    "joint" = "`quick_fit_joint`",
+    "cure" = "`quick_fit_cure`",
+    "splines" = "`quick_fit_splines`"
+  )
 
   if (is.null(function_name)) {
     stop(
@@ -133,7 +135,7 @@ quick_fit_select <- function(fit_type,
         function_name,
         " did not find the following columns in `data`: ",
         paste(setdiff(required_cols, colnames(data)),
-              collapse = ", "
+          collapse = ", "
         ), "."
       ),
       call. = FALSE
@@ -169,7 +171,9 @@ quick_fit_select <- function(fit_type,
           event,
           ") ~ as.factor(",
           strata,
-          ")"))
+          ")"
+        )
+      )
     }
     if (rlang::f_rhs(formula) == "1") {
       stop(
@@ -192,7 +196,8 @@ quick_fit_select <- function(fit_type,
           time,
           ", event = ",
           event,
-          ") ~ 1")
+          ") ~ 1"
+        )
       )
     }
     if (!rlang::f_rhs(formula) == "1") {
@@ -217,7 +222,8 @@ quick_fit_select <- function(fit_type,
 
   if (fit_type == "joint" & length(strata_list) == 1) {
     stop("Multiple strata required in `data` to fit a joint model.",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
   my_labels <- `if`(is.null(strata_labels), strata_list, strata_labels)
@@ -239,7 +245,6 @@ quick_fit_select <- function(fit_type,
   # Joint models ----
 
   if (fit_type == "joint") {
-
     converged <- list(Joint = easysurv::check_converged(
       formula = formula,
       data = data,
@@ -281,6 +286,11 @@ quick_fit_select <- function(fit_type,
     goodness_of_fit <- list(Joint = easysurv::get_fit_comparison(fits[[1]]))
     surv_params <- list(Joint = easysurv::get_results_table(fits[[1]]$models))
 
+    fit_averages <- list(
+      Joint =
+        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_averages))
+    )
+
     for (tx in seq_along(strata_list)) {
       hazard_plots[tx] <- list(easysurv::plot_smoothed_hazards(
         data = nested[["data"]][[tx]],
@@ -308,7 +318,7 @@ quick_fit_select <- function(fit_type,
           title = paste0(
             "Smoothed hazards (joint): ",
             my_labels[tx]
-            ),
+          ),
           plot.theme = plot.theme,
           font.family = font.family,
           use_plotly = TRUE
@@ -316,10 +326,6 @@ quick_fit_select <- function(fit_type,
       } else {
         hazard_plotly[tx] <- "Not generated. Use add_interactive_plots = TRUE."
       }
-
-      fit_averages[tx] <- list(
-        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_averages))
-      )
 
       predicted_fits[tx] <- list(easysurv::predict_fits(
         fits = fits[[1]],
@@ -330,7 +336,6 @@ quick_fit_select <- function(fit_type,
 
     names(hazard_plots) <-
       names(hazard_plotly) <-
-      names(fit_averages) <-
       names(predicted_fits) <-
       my_labels
 
@@ -356,14 +361,16 @@ quick_fit_select <- function(fit_type,
   # Non-joint models ----
 
   label_fit_plots <- switch(fit_type,
-                            "standard" = "Parametric fits",
-                            "cure" = "Mixture cure fits",
-                            "splines" = "Spline fits")
+    "standard" = "Parametric fits",
+    "cure" = "Mixture cure fits",
+    "splines" = "Spline fits"
+  )
 
   label_smoothed_hazards <- switch(fit_type,
-                                   "standard" = "Smoothed hazards",
-                                   "cure" = "Smoothed hazards (mixture cure)",
-                                   "splines" = "Smoothed hazards (splines)")
+    "standard" = "Smoothed hazards",
+    "cure" = "Smoothed hazards (mixture cure)",
+    "splines" = "Smoothed hazards (splines)"
+  )
 
 
   for (tx in seq_along(strata_list)) {
@@ -463,7 +470,7 @@ quick_fit_select <- function(fit_type,
         title = paste0(
           label_fit_plots, ": ",
           my_labels[tx]
-          ),
+        ),
         t = times,
         xlab = xlab,
         plot.theme = plot.theme,
@@ -480,7 +487,7 @@ quick_fit_select <- function(fit_type,
         title = paste0(
           label_smoothed_hazards, ": ",
           my_labels[tx]
-          ),
+        ),
         xlab = xlab,
         plot.theme = plot.theme,
         font.family = font.family,
@@ -501,13 +508,13 @@ quick_fit_select <- function(fit_type,
             (1 + exp(cure_fractions_temp[[dist]]))
         } else {
           cure_fractions_temp[dist] <- paste0(
-            "Functionality only prepared for logistic link")
+            "Functionality only prepared for logistic link"
+          )
         }
       }
 
       names(cure_fractions_temp) <- names(fits[[tx]]$models)
       cure_fractions[tx] <- list(cure_fractions_temp)
-
     }
   }
 
@@ -542,9 +549,10 @@ quick_fit_select <- function(fit_type,
   )
 
   class_name <- switch(fit_type,
-                       "standard" = "quick_fit",
-                       "cure" = "quick_fit_cure",
-                       "splines" = "quick_fit_splines")
+    "standard" = "quick_fit",
+    "cure" = "quick_fit_cure",
+    "splines" = "quick_fit_splines"
+  )
 
   class(out) <- c(class(out), class_name)
 

@@ -49,6 +49,8 @@
 #' distribution}
 #' \item{surv_params}{The flexsurv parameters for each model and their vcov
 #' matrix}
+#' \item{fit_averages}{The median, mean and restricted mean survival times for
+#' each distribution}
 #' \item{predicted_fits}{Predicted survival proportions over
 #' the \code{times} parameter, if provided}
 #'
