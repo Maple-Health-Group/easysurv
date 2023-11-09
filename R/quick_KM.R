@@ -180,7 +180,7 @@ quick_KM <- function(data,
   # Medians and 95% confidence limits
   KM_summary <- easysurv::summarise_KM(KM_all, strata_labels = my_labels)
 
-  KM_median_follow_up <- easysurv::median_FU(
+  KM_median_follow_up <- easysurv::get_median_FU(
     data,
     time,
     event,

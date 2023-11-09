@@ -318,7 +318,7 @@ quick_fit_select <- function(fit_type,
       }
 
       fit_averages[tx] <- list(
-        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_average))
+        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_averages))
       )
 
       predicted_fits[tx] <- list(easysurv::predict_fits(
@@ -452,7 +452,7 @@ quick_fit_select <- function(fit_type,
     )
 
     fit_averages[tx] <- list(
-      data.table::rbindlist(lapply(fits[[tx]]$models, get_fit_average))
+      data.table::rbindlist(lapply(fits[[tx]]$models, get_fit_averages))
     )
 
 

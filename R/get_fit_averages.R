@@ -3,8 +3,8 @@
 #' This function obtains the median, mean, and restricted mean survival times
 #' stored in a \code{flexsurvreg} or \code{\link[survHE]{fit.models}} object.
 #'
-#' @param mod An object of class \code{fit.models} obtained from the
-#' \code{\link[survHE]{fit.models}} function.
+#' @param mod A specific model of a \code{fit.models} object obtained from
+#' the \code{\link[survHE]{fit.models}} function.
 #'
 #' @importFrom dplyr rename_with mutate
 #' @export
@@ -23,27 +23,36 @@
 #'   data = lung,
 #'   distr = c("exponential", "weibull")
 #' )
-#' lapply(fit$models, get_fit_average)
+#' lapply(fit$models, get_fit_averages)
 #'
 #' # Example using a flexsurv object
 #' fit <- flexsurvreg(Surv(time, status) ~ as.factor(sex),
 #'   data = lung,
 #'   dist = "exponential"
 #' )
-#' get_fit_average(fit)
+#' get_fit_averages(fit)
 #' }
-get_fit_average <- function(mod) {
+get_fit_averages <- function(mod) {
 
-  median <- summary(mod, type = "median")
-
-  # checking if the model is splines
+  # Checking if the distribution is a spline model.
   the_dist <- `if`(is.null(mod$k), mod$dlist$name, paste(
       mod$k,
       "knot",
       mod$scale
   ))
 
-  # Handling "Inf" errors when calculating the mean
+  # MEDIAN
+  median <- tryCatch(
+    {
+      summary(mod, type = "median")
+    },
+    error = function(e) {
+      message(paste(the_dist, "median survival time not calculable."))
+      return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+    }
+  )
+
+  # MEAN
   mean <- tryCatch(
     {
       summary(mod, type = "mean")
@@ -54,21 +63,25 @@ get_fit_average <- function(mod) {
     }
   )
 
-  restricted_mean <- summary(mod, type = "rmst")
+  # RESTRICTED MEAN
+  restricted_mean <- tryCatch(
+    {
+      summary(mod, type = "rmst")
+    },
+    error = function(e) {
+      message(paste(the_dist, "restricted mean survival time not calculable."))
+      return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+    }
+  )
 
   # In case of strata, use seq_along
-
   for (i in seq_along(median)) {
     median[[i]] <- median[[i]] |>
       dplyr::rename_with( ~ paste0("median.", .x))
-  }
 
-  for (i in seq_along(mean)) {
     mean[[i]] <- mean[[i]] |>
       dplyr::rename_with( ~ paste0("mean.", .x))
-  }
 
-  for (i in seq_along(restricted_mean)) {
     restricted_mean[[i]] <- restricted_mean[[i]] |>
       dplyr::rename_with( ~ paste0("rmst.", .x))
   }
@@ -77,17 +90,13 @@ get_fit_average <- function(mod) {
 
   # Combine into list per strata
   for (i in seq_along(median)) {
-    model <- the_dist
     strata <- `if`(is.null(names(median)[i]),"-", names(median)[i])
-    out[[i]] <- cbind(model, strata, median[[i]], mean[[i]], restricted_mean[[i]])
+    out[[i]] <- cbind(the_dist, strata, median[[i]], mean[[i]], restricted_mean[[i]])
   }
 
   names(out) <- names(median)
 
   out <- data.table::rbindlist(out)
-
-  #out <- do.call(rbind, Map(data.frame, out))
-  #out <- bind_rows(out, .id = "column_label")
 
   return(out)
 }

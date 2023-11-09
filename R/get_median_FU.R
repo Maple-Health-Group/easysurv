@@ -27,17 +27,17 @@
 #'   strata = as.factor(input_data$sex)
 #' )
 #'
-#' median_follow_up <- median_FU(
+#' median_follow_up <- get_median_FU(
 #'   data = surv_data,
 #'   time = "time",
 #'   event = "event",
 #'   strata = "strata"
 #' )
 #' }
-median_FU <- function(data,
-                      time,
-                      event,
-                      strata) {
+get_median_FU <- function(data,
+                          time,
+                          event,
+                          strata) {
 
   # Define the Surv object
   theSurv <- survival::Surv(time = data[[time]], event = data[[event]])
