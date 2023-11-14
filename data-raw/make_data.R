@@ -1,35 +1,35 @@
 # This script prepares the data sets that are shipped with the package.
-# - ms_lung
-# - ms_bc
-# - ms_adtte
+# - easy_lung
+# - easy_bc
+# - easy_adtte
 
 # survival::lung ---------------------------------------------------------------
 
-ms_lung <- survival::lung |>
+easy_lung <- survival::lung |>
   dplyr::mutate(time = time / 365.25 * 12)
 
 # Attach labels
-attr(ms_lung$inst, "label") <- "Institution code"
-attr(ms_lung$time, "label") <- "Survival time, months"
-attr(ms_lung$status, "label") <- "Censoring status, 1 = Censored, 2 = Dead"
-attr(ms_lung$age, "label") <- "Age"
-attr(ms_lung$sex, "label") <- "Sex, 1 = Male, 2 = Female"
-attr(ms_lung$ph.ecog, "label") <- "ECOG Performance Status (Physician)"
-attr(ms_lung$ph.karno, "label") <- "Karnofsky performance score (Physician)"
-attr(ms_lung$pat.karno, "label") <- "Karnofsky performance score (Patient)"
-attr(ms_lung$meal.cal, "label") <- "Calories consumed"
-attr(ms_lung$wt.loss, "label") <- "Weight loss, lbs"
+attr(easy_lung$inst, "label") <- "Institution code"
+attr(easy_lung$time, "label") <- "Survival time, months"
+attr(easy_lung$status, "label") <- "Censoring status, 1 = Censored, 2 = Dead"
+attr(easy_lung$age, "label") <- "Age"
+attr(easy_lung$sex, "label") <- "Sex, 1 = Male, 2 = Female"
+attr(easy_lung$ph.ecog, "label") <- "ECOG Performance Status (Physician)"
+attr(easy_lung$ph.karno, "label") <- "Karnofsky performance score (Physician)"
+attr(easy_lung$pat.karno, "label") <- "Karnofsky performance score (Patient)"
+attr(easy_lung$meal.cal, "label") <- "Calories consumed"
+attr(easy_lung$wt.loss, "label") <- "Weight loss, lbs"
 
 
 # flexsurv::bc -----------------------------------------------------------------
 
-ms_bc <- flexsurv::bc
+easy_bc <- flexsurv::bc
 
 # Attach labels
-attr(ms_bc$censrec, "label") <- "0 = Censored, 1 = Dead"
-attr(ms_bc$rectime, "label") <- "Time of censoring or death in days"
-attr(ms_bc$group, "label") <- "Prognostic group: Good, Medium, or Poor"
-attr(ms_bc$recyrs, "label") <- "Time of censoring or death in years"
+attr(easy_bc$censrec, "label") <- "0 = Censored, 1 = Dead"
+attr(easy_bc$rectime, "label") <- "Time of censoring or death in days"
+attr(easy_bc$group, "label") <- "Prognostic group: Good, Medium, or Poor"
+attr(easy_bc$recyrs, "label") <- "Time of censoring or death in years"
 
 
 # ADTTE DATA -------------------------------------------------------------------
@@ -66,9 +66,9 @@ attr(adtte$EVNTDESC, "label") <- "Event description"
 attr(adtte$CNSDTDSC, "label") <- " Censoring description"
 attr(adtte$DCTREAS, "label") <- "Discontinuation from study reason"
 
-ms_adtte <- adtte
+easy_adtte <- adtte
 
-usethis::use_data(ms_adtte,
-                  ms_lung,
-                  ms_bc,
+usethis::use_data(easy_adtte,
+                  easy_lung,
+                  easy_bc,
                   overwrite = TRUE, internal = FALSE)

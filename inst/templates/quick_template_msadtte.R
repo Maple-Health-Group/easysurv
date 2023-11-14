@@ -32,7 +32,7 @@ library(dplyr)
 
 # Data Import ------------------------------------------------------------------
 
-surv_data <- ms_adtte
+surv_data <- easy_adtte
 
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)

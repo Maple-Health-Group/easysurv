@@ -58,7 +58,7 @@
 #' }
 #'
 #' @source \url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
-"ms_adtte"
+"easy_adtte"
 
 
 #' Formatted Copy of `survival::lung`
@@ -83,7 +83,7 @@
 #' }
 #'
 #' @source `survival::lung`
-"ms_lung"
+"easy_lung"
 
 
 
@@ -102,5 +102,5 @@
 #' }
 #'
 #' @source `flexsurv::bc`
-"ms_bc"
+"easy_bc"
 

@@ -32,7 +32,7 @@ library(dplyr)
 
 # Data Import ------------------------------------------------------------------
 
-surv_data <- ms_bc
+surv_data <- easy_bc
 
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)

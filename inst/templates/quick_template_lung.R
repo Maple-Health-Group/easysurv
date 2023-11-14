@@ -32,7 +32,7 @@ library(dplyr)
 
 # Data Import ------------------------------------------------------------------
 
-surv_data <- ms_lung
+surv_data <- easy_lung
 
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)
