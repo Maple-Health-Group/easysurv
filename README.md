@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 🍁 easysurv 🍁
+# easysurv
 
 <!-- badges: start -->
 
@@ -11,8 +11,13 @@
 
 ## Overview
 
-The easysurv R package provides tools to estimate and inspect parametric
-survival models.
+The *easysurv* R package provides tools to estimate and inspect
+parametric survival models.
+
+The package is built upon the *flexsurv* engine, and aims to provide a
+helpful starting point to explore survival extrapolations across
+frequently used distributions (such as exponential, generalized gamma,
+gamma, Gompertz, log-logistic, log-normal and Weibull).
 
 ## Installation
 
