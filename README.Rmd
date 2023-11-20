@@ -9,6 +9,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(easysurv)
 ```
 
 # easysurv
@@ -24,12 +26,48 @@ The *easysurv* R package provides tools to estimate and inspect parametric survi
 
 The package is built upon the *flexsurv* engine, and aims to provide a helpful starting point to explore survival extrapolations across frequently used distributions (such as exponential, generalized gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
 
+The package contains a family of functions prefixed with "quick_" that enable a comprehensive set of analyses in just a few simple steps.
+
+For example, the quick_KM() function can generate themed KM plots, accompanied by pertinent statistics such as numbers at risk over time.
+
+```{r quick-KM, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+surv_data <- easy_lung |>
+  dplyr::mutate(event = status - 1)
+
+KM_quick <- easysurv::quick_KM(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  strata_labels = c("Male", "Female"))
+
+KM_quick[["KM_plot"]]
+```
+
+For a user-defined set of distributions, the quick_fit() function can check distribution convergence, generate plots for extrapolations and smoothed hazards, create survival parameter tables, show goodness-of-fit statistics, and calculate average survival times.
+
+```{r quick-fit, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+fit_quick <- easysurv::quick_fit(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+  strata_labels = c("Male", "Female"),
+  add_interactive_plots = TRUE)
+
+fit_quick[["fit_plots"]][["Male"]]
+fit_quick[["hazard_plots"]][["Male"]]
+fit_quick[["goodness_of_fit"]][["Male"]]
+
+```
+
 ## Installation
 
 If you haven't already, install [R](https://www.r-project.org) and consider using [RStudio](https://www.rstudio.com/) as your integrated development environment (IDE).
 
 
-```{r, eval = FALSE}
+```{r install, eval = FALSE}
 # You will need to have the pak package installed.
 install.packages("pak")
 
@@ -39,7 +77,7 @@ pak::pkg_install("Maple-Health-Group/easysurv")
 
 ## Getting Started
 
-```{r, eval = FALSE}
+```{r getting-started, eval = FALSE}
 # Load the easysurv library
 library(easysurv)
 

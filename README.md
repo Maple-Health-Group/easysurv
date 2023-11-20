@@ -19,6 +19,66 @@ helpful starting point to explore survival extrapolations across
 frequently used distributions (such as exponential, generalized gamma,
 gamma, Gompertz, log-logistic, log-normal and Weibull).
 
+The package contains a family of functions prefixed with “quick\_” that
+enable a comprehensive set of analyses in just a few simple steps.
+
+For example, the quick_KM() function can generate themed KM plots,
+accompanied by pertinent statistics such as numbers at risk over time.
+
+``` r
+surv_data <- easy_lung |>
+  dplyr::mutate(event = status - 1)
+
+KM_quick <- easysurv::quick_KM(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  strata_labels = c("Male", "Female"))
+
+KM_quick[["KM_plot"]]
+```
+
+![](README_files/figure-gfm/quick-KM-1.png)<!-- -->
+
+For a user-defined set of distributions, the quick_fit() function can
+check distribution convergence, generate plots for extrapolations and
+smoothed hazards, create survival parameter tables, show goodness-of-fit
+statistics, and calculate average survival times.
+
+``` r
+fit_quick <- easysurv::quick_fit(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+  strata_labels = c("Male", "Female"),
+  add_interactive_plots = TRUE)
+
+fit_quick[["fit_plots"]][["Male"]]
+```
+
+![](README_files/figure-gfm/quick-fit-1.png)<!-- -->
+
+``` r
+fit_quick[["hazard_plots"]][["Male"]]
+```
+
+![](README_files/figure-gfm/quick-fit-2.png)<!-- -->
+
+``` r
+fit_quick[["goodness_of_fit"]][["Male"]]
+#>           model      AIC      BIC AIC_rank BIC_rank
+#> 1   Exponential 772.4134 775.3406        5        3
+#> 2         Gamma 767.6859 773.5404        2        2
+#> 3    Gen. Gamma 769.2226 778.0044        3        5
+#> 4      Gompertz 769.7047 775.5592        4        4
+#> 5  log-Logistic 776.5899 782.4444        6        6
+#> 6    log-Normal 784.6606 790.5151        7        7
+#> 7 Weibull (AFT) 767.2281 773.0826        1        1
+```
+
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
