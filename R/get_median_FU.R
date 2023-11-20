@@ -11,6 +11,7 @@
 #' @importFrom survival survfit
 #' @importFrom survival Surv
 #' @importFrom stats quantile
+#' @importFrom stats as.formula
 #'
 #' @export
 #'
@@ -48,7 +49,7 @@ get_median_FU <- function(data,
 
   # Find median quantile
   quantiles <- stats::quantile(
-    survival::survfit(inverseSurv ~ as.factor(strata), data = data), 0.5
+    survival::survfit(stats::as.formula(paste0("inverseSurv ~ as.factor(", strata, ")")), data = data), 0.5
   )
 
   # Do not keep CI.

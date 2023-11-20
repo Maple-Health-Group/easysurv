@@ -32,6 +32,7 @@
 #' @importFrom dplyr nest_by
 #' @importFrom stats setNames as.formula
 #' @importFrom tibble tibble
+#' @importFrom rlang .data
 #'
 #' @export
 #'
@@ -138,7 +139,7 @@ quick_KM <- function(data,
     KM_all <- survival::survfit0(KM_all, start.time = 0)
   }
 
-  nested <- data |> dplyr::nest_by(strata)
+  nested <- data |> dplyr::nest_by(.data[[strata]])
 
   fit_separate <- stats::as.formula(paste0(
     "survival::Surv(time = ", time, ", event = ", event, ") ~ 1"
@@ -181,10 +182,10 @@ quick_KM <- function(data,
   KM_summary <- easysurv::summarise_KM(KM_all, strata_labels = my_labels)
 
   KM_median_follow_up <- easysurv::get_median_FU(
-    data,
-    time,
-    event,
-    strata
+    data = data,
+    time = time,
+    event = event,
+    strata = strata
   )
 
   KM_summary <- cbind(KM_summary, KM_median_follow_up)
