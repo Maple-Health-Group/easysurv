@@ -228,7 +228,7 @@ quick_fit_select <- function(fit_type,
 
   my_labels <- `if`(is.null(strata_labels), strata_list, strata_labels)
 
-  nested <- data |> dplyr::nest_by(strata)
+  nested <- data |> dplyr::nest_by(.data[[strata]])
 
   converged <- list()
   fits <- list()
