@@ -206,7 +206,7 @@ The `quick_KM` function works by combining uses of the `survival::survfit()`, `e
 
 We stored the output in `KM_check`. Calling KM_check gives us a quick summary but, since it's a list object, if we want to look at any individual component, we need to call it by name in double square brackets. For example,
 
-```{r KM-plot, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+```{r KM-plot, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
 KM_check[["KM_plot"]]
 ```
 
@@ -223,7 +223,7 @@ Next, we want to run some diagnostics tests, which will be informative for futur
 
 We'll run the function using `surv_data`, supplying the mostly self-explanatory arguments. You can type `?quick_PH` in the console or visit the other vignette for more information.
 
-```{r quick-PH, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+```{r quick-PH, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
 PH_check <- easysurv::quick_PH(
   data = surv_data,
   time = "time",

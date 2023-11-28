@@ -46,7 +46,7 @@ KM_quick[["KM_plot"]]
 
 For a user-defined set of distributions, the quick_fit() function can check distribution convergence, generate plots for extrapolations and smoothed hazards, create survival parameter tables, show goodness-of-fit statistics, and calculate average survival times.
 
-```{r quick-fit, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+```{r quick-fit, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
 fit_quick <- easysurv::quick_fit(
   data = surv_data,
   time = "time",
