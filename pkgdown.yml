@@ -1,0 +1,10 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  workflow_quick: workflow_quick.html
+last_built: 2023-11-28T10:26Z
+urls:
+  reference: https://maple-health-group.github.io/easysurv/reference
+  article: https://maple-health-group.github.io/easysurv/articles
+
