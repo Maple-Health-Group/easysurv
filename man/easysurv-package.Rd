@@ -13,6 +13,7 @@ Functions to streamline the process of fitting parametric models to extrapolate 
 Useful links:
 \itemize{
   \item \url{https://github.com/Maple-Health-Group/easysurv}
+  \item \url{https://maple-health-group.github.io/easysurv/}
   \item Report bugs at \url{https://github.com/Maple-Health-Group/easysurv/issues}
 }
 

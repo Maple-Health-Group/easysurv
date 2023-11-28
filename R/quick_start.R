@@ -1,4 +1,4 @@
-#' Launch an Example Script to Start Your Survival Analysis
+#' Launch an Example Script to Start Your Survival Analysis using the "lung" dataset
 #'
 #' This function launches an example script for starting survival analysis
 #' using the easysurv package. The script uses the lung data set exported from

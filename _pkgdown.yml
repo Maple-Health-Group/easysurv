@@ -1,4 +1,5 @@
 url: https://maple-health-group.github.io/easysurv/
 template:
   bootstrap: 5
+  bootswatch: sandstone
 

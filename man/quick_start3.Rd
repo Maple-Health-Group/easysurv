@@ -2,7 +2,7 @@
 % Please edit documentation in R/quick_start3.R
 \name{quick_start3}
 \alias{quick_start3}
-\title{Launch an Example Script to Start Your Survival Analysis}
+\title{Launch an Example Script to Start Your Survival Analysis using simulated clinical trial data}
 \usage{
 quick_start3(output_file_name = NULL)
 }

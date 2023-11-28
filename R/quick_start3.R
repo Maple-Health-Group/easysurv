@@ -1,4 +1,4 @@
-#' Launch an Example Script to Start Your Survival Analysis
+#' Launch an Example Script to Start Your Survival Analysis using simulated clinical trial data
 #'
 #' This function launches an example script for starting survival analysis
 #' using the easysurv package. The script uses simulated phase III breast
