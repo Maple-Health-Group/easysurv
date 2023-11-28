@@ -1,6 +1,7 @@
-#' Launch an Example Script to Start Your Survival Analysis
+#' Select an Example Script to Start Your Survival Analysis using "quick_start()" functions
 #'
-#' This function launches an example script for starting survival analysis
+#' This is a back-end function that is called by any of the "quick_start()" functions, which
+#' launches an example script for starting survival analysis
 #' using the easysurv package. The code is inspired by usethis::use_template
 #' but modified to work outside the context of an .RProj or package.
 #'
