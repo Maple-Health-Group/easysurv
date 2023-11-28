@@ -39,7 +39,7 @@ KM_quick <- easysurv::quick_KM(
 KM_quick[["KM_plot"]]
 ```
 
-![](README_files/figure-gfm/quick-KM-1.png)<!-- -->
+![](man/figures/quick-KM-1.png)<!-- -->
 
 For a user-defined set of distributions, the quick_fit() function can
 check distribution convergence, generate plots for extrapolations and
@@ -59,13 +59,13 @@ fit_quick <- easysurv::quick_fit(
 fit_quick[["fit_plots"]][["Male"]]
 ```
 
-![](README_files/figure-gfm/quick-fit-1.png)<!-- -->
+![](man/figures/quick-fit-1.png)<!-- -->
 
 ``` r
 fit_quick[["hazard_plots"]][["Male"]]
 ```
 
-![](README_files/figure-gfm/quick-fit-2.png)<!-- -->
+![](man/figures/quick-fit-2.png)<!-- -->
 
 ``` r
 fit_quick[["goodness_of_fit"]][["Male"]]

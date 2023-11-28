@@ -7,7 +7,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>", fig.path = "man/figures/"
 )
 
 library(easysurv)
@@ -30,7 +30,7 @@ The package contains a family of functions prefixed with "quick_" that enable a 
 
 For example, the quick_KM() function can generate themed KM plots, accompanied by pertinent statistics such as numbers at risk over time.
 
-```{r quick-KM, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+```{r quick-KM, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
 surv_data <- easy_lung |>
   dplyr::mutate(event = status - 1)
 
