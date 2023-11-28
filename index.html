@@ -28,7 +28,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="index.html">easysurv</a>
 
@@ -93,7 +93,7 @@
 <span>  strata_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">KM_quick</span><span class="op">[[</span><span class="st">"KM_plot"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/quick-KM-1.png"><!-- --></p>
+<p><img src="reference/figures/quick-KM-1.png"><!-- --></p>
 <p>For a user-defined set of distributions, the quick_fit() function can check distribution convergence, generate plots for extrapolations and smoothed hazards, create survival parameter tables, show goodness-of-fit statistics, and calculate average survival times.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_quick</span> <span class="op">&lt;-</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="fu"><a href="reference/quick_fit.html">quick_fit</a></span><span class="op">(</span></span>
@@ -106,10 +106,10 @@
 <span>  add_interactive_plots <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit_quick</span><span class="op">[[</span><span class="st">"fit_plots"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Male"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/quick-fit-1.png"><!-- --></p>
+<p><img src="reference/figures/quick-fit-1.png"><!-- --></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_quick</span><span class="op">[[</span><span class="st">"hazard_plots"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Male"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/quick-fit-2.png"><!-- --></p>
+<p><img src="reference/figures/quick-fit-2.png"><!-- --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_quick</span><span class="op">[[</span><span class="st">"goodness_of_fit"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Male"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;           model      AIC      BIC AIC_rank BIC_rank</span></span>

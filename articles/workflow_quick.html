@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
@@ -615,6 +615,7 @@ argument.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">## gompertz mean survival time not calculable.</span></span></code></pre>
+<pre><code><span><span class="co">## gengamma mean survival time not calculable.</span></span></code></pre>
 <p>To view the output of this object, we can continue to click through
 the next section, <em>“## See Outputs —-”</em>, which are also set up
 conditionally, so we don’t need to specifically find the outputs we
@@ -668,7 +669,7 @@ are formatted in such a way that they export easily to Excel. For those
 who want to export all of these results, we can leverage the
 <code>openxlsx</code> package. We’ll start by creating a new blank
 workbook.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Excel Exports ----------------------------------------------------------------</span></span>
 <span></span>
 <span><span class="co"># Create a new workbook object</span></span>
@@ -678,7 +679,7 @@ the objects created by the <em>quick</em> functions and put them in the
 blank workbook. As with above, these are set up conditionally depending
 on what analyses were performed, so we can simply click through this
 section.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "quick_to_XL" function prepares easysurv outputs for Excel exporting.</span></span>
 <span><span class="co"># Note that plots will be reproduced at a different DPI setting for Excel.</span></span>
 <span><span class="co"># This may make them appear strange in R temporarily.</span></span>
@@ -693,7 +694,7 @@ section.</p>
 <p>Lastly, we’ll give this document a name, which is set to be
 <em>“easysurv output -”</em> along with the date and time, we’ll save
 the document and we’ll open it up!</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Give the workbook a name ending in .xlsx</span></span>
 <span><span class="va">output_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>  <span class="st">"easysurv output - "</span>,</span>
