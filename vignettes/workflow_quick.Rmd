@@ -111,11 +111,8 @@ surv_data <- surv_data |>
 We took the following steps:
 
 * Left `time` as is.
-
 * Generated `event` variable by transforming the existing `status` variable. `status` was coded as "1" for censoring and "2" for events, but our package (in line with standard survival packages) uses "0" for right-censoring and "1" for events. To fix this, we simply subtracted 1 from `status`.
-
-* Generate the `strata` variable using `sex`, later converting it to a factor.
-
+* Generated the `strata` variable using `sex`, later converting it to a factor.
 * Converted the dataset into a "tibble" for easier manipulation, and optionally, removed unnecessary columns using select() from `dplyr`.
 
 ## Data Labelling and Inspection
@@ -336,6 +333,12 @@ As with the other *quick* objects, `fit_check` is a list object with 9 component
 7. **goodness_of_fit: AIC and BIC outputs, along with their relative ranks for each distribution.
 8. **surv_params**: The `flexsurv` parameters for each distribution and strata, along with their variance-covariance matrices.
 9. **predicted_fits**: Predicted survival proportions over the supplied times for each strata.
+
+For example, we can see a plot of our survival data alongside the curve extrapolations by calling our newly created `fit_check` and specifying the component of interest using double square brackets.
+
+```{r fit-check, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
+fit_check[["fit_plots"]][["Male"]]
+```
   
 <br>
 

@@ -19,66 +19,6 @@ helpful starting point to explore survival extrapolations across
 frequently used distributions (such as exponential, generalized gamma,
 gamma, Gompertz, log-logistic, log-normal and Weibull).
 
-The package contains a family of functions prefixed with “quick\_” that
-enable a comprehensive set of analyses in just a few simple steps.
-
-For example, the quick_KM() function can generate themed KM plots,
-accompanied by pertinent statistics such as numbers at risk over time.
-
-``` r
-surv_data <- easy_lung |>
-  dplyr::mutate(event = status - 1)
-
-KM_quick <- easysurv::quick_KM(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  strata = "sex",
-  strata_labels = c("Male", "Female"))
-
-KM_quick[["KM_plot"]]
-```
-
-![](man/figures/quick-KM-1.png)<!-- -->
-
-For a user-defined set of distributions, the quick_fit() function can
-check distribution convergence, generate plots for extrapolations and
-smoothed hazards, create survival parameter tables, show goodness-of-fit
-statistics, and calculate average survival times.
-
-``` r
-fit_quick <- easysurv::quick_fit(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  strata = "sex",
-  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-  strata_labels = c("Male", "Female"),
-  add_interactive_plots = TRUE)
-
-fit_quick[["fit_plots"]][["Male"]]
-```
-
-![](man/figures/quick-fit-1.png)<!-- -->
-
-``` r
-fit_quick[["hazard_plots"]][["Male"]]
-```
-
-![](man/figures/quick-fit-2.png)<!-- -->
-
-``` r
-fit_quick[["goodness_of_fit"]][["Male"]]
-#>           model      AIC      BIC AIC_rank BIC_rank
-#> 1   Exponential 772.4134 775.3406        5        3
-#> 2         Gamma 767.6859 773.5404        2        2
-#> 3    Gen. Gamma 769.2226 778.0044        3        5
-#> 4      Gompertz 769.7047 775.5592        4        4
-#> 5  log-Logistic 776.5899 782.4444        6        6
-#> 6    log-Normal 784.6606 790.5151        7        7
-#> 7 Weibull (AFT) 767.2281 773.0826        1        1
-```
-
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
@@ -110,3 +50,78 @@ help(package = "easysurv")
 # Access a detailed vignette
 browseVignettes("easysurv")
 ```
+
+## Example
+
+The package contains a family of functions prefixed with “quick\_” that
+enable a comprehensive set of analyses in just a few simple steps.
+
+For example, the `quick_KM()` function can generate themed KM plots,
+accompanied by pertinent statistics such as numbers at risk over time.
+
+``` r
+# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serves as an event indicator (0/1)
+surv_data <- easy_lung |>
+  dplyr::mutate(event = status - 1)
+
+# Run "quick_KM()" on this formatted dataset
+KM_quick <- easysurv::quick_KM(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  strata_labels = c("Male", "Female"))
+
+# Print the newly created KM plot
+KM_quick[["KM_plot"]]
+```
+
+![](man/figures/quick-KM-1.png)<!-- -->
+
+For a user-defined set of distributions, the `quick_fit()` function can
+check distribution convergence, generate plots for extrapolations and
+smoothed hazards, create survival parameter tables, show goodness-of-fit
+statistics, and calculate average survival times.
+
+``` r
+# Run "quick_fit()" on the formatted "lung" dataset, examining the effect of the "sex" variable
+fit_quick <- easysurv::quick_fit(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  strata = "sex",
+  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+  strata_labels = c("Male", "Female"),
+  add_interactive_plots = TRUE)
+
+# Print the hazard and fitted survival plots
+fit_quick[["hazard_plots"]][["Male"]]
+```
+
+![](man/figures/quick-fit-1.png)<!-- -->
+
+``` r
+fit_quick[["fit_plots"]][["Male"]]
+```
+
+![](man/figures/quick-fit-2.png)<!-- -->
+
+``` r
+# Print the AIC/BIC scores and their relative ranking
+fit_quick[["goodness_of_fit"]][["Male"]]
+#>           model      AIC      BIC AIC_rank BIC_rank
+#> 1   Exponential 772.4134 775.3406        5        3
+#> 2         Gamma 767.6859 773.5404        2        2
+#> 3    Gen. Gamma 769.2226 778.0044        3        5
+#> 4      Gompertz 769.7047 775.5592        4        4
+#> 5  log-Logistic 776.5899 782.4444        6        6
+#> 6    log-Normal 784.6606 790.5151        7        7
+#> 7 Weibull (AFT) 767.2281 773.0826        1        1
+```
+
+## Future Tasks
+
+- Expand test framework with increased coverage.
+- Expand diagnostic test capabilities with additional outputs and plots.
+- Create additional vignettes for other workflows (e.g., mixture cure
+  analysis, spline analysis).
