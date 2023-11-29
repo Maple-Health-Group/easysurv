@@ -389,4 +389,4 @@ openxlsx::openXL(output_name)
 
 # Conclusion
 
-And with that, we have a set of standard parametric model outputs in both R and Excel! Look out for future functionality and vignettes and be sure to check out the tempaltes produced by `quick_start2()` and `quick_start3()`. If you encounter any bugs or issues, please reach out to the authors.
+And with that, we have a set of standard parametric model outputs in both R and Excel! Look out for future functionality and vignettes and be sure to check out the templates produced by `quick_start2()` and `quick_start3()`. If you encounter any bugs or issues, please reach out to the authors.
