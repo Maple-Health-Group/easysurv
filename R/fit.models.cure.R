@@ -1,10 +1,9 @@
 #' Fit parametric mixture cure survival models for health economic evaluations
 #'
 #' \code{fit.models.cure} fits parametric mixture cure survival models
-#' for health economic evaluations.
-#' Most code here is lifted from
-#' \url{github.com/DARTH-git/darthtools/blob/main/R/survival_functions.R}
-#' at 12 June 2023 - and then minor edits were made, mostly to documentation.
+#' for health economic evaluations.The code for \code{fit.models.cure} is primarily
+#' taken from the equivalent DARTH function, with minor edits to functionality
+#' and documentation.
 #'
 #' @param formula A formula specifying the model to be used, in the form
 #' \code{Surv(time,event)~strata[+covariates]} for /code{flexsurv}. Recommend

@@ -60,7 +60,7 @@ For example, the `quick_KM()` function can generate themed KM plots,
 accompanied by pertinent statistics such as numbers at risk over time.
 
 ``` r
-# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serves as an event indicator (0/1)
+# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)
 surv_data <- easy_lung |>
   dplyr::mutate(event = status - 1)
 
@@ -118,6 +118,24 @@ fit_quick[["goodness_of_fit"]][["Male"]]
 #> 6    log-Normal 784.6606 790.5151        7        7
 #> 7 Weibull (AFT) 767.2281 773.0826        1        1
 ```
+
+## Known Issues
+
+#### Fonts
+
+In many cases, changing fonts in R plots can be more challenging than it
+should be. The standard plots produced in easysurv use the Roboto
+Condensed font. R attempts to load the font when calling
+library(easysurv). You should see the following initialization plot at
+start-up:
+
+![](man/figures/font-issue-1.png)<!-- -->
+
+If the font does not display correctly. We recommend calling
+library(easysurv) again. If the font displays as expected, disregard
+font-related warnings R may display. If you want to show easysurv plots
+in an R Markdown file, consider adding fig.showtext = TRUE to the code
+chunk options to avoid font size issues.
 
 ## Future Tasks
 
