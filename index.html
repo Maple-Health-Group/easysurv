@@ -115,7 +115,7 @@
 <p>The package contains a family of functions prefixed with “quick_” that enable a comprehensive set of analyses in just a few simple steps.</p>
 <p>For example, the <code><a href="reference/quick_KM.html">quick_KM()</a></code> function can generate themed KM plots, accompanied by pertinent statistics such as numbers at risk over time.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serves as an event indicator (0/1)</span></span>
+<code class="sourceCode R"><span><span class="co"># Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)</span></span>
 <span><span class="va">surv_data</span> <span class="op">&lt;-</span> <span class="va">easy_lung</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>event <span class="op">=</span> <span class="va">status</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
@@ -159,6 +159,17 @@
 <span><span class="co">#&gt; 5  log-Logistic 776.5899 782.4444        6        6</span></span>
 <span><span class="co">#&gt; 6    log-Normal 784.6606 790.5151        7        7</span></span>
 <span><span class="co">#&gt; 7 Weibull (AFT) 767.2281 773.0826        1        1</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="known-issues">Known Issues<a class="anchor" aria-label="anchor" href="#known-issues"></a>
+</h2>
+<div class="section level4">
+<h4 id="fonts">Fonts<a class="anchor" aria-label="anchor" href="#fonts"></a>
+</h4>
+<p>In many cases, changing fonts in R plots can be more challenging than it should be. The standard plots produced in easysurv use the Roboto Condensed font. R attempts to load the font when calling library(easysurv). You should see the following initialization plot at start-up:</p>
+<p><img src="reference/figures/font-issue-1.png"><!-- --></p>
+<p>If the font does not display correctly. We recommend calling library(easysurv) again. If the font displays as expected, disregard font-related warnings R may display. If you want to show easysurv plots in an R Markdown file, consider adding fig.showtext = TRUE to the code chunk options to avoid font size issues.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="future-tasks">Future Tasks<a class="anchor" aria-label="anchor" href="#future-tasks"></a>
