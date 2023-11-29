@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
                         <h4 data-toc-skip class="author">Niall Davison
 &amp; Brad Kievit</h4>
             
-            <h4 data-toc-skip class="date">2023-11-28</h4>
+            <h4 data-toc-skip class="date">2023-11-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Maple-Health-Group/easysurv/blob/HEAD/vignettes/workflow_quick.Rmd" class="external-link"><code>vignettes/workflow_quick.Rmd</code></a></small>
       <div class="d-none name"><code>workflow_quick.Rmd</code></div>
@@ -210,18 +210,17 @@ imported and stored as <code>surv_data</code>.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">event</span>, <span class="va">strata</span><span class="op">)</span> <span class="co"># Optional: Just keep variables of interest</span></span></code></pre></div>
 <p>We took the following steps:</p>
 <ul>
-<li><p>Left <code>time</code> as is.</p></li>
-<li><p>Generated <code>event</code> variable by transforming the
-existing <code>status</code> variable. <code>status</code> was coded as
-“1” for censoring and “2” for events, but our package (in line with
-standard survival packages) uses “0” for right-censoring and “1” for
-events. To fix this, we simply subtracted 1 from
-<code>status</code>.</p></li>
-<li><p>Generate the <code>strata</code> variable using <code>sex</code>,
-later converting it to a factor.</p></li>
-<li><p>Converted the dataset into a “tibble” for easier manipulation,
-and optionally, removed unnecessary columns using select() from
-<code>dplyr</code>.</p></li>
+<li>Left <code>time</code> as is.</li>
+<li>Generated <code>event</code> variable by transforming the existing
+<code>status</code> variable. <code>status</code> was coded as “1” for
+censoring and “2” for events, but our package (in line with standard
+survival packages) uses “0” for right-censoring and “1” for events. To
+fix this, we simply subtracted 1 from <code>status</code>.</li>
+<li>Generated the <code>strata</code> variable using <code>sex</code>,
+later converting it to a factor.</li>
+<li>Converted the dataset into a “tibble” for easier manipulation, and
+optionally, removed unnecessary columns using select() from
+<code>dplyr</code>.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -615,7 +614,6 @@ argument.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">## gompertz mean survival time not calculable.</span></span></code></pre>
-<pre><code><span><span class="co">## gengamma mean survival time not calculable.</span></span></code></pre>
 <p>To view the output of this object, we can continue to click through
 the next section, <em>“## See Outputs —-”</em>, which are also set up
 conditionally, so we don’t need to specifically find the outputs we
@@ -659,6 +657,13 @@ matrices.</li>
 <strong>predicted_fits</strong>: Predicted survival proportions over
 the supplied times for each strata.</li>
 </ol>
+<p>For example, we can see a plot of our survival data alongside the
+curve extrapolations by calling our newly created <code>fit_check</code>
+and specifying the component of interest using double square
+brackets.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_check</span><span class="op">[[</span><span class="st">"fit_plots"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Male"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<p><img src="workflow_quick_files/figure-html/fit-check-1.png" width="576"></p>
 <p><br></p>
 </div>
 <div class="section level3">
