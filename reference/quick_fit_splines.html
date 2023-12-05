@@ -75,7 +75,8 @@ models without warnings/errors, it returns fit information and plots.</p>
 <span>  xlab <span class="op">=</span> <span class="st">"Time"</span>,</span>
 <span>  font.family <span class="op">=</span> <span class="st">"Roboto Condensed"</span>,</span>
 <span>  plot.theme <span class="op">=</span> <span class="fu"><a href="theme_easysurv.html">theme_easysurv</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  add_interactive_plots <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  add_interactive_plots <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  get_mean <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -140,6 +141,11 @@ the stratas (default is NULL). Provide in a consistent order with
 <dt>add_interactive_plots</dt>
 <dd><p>Optional. Whether to include <code>plotly</code> outputs
 for hazard and fit plots. Default is FALSE.</p></dd>
+
+
+<dt>get_mean</dt>
+<dd><p>Optional. Whether to attempt to calculate mean survival times
+for the fit_averages object. Defaults to FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">
