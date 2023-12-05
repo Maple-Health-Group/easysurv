@@ -30,6 +30,8 @@
 #' \code{\link{theme_easysurv}()}.
 #' @param add_interactive_plots Optional. Whether to include `plotly` outputs
 #' for hazard and fit plots. Default is FALSE.
+#' @param get_mean Optional. Whether to attempt to calculate mean survival times
+#' for the fit_averages object. Defaults to FALSE.
 #'
 #' @export
 #'
@@ -87,7 +89,8 @@ quick_fit_cure <- function(data,
                            xlab = "Time",
                            font.family = "Roboto Condensed",
                            plot.theme = theme_easysurv(),
-                           add_interactive_plots = FALSE) {
+                           add_interactive_plots = FALSE,
+                           get_mean = FALSE) {
 
   quick_fit_select(fit_type = "cure",
                    data = data,
@@ -101,5 +104,6 @@ quick_fit_cure <- function(data,
                    xlab = xlab,
                    font.family = font.family,
                    plot.theme = plot.theme,
-                   add_interactive_plots = add_interactive_plots)
+                   add_interactive_plots = add_interactive_plots,
+                   get_mean = get_mean)
 }
