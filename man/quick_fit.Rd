@@ -17,7 +17,8 @@ quick_fit(
   xlab = "Time",
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
-  add_interactive_plots = FALSE
+  add_interactive_plots = FALSE,
+  get_mean = FALSE
 )
 
 quick_fit_standard(
@@ -32,7 +33,8 @@ quick_fit_standard(
   xlab = "Time",
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
-  add_interactive_plots = FALSE
+  add_interactive_plots = FALSE,
+  get_mean = FALSE
 )
 }
 \arguments{
@@ -71,6 +73,9 @@ the stratas (default is NULL). Provide in a consistent order with
 
 \item{add_interactive_plots}{Optional. Whether to include \code{plotly} outputs
 for hazard and fit plots. Default is FALSE.}
+
+\item{get_mean}{Optional. Whether to attempt to calculate mean survival times
+for the fit_averages object. Defaults to FALSE.}
 }
 \value{
 An object of class \code{quick_fit} with components:
@@ -87,7 +92,7 @@ parameter}
 distribution}
 \item{surv_params}{The flexsurv parameters for each model and their vcov
 matrix}
-\item{fit_averages}{The median, mean and restricted mean survival times for
+\item{fit_averages}{The median, restricted mean and mean survival times for
 each distribution}
 \item{predicted_fits}{Predicted survival proportions over the \code{times}
 parameter, if provided}

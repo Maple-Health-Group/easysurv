@@ -2,21 +2,32 @@
 % Please edit documentation in R/get_fit_averages.R
 \name{get_fit_averages}
 \alias{get_fit_averages}
-\title{Obtain median, mean, and restricted mean survival times.}
+\title{Obtain median, restricted mean, and mean survival times.}
 \usage{
-get_fit_averages(mod)
+get_fit_averages(mod, get_median = TRUE, get_rmst = TRUE, get_mean = FALSE)
 }
 \arguments{
 \item{mod}{A specific model of a \code{fit.models} object obtained from
 the \code{\link[survHE]{fit.models}} function.}
+
+\item{get_median}{Optional for whether to return median survival times.
+Defaults to TRUE.}
+
+\item{get_rmst}{Optional for whether to return restricted mean survival
+times. Defaults to TRUE.}
+
+\item{get_mean}{Optional for whether to return mean survival times.
+Defaults to FALSE.}
 }
 \value{
 A data frame containing the median, mean and restricted mean survival
 times (with 95\% confidence intervals) where calculable.
 }
 \description{
-This function obtains the median, mean, and restricted mean survival times
+This function can obtain the median, restricted mean and mean survival times
 stored in a \code{flexsurvreg} or \code{\link[survHE]{fit.models}} object.
+By default, mean times are not returned as certain distributions may plateau,
+which makes calculation not possible.
 }
 \examples{
 \dontrun{

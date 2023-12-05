@@ -31,6 +31,8 @@
 #' @param times Optional. A set of times at which to calculate predicted
 #' survival. The default is
 #' \code{seq(from = 0, to = ceiling(max(data$time)*2.5), length.out = 200)}
+#' @param get_mean Optional. Whether to attempt to calculate mean survival times
+#' for the fit_averages object. Defaults to FALSE.
 #'
 #' @importFrom rlang f_rhs
 #' @importFrom dplyr nest_by
@@ -93,7 +95,8 @@ quick_fit_select <- function(fit_type,
                              xlab = "Time",
                              font.family = "Roboto Condensed",
                              plot.theme = theme_easysurv(),
-                             add_interactive_plots = FALSE) {
+                             add_interactive_plots = FALSE,
+                             get_mean = FALSE) {
   # Validate argument inputs ----
   function_name <- switch(fit_type,
     "standard" = "`quick_fit`",
@@ -288,7 +291,9 @@ quick_fit_select <- function(fit_type,
 
     fit_averages <- list(
       Joint =
-        data.table::rbindlist(lapply(fits[[1]]$models, get_fit_averages))
+        data.table::rbindlist(lapply(fits[[1]]$models,
+                                     get_fit_averages,
+                                     get_mean = get_mean))
     )
 
     for (tx in seq_along(strata_list)) {
@@ -459,7 +464,9 @@ quick_fit_select <- function(fit_type,
     )
 
     fit_averages[tx] <- list(
-      data.table::rbindlist(lapply(fits[[tx]]$models, get_fit_averages))
+      data.table::rbindlist(lapply(fits[[tx]]$models,
+                                   get_fit_averages,
+                                   get_mean = get_mean))
     )
 
 

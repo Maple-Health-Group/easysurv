@@ -16,7 +16,8 @@ quick_fit_cure(
   xlab = "Time",
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
-  add_interactive_plots = FALSE
+  add_interactive_plots = FALSE,
+  get_mean = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,9 @@ the stratas (default is NULL). Provide in a consistent order with
 
 \item{add_interactive_plots}{Optional. Whether to include \code{plotly} outputs
 for hazard and fit plots. Default is FALSE.}
+
+\item{get_mean}{Optional. Whether to attempt to calculate mean survival times
+for the fit_averages object. Defaults to FALSE.}
 }
 \value{
 An object of class \code{quick_fit_cure} containing the following

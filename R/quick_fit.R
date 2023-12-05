@@ -32,6 +32,8 @@
 #' \code{\link{theme_easysurv}()}.
 #' @param add_interactive_plots Optional. Whether to include `plotly` outputs
 #' for hazard and fit plots. Default is FALSE.
+#' @param get_mean Optional. Whether to attempt to calculate mean survival times
+#' for the fit_averages object. Defaults to FALSE.
 #'
 #' @export
 #'
@@ -49,7 +51,7 @@
 #' distribution}
 #' \item{surv_params}{The flexsurv parameters for each model and their vcov
 #' matrix}
-#' \item{fit_averages}{The median, mean and restricted mean survival times for
+#' \item{fit_averages}{The median, restricted mean and mean survival times for
 #' each distribution}
 #' \item{predicted_fits}{Predicted survival proportions over the \code{times}
 #' parameter, if provided}
@@ -86,7 +88,8 @@ quick_fit <- function(data,
                       xlab = "Time",
                       font.family = "Roboto Condensed",
                       plot.theme = theme_easysurv(),
-                      add_interactive_plots = FALSE) {
+                      add_interactive_plots = FALSE,
+                      get_mean = FALSE) {
 
   quick_fit_select(fit_type = "standard",
                    data = data,
@@ -100,7 +103,8 @@ quick_fit <- function(data,
                    xlab = xlab,
                    font.family = font.family,
                    plot.theme = plot.theme,
-                   add_interactive_plots = add_interactive_plots)
+                   add_interactive_plots = add_interactive_plots,
+                   get_mean = get_mean)
 }
 
 
