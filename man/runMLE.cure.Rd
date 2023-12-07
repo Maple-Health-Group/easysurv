@@ -4,29 +4,24 @@
 \alias{runMLE.cure}
 \title{Run maximum likelihood estimation (MLE) on cure models for survival analysis}
 \usage{
-runMLE.cure(x, exArgs)
+runMLE.cure(x, cure_weights, exArgs)
 }
 \arguments{
-\item{x}{The specified distribution to run MLE on.
-If \code{"splines"}, a flexible parametric survival model is fitted using
-the \code{\link[flexsurv]{flexsurvspline}} function. If any other
-distribution, a cure model is fitted using the
-\code{\link[flexsurvcure]{flexsurvcure}} function.}
+\item{x}{The specified distribution to run MLE on.}
+
+\item{cure_weights}{Case weights. The function expects a string
+corresponding to a variable name within the data. Can be NULL}
 
 \item{exArgs}{Additional arguments to pass to the
-\code{\link[flexsurvcure]{flexsurvcure}} or
-\code{\link[flexsurv]{flexsurvspline}} function, such as the formula and
-data.}
+\code{\link[flexsurvcure]{flexsurvcure}} function.}
 }
 \value{
 A list containing the fitted model, AIC, BIC, DIC (NULL in this
 case), the time taken to run the estimation, and the model name.
 }
 \description{
-This function performs MLE on cure models using either the
-\code{\link[flexsurvcure]{flexsurvcure}} or
-\code{\link[flexsurv]{flexsurvspline}} functions depending on the
-specified distribution.
+This function performs MLE on cure models using
+\code{\link[flexsurvcure]{flexsurvcure}}
 }
 \examples{
 \dontrun{
@@ -36,11 +31,5 @@ library(survival)
 formula <- Surv(time, status) ~ as.factor(sex)
 data <- lung
 runMLE.cure("weibull", exArgs = list(formula = formula, data = data))
-
-# Example usage with flexsurvspline
-formula <- Surv(time, status) ~ as.factor(sex)
-data <- lung
-k <- 3
-runMLE.cure("splines", exArgs = list(formula = formula, data = data, k = k))
 }
 }

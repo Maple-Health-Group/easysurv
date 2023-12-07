@@ -16,6 +16,8 @@
 #' \code{"weibullPH"},\code{"loglogistic"},\code{"lognormal"}.
 #' @param method The method used to do the estimation. Current possible
 #' values are \code{"mle"}.
+#' @param weights Optional for case weights. The function expects a string
+#' corresponding to a variable name within the data.
 #' @param ... Additional arguments for \code{runMLE.cure}.
 #'
 #' @return
@@ -39,7 +41,7 @@
 #' }
 #'
 fit.models.cure <- function(formula = NULL, data, distr = NULL, method = "mle",
-                            ...) {
+                             weights = NULL, ...) {
   exArgs <- list(...)
   exArgs$formula <- formula
   exArgs$data <- data
@@ -55,8 +57,9 @@ fit.models.cure <- function(formula = NULL, data, distr = NULL, method = "mle",
   if (method == "mle") {
     res <- format_output_fit.models(lapply(distr, function(x) {
       runMLE.cure(
-        x,
-        exArgs
+        x = x,
+        cure_weights = weights,
+        exArgs = exArgs
       )
     }), method, distr, formula, data)
   }

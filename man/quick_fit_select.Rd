@@ -14,6 +14,7 @@ quick_fit_select(
   strata_labels = NULL,
   times = NULL,
   formula = NULL,
+  weights = NULL,
   xlab = "Time",
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
@@ -49,6 +50,9 @@ survival. The default is
 
 \item{formula}{Optional. Surv() formula. Default is
 \code{survival::Surv(time,event) ~ 1}}
+
+\item{weights}{Optional for case weights. The function expects a string
+corresponding to a variable name within the data.}
 
 \item{xlab}{The x-axis label for plots. Default is "Time".}
 

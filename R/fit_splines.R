@@ -12,7 +12,9 @@
 #' proportional odds model (\code{scale = "odds"}).
 #' @param data A data frame containing the data to be used for the analysis.
 #' This must contain data for the \code{time} and \code{event} variables.
-#' @param method To add details
+#' @param method Method from survHE, default is mle.
+#' @param weights Optional for case weights. The function expects a string
+#' corresponding to a variable name within the data.
 #'
 #' @importFrom survHE fit.models
 #' @export
@@ -30,7 +32,7 @@
 #' print(spline_fit)
 #' }
 #'
-fit_splines <- function(formula, dists, data, method = "mle") {
+fit_splines <- function(formula, dists, data, method = "mle", weights = NULL) {
 
   # lapply not possible as survHE forces knots to be single integer.
 
@@ -40,7 +42,8 @@ fit_splines <- function(formula, dists, data, method = "mle") {
       data = data,
       k = dists$knots[dist_num],
       scale = dists$scale[dist_num],
-      distr = "splines", method = method
+      distr = "splines", method = method,
+      weights = weights
     )
     names(fitting$models) <- paste(
       fitting$models[[1]]$call$k,

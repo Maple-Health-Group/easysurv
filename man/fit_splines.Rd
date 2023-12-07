@@ -4,7 +4,7 @@
 \alias{fit_splines}
 \title{Fit spline models in survival analysis for health economic evaluations}
 \usage{
-fit_splines(formula, dists, data, method = "mle")
+fit_splines(formula, dists, data, method = "mle", weights = NULL)
 }
 \arguments{
 \item{formula}{A formula specifying the model to be used, in the form
@@ -19,7 +19,10 @@ proportional odds model (\code{scale = "odds"}).}
 \item{data}{A data frame containing the data to be used for the analysis.
 This must contain data for the \code{time} and \code{event} variables.}
 
-\item{method}{To add details}
+\item{method}{Method from survHE, default is mle.}
+
+\item{weights}{Optional for case weights. The function expects a string
+corresponding to a variable name within the data.}
 }
 \value{
 A list containing the fitted spline models and model fitting

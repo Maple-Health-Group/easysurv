@@ -4,7 +4,14 @@
 \alias{fit.models.cure}
 \title{Fit parametric mixture cure survival models for health economic evaluations}
 \usage{
-fit.models.cure(formula = NULL, data, distr = NULL, method = "mle", ...)
+fit.models.cure(
+  formula = NULL,
+  data,
+  distr = NULL,
+  method = "mle",
+  weights = NULL,
+  ...
+)
 }
 \arguments{
 \item{formula}{A formula specifying the model to be used, in the form
@@ -21,6 +28,9 @@ to be fitted. Available options are: \code{"exponential"},\code{"gamma"},
 
 \item{method}{The method used to do the estimation. Current possible
 values are \code{"mle"}.}
+
+\item{weights}{Optional for case weights. The function expects a string
+corresponding to a variable name within the data.}
 
 \item{...}{Additional arguments for \code{runMLE.cure}.}
 }
