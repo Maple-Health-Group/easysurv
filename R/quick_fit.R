@@ -24,6 +24,8 @@
 #' \code{levels(as.factor(data$strata))}.
 #' @param formula Optional. Surv() formula. Default is
 #' \code{survival::Surv(time,event) ~ 1}
+#' @param weights Optional for case weights. The function expects a string
+#' corresponding to a variable name within the data.
 #'
 #' @param xlab The x-axis label for plots. Default is "Time".
 #' @param font.family The name of the font for the plots. Default is
@@ -85,6 +87,7 @@ quick_fit <- function(data,
                       times = NULL,
                       strata_labels = NULL,
                       formula = NULL,
+                      weights = NULL,
                       xlab = "Time",
                       font.family = "Roboto Condensed",
                       plot.theme = theme_easysurv(),
@@ -100,6 +103,7 @@ quick_fit <- function(data,
                    times = times,
                    strata_labels = strata_labels,
                    formula = formula,
+                   weights = weights,
                    xlab = xlab,
                    font.family = font.family,
                    plot.theme = plot.theme,

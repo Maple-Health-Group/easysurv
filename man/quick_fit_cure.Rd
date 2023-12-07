@@ -13,6 +13,7 @@ quick_fit_cure(
   times = NULL,
   strata_labels = NULL,
   formula = NULL,
+  weights = NULL,
   xlab = "Time",
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
@@ -45,6 +46,9 @@ the stratas (default is NULL). Provide in a consistent order with
 
 \item{formula}{Optional. Surv() formula. Default is
 \code{survival::Surv(time,event) ~ 1}}
+
+\item{weights}{Optional for case weights. The function expects a string
+corresponding to a variable name within the data.}
 
 \item{xlab}{The x-axis label for plots. Default is "Time".}
 

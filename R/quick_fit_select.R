@@ -25,6 +25,9 @@
 #' for hazard and fit plots. Default is FALSE.
 #' @param formula Optional. Surv() formula. Default is
 #' \code{survival::Surv(time,event) ~ 1}
+#' @param weights Optional for case weights. The function expects a string
+#' corresponding to a variable name within the data.
+#'
 #' @param strata_labels Optional. A character vector containing the names of
 #' the stratas (default is NULL). Provide in a consistent order with
 #' \code{levels(as.factor(data$strata))}.
@@ -93,6 +96,7 @@ quick_fit_select <- function(fit_type,
                              strata_labels = NULL,
                              times = NULL,
                              formula = NULL,
+                             weights = NULL,
                              xlab = "Time",
                              font.family = "Roboto Condensed",
                              plot.theme = theme_easysurv(),
@@ -232,6 +236,13 @@ quick_fit_select <- function(fit_type,
 
   my_labels <- `if`(is.null(strata_labels), strata_list, strata_labels)
 
+
+  if (!is.null(weights)) {
+    the_weights <- data[[weights]]
+  } else {
+    the_weights <- NULL
+  }
+
   nested <- data |> dplyr::nest_by(.data[[strata]])
 
   converged <- list()
@@ -259,7 +270,8 @@ quick_fit_select <- function(fit_type,
       formula = formula,
       data = data,
       distr = dists,
-      method = "mle"
+      method = "mle",
+      weights = the_weights
     ))
 
     fit_plots <- list(Joint = easysurv::plot_fits(
@@ -382,6 +394,11 @@ quick_fit_select <- function(fit_type,
   for (tx in seq_along(strata_list)) {
     the_data <- nested[["data"]][[tx]]
 
+    if (!is.null(weights)) {
+      the_weights <- nested[["data"]][[tx]][[weights]]
+    } else {
+      the_weights <- NULL
+    }
 
     if (fit_type == "standard") {
       converged[tx] <- list(easysurv::check_converged(
@@ -394,7 +411,8 @@ quick_fit_select <- function(fit_type,
         formula = formula,
         data = the_data,
         distr = converged[[tx]],
-        method = "mle"
+        method = "mle",
+        weights = the_weights
       ))
     }
 
@@ -409,7 +427,8 @@ quick_fit_select <- function(fit_type,
         formula = formula,
         data = the_data,
         distr = converged[[tx]],
-        method = "mle"
+        method = "mle",
+        weights = weights
       ))
     }
 
@@ -424,7 +443,8 @@ quick_fit_select <- function(fit_type,
         formula = formula,
         data = the_data,
         dists = converged[[tx]],
-        method = "mle"
+        method = "mle",
+        weights = the_weights
       ))
     }
 

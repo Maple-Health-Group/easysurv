@@ -17,6 +17,8 @@
 #' @param formula Optional. Surv() formula specifying the survival model.
 #' Default is
 #' \code{survival::Surv(time,event) ~ as.factor(strata)}
+#' @param weights Optional for case weights. The function expects a string
+#' corresponding to a variable name within the data.
 #' @param strata_labels Optional. A character vector containing the names of
 #' the stratas (default is NULL). Provide in a consistent order with
 #' \code{levels(as.factor(data$strata))}.
@@ -85,6 +87,7 @@ quick_fit_joint <- function(data,
                             times = NULL,
                             strata_labels = NULL,
                             formula = NULL,
+                            weights = NULL,
                             xlab = "Time",
                             font.family = "Roboto Condensed",
                             plot.theme = theme_easysurv(),
@@ -100,6 +103,7 @@ quick_fit_joint <- function(data,
                    times = times,
                    strata_labels = strata_labels,
                    formula = formula,
+                   weights = weights,
                    xlab = xlab,
                    font.family = font.family,
                    plot.theme = plot.theme,

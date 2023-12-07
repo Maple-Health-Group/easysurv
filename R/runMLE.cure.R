@@ -1,24 +1,15 @@
-
-
 #' Run maximum likelihood estimation (MLE) on cure models for survival analysis
 #'
-#' This function performs MLE on cure models using either the
-#' \code{\link[flexsurvcure]{flexsurvcure}} or
-#' \code{\link[flexsurv]{flexsurvspline}} functions depending on the
-#' specified distribution.
+#' This function performs MLE on cure models using
+#' \code{\link[flexsurvcure]{flexsurvcure}}
 #'
 #' @param x The specified distribution to run MLE on.
-#' If \code{"splines"}, a flexible parametric survival model is fitted using
-#' the \code{\link[flexsurv]{flexsurvspline}} function. If any other
-#' distribution, a cure model is fitted using the
-#' \code{\link[flexsurvcure]{flexsurvcure}} function.
 #'
 #' @param exArgs Additional arguments to pass to the
-#' \code{\link[flexsurvcure]{flexsurvcure}} or
-#' \code{\link[flexsurv]{flexsurvspline}} function, such as the formula and
-#' data.
+#' \code{\link[flexsurvcure]{flexsurvcure}} function.
+#' @param cure_weights Case weights. The function expects a string
+#' corresponding to a variable name within the data. Can be NULL
 #'
-#' @importFrom flexsurv flexsurvspline
 #' @importFrom flexsurvcure flexsurvcure
 #' @export
 #'
@@ -33,72 +24,32 @@
 #' formula <- Surv(time, status) ~ as.factor(sex)
 #' data <- lung
 #' runMLE.cure("weibull", exArgs = list(formula = formula, data = data))
-#'
-#' # Example usage with flexsurvspline
-#' formula <- Surv(time, status) ~ as.factor(sex)
-#' data <- lung
-#' k <- 3
-#' runMLE.cure("splines", exArgs = list(formula = formula, data = data, k = k))
 #' }
-runMLE.cure <- function(x, exArgs) {
+runMLE.cure <- function(x, cure_weights, exArgs) {
   formula <- exArgs$formula
   data <- exArgs$data
   availables <- load_availables()
   d3 <- manipulate_distributions(x)$distr3
   x <- manipulate_distributions(x)$distr
   tic <- proc.time()
-  if (x == "survspline") {
-    if (exists("bhazard", where = exArgs)) {
-      bhazard <- exArgs$bhazard
-    } else {
-      bhazard <- NULL
-    }
-    if (exists("weights", where = exArgs)) {
-      weights <- exArgs$weights
-    } else {
-      weights <- NULL
-    }
-    if (exists("subset", where = exArgs)) {
-      subset <- exArgs$subset
-    } else {
-      subset <- NULL
-    }
-    if (exists("knots", where = exArgs)) {
-      knots <- exArgs$knots
-    } else {
-      knots <- NULL
-    }
-    if (exists("k", where = exArgs)) {
-      k <- exArgs$k
-    } else {
-      k <- 0
-    }
-    if (exists("bknots", where = exArgs)) {
-      bknots <- exArgs$bknots
-    } else {
-      bknots <- NULL
-    }
-    if (exists("scale", where = exArgs)) {
-      scale <- exArgs$scale
-    } else {
-      scale <- "hazard"
-    }
-    if (exists("timescale", where = exArgs)) {
-      timescale <- exArgs$scale
-    } else {
-      timescale <- "log"
-    }
-    model <- flexsurv::flexsurvspline(
+
+  if (is.null(cure_weights)) {
+    model <- flexsurvcure::flexsurvcure(
       formula = formula,
-      data = data, k = k, knots = knots, bknots = bknots,
-      scale = scale, timescale = timescale
+      data = data,
+      dist = x,
+      mixture = TRUE
     )
   } else {
-    model <- flexsurvcure::flexsurvcure(formula = formula,
-                                        data = data,
-                                        dist = x,
-                                        mixture = TRUE)
+    model <- flexsurvcure::flexsurvcure(
+      formula = formula,
+      data = cbind(data, cure_weights = data[[cure_weights]]),
+      dist = x,
+      mixture = TRUE,
+      weights = cure_weights
+    )
   }
+
   toc <- proc.time() - tic
   model_name <- d3
   list(
