@@ -63,7 +63,14 @@ and documentation.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit.models.cure</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span>, distr <span class="op">=</span> <span class="cn">NULL</span>, method <span class="op">=</span> <span class="st">"mle"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit.models.cure</span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  distr <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"mle"</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +96,11 @@ to be fitted. Available options are: <code>"exponential"</code>,<code>"gamma"</c
 <dt>method</dt>
 <dd><p>The method used to do the estimation. Current possible
 values are <code>"mle"</code>.</p></dd>
+
+
+<dt>weights</dt>
+<dd><p>Optional for case weights. The function expects a string
+corresponding to a variable name within the data.</p></dd>
 
 
 <dt>...</dt>

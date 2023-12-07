@@ -75,6 +75,7 @@ information and plots.</p>
 <span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  strata_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Time"</span>,</span>
 <span>  font.family <span class="op">=</span> <span class="st">"Roboto Condensed"</span>,</span>
 <span>  plot.theme <span class="op">=</span> <span class="fu"><a href="theme_easysurv.html">theme_easysurv</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -91,6 +92,7 @@ information and plots.</p>
 <span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  strata_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Time"</span>,</span>
 <span>  font.family <span class="op">=</span> <span class="st">"Roboto Condensed"</span>,</span>
 <span>  plot.theme <span class="op">=</span> <span class="fu"><a href="theme_easysurv.html">theme_easysurv</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -140,6 +142,11 @@ the stratas (default is NULL). Provide in a consistent order with
 <dt>formula</dt>
 <dd><p>Optional. Surv() formula. Default is
 <code>survival::Surv(time,event) ~ 1</code></p></dd>
+
+
+<dt>weights</dt>
+<dd><p>Optional for case weights. The function expects a string
+corresponding to a variable name within the data.</p></dd>
 
 
 <dt>xlab</dt>

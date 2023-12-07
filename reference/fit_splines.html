@@ -57,7 +57,7 @@ to survival data.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_splines</span><span class="op">(</span><span class="va">formula</span>, <span class="va">dists</span>, <span class="va">data</span>, method <span class="op">=</span> <span class="st">"mle"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_splines</span><span class="op">(</span><span class="va">formula</span>, <span class="va">dists</span>, <span class="va">data</span>, method <span class="op">=</span> <span class="st">"mle"</span>, weights <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -81,7 +81,12 @@ This must contain data for the <code>time</code> and <code>event</code> variable
 
 
 <dt>method</dt>
-<dd><p>To add details</p></dd>
+<dd><p>Method from survHE, default is mle.</p></dd>
+
+
+<dt>weights</dt>
+<dd><p>Optional for case weights. The function expects a string
+corresponding to a variable name within the data.</p></dd>
 
 </dl></div>
     <div class="section level2">
