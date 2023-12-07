@@ -39,6 +39,7 @@
 #' @importFrom survival Surv
 #' @importFrom survHE fit.models
 #' @importFrom stats as.formula
+#' @importFrom data.table rbindlist
 #'
 #' @export
 #'
