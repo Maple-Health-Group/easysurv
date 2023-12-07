@@ -31,6 +31,8 @@
 #' @importFrom plotly ggplotly
 #' @importFrom plotly layout
 #' @importFrom plotly config
+#' @importFrom data.table as.data.table
+#' @importFrom data.table rbindlist
 #'
 #' @return A plot object of the extrapolations with custom defaults.
 #'
@@ -73,7 +75,39 @@ plot_fits <- function(models,
                              add.km = add.km,
                              t = t,
                              ...
-  ) +
+  )
+
+  # Deal with survHE not plotting flexsurvcure predictions
+  if (inherits(models$models[[1]], "flexsurvcure")) {
+
+    get_times <- unique(out[["layers"]][[1]][["data"]][["time"]])
+    strata_list <- levels(droplevels(as.factor((out[["layers"]][[1]][["data"]][["strata"]]))))
+
+    new_predicts <- list()
+
+    # Remake the predictions
+    for (i in seq_along(strata_list)) {
+      new_predicts[i] <- list(easysurv::predict_fits(models, get_times, group = i))
+    }
+
+    new_S_list <- list()
+    my_counter <- 0
+
+    # Store them in a consistent order with the survHE plot
+    for (loop_models in seq_along(models$models)) {
+      for (loop_strata in seq_along(strata_list)) {
+        my_counter <- my_counter + 1
+        new_S_list[my_counter] <- new_predicts[[loop_strata]][loop_models + 1]
+      }
+    }
+
+    new_S <- data.table::rbindlist(lapply(new_S_list, data.table::as.data.table))
+    new_S <- as.numeric(as.character(unlist(new_S)))
+
+    out[["layers"]][[1]][["data"]][["S"]] <- new_S
+  }
+
+  out <- out  +
     ggplot2::labs(title = title, subtitle = subtitle, y = ylab)
 
   out <- out + plot.theme +
