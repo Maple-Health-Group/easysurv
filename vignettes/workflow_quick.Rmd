@@ -1,10 +1,8 @@
 ---
-title: "Quick Start Guide for Survival Curve Extrapolation"
-author: Niall Davison & Brad Kievit
-date: "`r Sys.Date()`"
+title: "Quick Start Guide"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Quick Start Guide for Survival Curve Extrapolation}
+  %\VignetteIndexEntry{Quick Start Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

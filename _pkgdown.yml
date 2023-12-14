@@ -1,5 +1,8 @@
 url: https://maple-health-group.github.io/easysurv/
+
 template:
   bootstrap: 5
-  bootswatch: flatly
-
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
