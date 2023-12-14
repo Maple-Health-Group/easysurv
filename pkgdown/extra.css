@@ -1,0 +1,9 @@
+/* For the version number to display properly when using the flatly theme*/
+.text-muted {
+  color: #a3a6a9 !important;
+}
+
+/* To make the navbar less tall */
+.navbar {
+  --bs-navbar-padding-y: 0.5rem !important;
+}
