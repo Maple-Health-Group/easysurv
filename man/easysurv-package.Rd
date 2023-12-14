@@ -7,6 +7,8 @@
 \alias{easysurv}
 \title{easysurv: Estimate and inspect parametric survival models}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Functions to streamline the process of fitting parametric models to extrapolate survival data. easysurv can fit data via simple parametric modelling, mixture cure modelling and spline modelling.
 }
 \seealso{
