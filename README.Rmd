@@ -7,20 +7,19 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", fig.path = "man/figures/"
+  comment = "#>", 
+  fig.path = "man/figures/"
 )
 
 library(easysurv)
 ```
 
-# easysurv <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
+# <b>easysurv</b> <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml)
 [![test-coverage](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
-
-## Overview
 
 The *easysurv* R package provides tools to estimate and inspect parametric survival models. 
 
