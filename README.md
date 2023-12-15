@@ -31,7 +31,7 @@ install.packages("pak")
 pak::pkg_install("Maple-Health-Group/easysurv")
 ```
 
-## Getting Started
+## Getting started
 
 ``` r
 # Load the easysurv library
@@ -49,13 +49,12 @@ help(package = "easysurv")
 browseVignettes("easysurv")
 ```
 
-## Example
+## Examples
 
-The package contains a family of functions prefixed with “quick\_” that
-enable a comprehensive set of analyses in just a few simple steps.
+### `quick_KM()`
 
-For example, the `quick_KM()` function can generate themed KM plots,
-accompanied by pertinent statistics such as numbers at risk over time.
+The `quick_KM()` function can generate themed KM plots, accompanied by
+pertinent statistics such as numbers at risk over time.
 
 ``` r
 # Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)
@@ -75,6 +74,8 @@ KM_quick[["KM_plot"]]
 ```
 
 ![](man/figures/quick-KM-1.png)<!-- -->
+
+### `quick_fit()`
 
 For a user-defined set of distributions, the `quick_fit()` function can
 check distribution convergence, generate plots for extrapolations and
@@ -117,25 +118,24 @@ fit_quick[["goodness_of_fit"]][["Male"]]
 #> 7 Weibull (AFT) 767.2281 773.0826        1        1
 ```
 
-## Known Issues
+## Known issues
 
 #### Fonts
 
-In many cases, changing fonts in R plots can be more challenging than it
-should be. The standard plots produced in easysurv use the Roboto
-Condensed font. R attempts to load the font when calling
-library(easysurv). You should see the following initialization plot at
-start-up:
+The standard plots produced in *easysurv* use the Roboto Condensed font.
+R attempts to load the font when calling `library(easysurv)`. If the
+font does not display correctly, we recommend calling
+`library(easysurv)` again. You should see the following initialization
+plot at start-up:
 
 ![](man/figures/font-issue-1.png)<!-- -->
 
-If the font does not display correctly. We recommend calling
-library(easysurv) again. If the font displays as expected, disregard
-font-related warnings R may display. If you want to show easysurv plots
-in an R Markdown file, consider adding fig.showtext = TRUE to the code
-chunk options to avoid font size issues.
+If the font displays as expected, disregard font-related warnings R may
+display. If you want to show easysurv plots in an R Markdown file,
+consider adding `fig.showtext = TRUE` to the code chunk options to fix
+the font size.
 
-## Future Tasks
+## Future plans
 
 - Expand test framework with increased coverage.
 - Expand diagnostic test capabilities with additional outputs and plots.
