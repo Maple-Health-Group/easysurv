@@ -13,16 +13,19 @@ Welcome to `easysurv`, an R package developed by the Maple Health Group to suppo
 
 The package helps to plot Kaplan-Meier data, assess the proportional hazards assumptions, and estimate & inspect standard parametric survival extrapolations. `easysurv` can also assist in mixture cure and spline modelling, although these are not explained in detail here.
 
-This guide covers the *`quick`* family of functions (`quick_start`, `quick_KM`, `quick_PH`, `quick_fit`, `quick_to_XL`) for easy survival analysis in just a few steps. For finer control, explore other package functions in the *Survival Curve Extrapolation with easysurv* vignette.
+This guide covers the *`quick`* family of functions:
+
+* `quick_start`
+* `quick_KM`
+* `quick_PH`
+* `quick_fit`
+* `quick_to_XL`
+
+for easy survival analysis in just a few steps.
 
 <br>
 
 # Getting Started
-
-1. **Clean the R environment** to ensure there's no interference from pre-existing R objects or functions.
-1. **Attach easysurv** so we can use its functions.
-1. **Load a template** using the `quick_start()` function.
-
 
 ```{r initiate-session, warning=FALSE, message=FALSE, fig.show='hide'}
 # Start from a clean environment
@@ -31,21 +34,21 @@ rm(list=ls())
 # Attach the easysurv package
 library(easysurv)
 
-# Load a easysurv analysis template
+# Load an easysurv analysis template
 quick_start()
 ```
 
 `quick_start()` creates a new .R script in your R environment, pre-loaded with code for survival analysis using the `lung` dataset from the `survival` package.
 
-You can also explore `quick_start2()` and `quick_start3()`, which use different datasets: "bc" from the `flexsurv` package and simulated phase III breast cancer trial data from the `ggsurvfit` package, respectively. 
+`quick_start2()` and `quick_start3()` use different data sets: "bc" from the `flexsurv` package and simulated phase III breast cancer trial data from the `ggsurvfit` package, respectively. 
 
-While the three templates share similarities in their analyses, the choice of starting data sets introduces some variations, making it beneficial to review all three templates for a comprehensive understanding of the package's versatility.
+The choice of starting data introduces some variations in code, making it beneficial to review all three templates for a comprehensive understanding of the package's versatility.
 
 <br>
 
 # Preparing Your Data
 
-You will need to import, assess, and clean your data before analysis. Below, we advise some practices to ensure that `easysurv` can handle your data.
+Below, we advise some practices to ensure that `easysurv` can handle your data.
 
 ## Data Import
 
@@ -57,9 +60,6 @@ surv_data <- easy_lung
 
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)
-
-# Toggle the next comment to see entire data.
-# View(surv_data)
 ```
 
 When importing your own data, there are a number of functions that can be used depending on the file format of the data. These lines of code are available in the script and can be activated as needed.
@@ -75,26 +75,19 @@ When importing your own data, there are a number of functions that can be used d
 
 ## Data Manipulation
 
-We'll attach one more package, `dplyr`, for data manipulation, and adjust number formatting using `scipen`.
-
-```{r other-libraries, warning=FALSE, message=FALSE}
-# Attach other packages for data manipulation
-library(dplyr)
-
-# Suppress scientific notation
-options(scipen = 999)
-```
-
 The data needs to be formatted in a certain way for the survival analysis to proceed smoothly. Don't worry, the requirements are straightforward! The data will need:
 
 1. A `time` variable specifying the times to events.
 2. A binary `event` column specifying whether the event was right-censored (event = 0) or an event (event = 1).
-3. Optional: A `strata` column specifying some way to stratify the events if a comparison is of interest.
+3. A `strata` column specifying some way to stratify the events if a comparison is of interest.
 
-Let's apply these requirements to the `lung` dataset we imported and stored as `surv_data`.
-
+Let's apply these requirements to the `easy_lung` dataset we imported and stored as `surv_data`.
 
 ```{r data-filtering, warning=FALSE, message=FALSE}
+# Attach dplyr for data manipulation
+library(dplyr)
+
+# Manipulate the data to use with easysurv
 surv_data <- surv_data |>
   dplyr::mutate(
     time = time,
@@ -109,20 +102,18 @@ surv_data <- surv_data |>
 We took the following steps:
 
 * Left `time` as is.
-* Generated `event` variable by transforming the existing `status` variable. `status` was coded as "1" for censoring and "2" for events, but our package (in line with standard survival packages) uses "0" for right-censoring and "1" for events. To fix this, we simply subtracted 1 from `status`.
+* Generated `event` variable by transforming the existing `status` variable. `status` was coded as "1" for censoring and "2" for events, but our package (in line with standard survival packages) uses "0" for right-censoring and "1" for events. So we simply subtracted 1 from `status`.
 * Generated the `strata` variable using `sex`, later converting it to a factor.
-* Converted the dataset into a "tibble" for easier manipulation, and optionally, removed unnecessary columns using select() from `dplyr`.
+* Converted the dataset into a "tibble" for easier handling, and removed unnecessary columns using `select()`.
 
 ## Data Labelling and Inspection
 
-Let's take a look at our `strata` column, to understand the sample size of each group.
-
 ```{r count-strata, warning=FALSE, message=FALSE}
-# See the levels of the strata
+# Check the sample size of each strata
 surv_data |> count(strata)
 ```
 
-We see that there are 138 instances of the "1" value and 90 instances of the "2" value. Since we're stratifying by sex, this isn't very helpful. Let's then rename these levels correctly as "Male" and "Female".
+We see that there are 138 instances of the "1" value and 90 instances of the "2" value. Since we're stratifying by sex, this isn't very helpful. Let's then rename these levels as "Male" and "Female".
 
 We can update other labeling too.
 
@@ -137,40 +128,38 @@ attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
 endpoint_label <- "Overall Survival"
 ```
 
-Our data should be ready for survival analysis now, but we want to make sure everything is set up correctly. We can take a look at the top few rows of our "tibble".
+Our data should be ready for survival analysis now, but we want to make sure everything is set up correctly. We can take a look at the top few rows of our tibble, and perform some final sense checks.
 
 ```{r show-surv-data, warning=FALSE, message=FALSE}
 # Make sure the data appears as expected.
 # A tibble prints the first 10 rows by default
 surv_data
-```
 
-We'll do a final sense check of sample sizes and the number of censors/events.
-
-```{r sample-sizes, warning=FALSE, message=FALSE}
-# See sample sizes and censor/event counts
+# See sample sizes
 surv_data |> count(strata)
+
+# See censor/event counts
 surv_data |> count(strata, event)
 ```
-
-This summary is more informative than before. It shows more males than females were in the data, and that a greater proportion of females were right censored. This could be something to be mindful of as we proceed with the analysis.
 
 <br>
 
 
 # Quick Workflow Using `easysurv`
 
-Now that our data set is properly set up, we can begin with the `easysurv` analysis! In this *quick* workflow, most of the heavy lifting will be done by a set of functions with the *`quick_`* prefix. The first of these is the `quick_KM` function.
+Now that our data is properly set up, we can begin with the `easysurv` analysis.
+
+In this *quick* workflow, most of the heavy lifting will be done by a set of functions with the *`quick_`* prefix. The first of these is the `quick_KM` function.
 
 ## Kaplan Meier analysis
 
-The `quick_KM` function produces an object with 5 components, containing all the of Kaplan-Meier data we might need:
+The `quick_KM` function produces an object with 5 components:
 
 1. **KM_all**: A `survfit` model that includes the whole data set (comparing across strata) using `Surv(time, event) ~ as.factor(strata)` as the formula.
 2. **KM_indiv**: A set of `survfit` models for each individual strata in the data set using `Surv(time, event) ~ 1` as the formula.
 3. **KM_stepped**: A table summarizing the KM survival over time, but presented in a "stepped" manner that is useful for plotting in Excel.
-4. **KM_plot**: A plot of the Kaplan Meier curve using the `easysurv` theme.
-5. **KM_summary**: Summary information for each of the strata, which includes sample sizes, the number of events, restricted mean survival, median survial and corresponding confidence intervals.
+4. **KM_plot**: A plot of the Kaplan-Meier curve using the `easysurv` theme.
+5. **KM_summary**: Summary information for each of the strata, which includes sample sizes, the number of events, restricted mean survival, median survival and corresponding confidence intervals.
 
 We'll run this function with our `surv_data` tibble, providing the names used for the `time`, `event` and `strata` variables, along with a few optional arguments that you can learn about in more detail by typing `?quick_KM` into your console.
 
@@ -197,26 +186,27 @@ KM_check <- easysurv::quick_KM(
 KM_check
 ```  
 
-The `quick_KM` function works by combining uses of the `survival::survfit()`, `easysurv::plot_KM`, `easysurv::summarise_KM` and `easysurv::step_KM` functions. 
+The `quick_KM` function combines uses of the `survival::survfit`, `easysurv::plot_KM`, `easysurv::summarise_KM` and `easysurv::step_KM` functions. 
 
-We stored the output in `KM_check`. Calling KM_check gives us a quick summary but, since it's a list object, if we want to look at any individual component, we need to call it by name in double square brackets. For example,
+To see specific elements of the output, call it by name in double square brackets. For example,
 
-```{r KM-plot, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
+```{r KM-plot, eval = FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
+# Not run here
 KM_check[["KM_plot"]]
 ```
 
 <br>
 
 ## Diagnostic tests
-Next, we want to run some diagnostics tests, which will be informative for future curve fitting. For this, we'll use another consolidated function, `quick_PH()`. The output is another list object with five components:
+Statistical tests and plots can inform curve fitting approach selection. 
+
+The `quick_PH()` function, where PH = proportional hazards, outputs a list object with five components:
 
 1. **cloglog_plot**: A log cumulative hazard plot with the `easysurv` theme.
-2. **coxph_model**: A `summary.coxPH` object containing statistical test outputs, namely the Cox PH hazard ratio and confidence intervals.
-3. **survdiff**: A `survdiff` object that summarizes a log-rank test, which tests for differences in survival between strata. If p-values are > 0.05, differences are not statistically significant.
-4. **coxzph_ph_test**: A `summary.coxPH` object containing statistical test outputs, namely around whether the data violates the proportional hazards assumption or not.
+2. **coxph_model**: A `survival::summary.coxPH()` object containing statistical test outputs, namely the Cox PH hazard ratio and confidence intervals.
+3. **survdiff**: A `survival::survdiff()` object that summarizes a log-rank test, which tests for differences in survival between strata. If p-values are > 0.05, differences are not statistically significant.
+4. **coxzph_ph_test**: A `survival::summary.coxPH()` object containing statistical test outputs, namely around whether the data violates the proportional hazards assumption or not.
 5. **schoenfeld_plot**: A Schoenfeld residuals plot in the `easysurv` theme.
-
-We'll run the function using `surv_data`, supplying the mostly self-explanatory arguments. You can type `?quick_PH` in the console or visit the other vignette for more information.
 
 ```{r quick-PH, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
 PH_check <- easysurv::quick_PH(
@@ -231,22 +221,22 @@ PH_check <- easysurv::quick_PH(
 PH_check
 ```
 
-This function combines the use of `easysurv::plot_KM` for plotting the log cumulative hazard, `survival::coxph` and `survival::cox.zph ` for fitting a Cox model, `survival::survdiff` for testing differences in survival, and `easysurv::ggcoxdiagnostics` for producing a Schoenfeld plot. 
-
-As with KM_check, PH_check is a list object, so individual components can be called using double square brackets. However, the output of this object supplies all the plots and tests in quick succession, which we can scroll/click through as needed.
+This function combines the use of `easysurv::plot_KM()` for plotting the log cumulative hazard, `survival::coxph()` and `survival::cox.zph()` for fitting a Cox model, `survival::survdiff()` for testing differences in survival, and `easysurv::ggcoxdiagnostics()` for producing a Schoenfeld plot. 
 
 <br>
 
 ## Fitting Survival Models
 
-Now that we have better statistical awareness of our data, we can fit curves to the data. Off the top, we need to decide what kind of analysis we want to do. `easysurv` has 4 different options, and we can choose one, some or all of them:
+Now that we have better statistical awareness of our data, we can fit parametric curves.
+
+`easysurv` supports 4 different options:
 
 * Separate parametric model fitting
 * Joint parametric model fitting
 * Mixture cure model fitting
 * Spline model fitting
 
-Once decided, we can set our preferences. In this instance, we will choose to do just the standard separate parametric fits.
+In the `quick_start()` template, we include toggles to decide which of these analyses to perform. This isn't necessary in all workflows.
 
 ```{r do-what, warning=FALSE, message=FALSE}
 ## Choose Model Fit Approaches ---------------------------------------------
@@ -260,7 +250,7 @@ do_cure <- FALSE # TRUE: run mixture cure model fits
 do_splines <- FALSE # TRUE: run spline model fits
 ```
 
-We also need to select our distributions of interest. We can choose as many or as few as we want, so long as it’s available as a dist option in `flexsurvreg`, which is the underlying function of our custom fitting function. 
+We need to specify our distributions of interest. We can choose as many or as few as we want, so long as it’s available as a dist option in `flexsurvreg`, which is the underlying function of our custom fitting function. 
 
 Here, we’re going to fit curves to “Exponential”, “Gamma”, “Generalized Gamma”, “Gompertz”, “log-logistic”, “log-normal” and “Weibull” distributions. With gamma as an exception, these are the distributions recommended by NICE in Technical Support Document (TSD) 14, ["Survival analysis: Extrapolating patient data"](https://www.sheffield.ac.uk/media/34225/download?attachment). Gamma has been included because it has been required by other HTA bodies, including CADTH. The notation for these distributions is defined per `flexsurvreg`.
 
@@ -291,8 +281,6 @@ We are now ready to use the *quick_fit* functions, which consolidate the entire 
 
 The script has a set of conditions set up so we don't need to specifically find the *quick_fit* functions we want to use and avoid the ones we don't. We can simply click through the whole *"## Model Fitting ----"* section.
 
-As we click through this section, we'll execute the `quick_fit()` function. Of note, we supplied our times over which we want to generate/plot extrapolations in the `times` argument.
-
 ```{r quick-fit}
 ### Separate fits --------------------------------------------------------------
 
@@ -313,22 +301,22 @@ if (do_standard) {
     times = times,
     strata_labels = strata_labels,
     xlab = "Months",
-    add_interactive_plots = TRUE
+    add_interactive_plots = FALSE
   )
 }
 ``` 
 
-To view the output of this object, we can continue to click through the next section, *"## See Outputs ----"*, which are also set up conditionally, so we don't need to specifically find the outputs we created and avoid the ones we didn't.
+To view the output of this object, we can continue to click through the next section, *"## See Outputs ----"*.
 
 As with the other *quick* objects, `fit_check` is a list object with 9 components than can be called individually using double square brackets:
 
 1. **converged**: A list of all the successfully converged distributions for each strata.
-2. **fits**: A `survHE::fit.models` output, containing the `flexsurv` objects for each converged distribution for each strata.
+2. **fits**: A `survHE::fit.models()` output, containing the `flexsurv` objects for each converged distribution for each strata.
 3. **hazard_plots**: Smoothed hazard plots for each strata.
 4. **hazard_plotly**: *If the `add_interactive_plots` argument was set to `TRUE`.* A set of interactive `plotly`  hazard plots, that can accessed in the Viewer panel of RStudio, for each strata.
 5. **fit_plots**: Plots of the curve extrapolations over the supplied times for each strata.
 6. **fit_plotly**: *If the `add_interactive_plots` argument was set to `TRUE`.* A set of interactive `plotly` survival plots, that can accessed in the Viewer panel of RStudio, for each strata.
-7. **goodness_of_fit: AIC and BIC outputs, along with their relative ranks for each distribution.
+7. **goodness_of_fit**: AIC and BIC outputs, along with their relative ranks for each distribution.
 8. **surv_params**: The `flexsurv` parameters for each distribution and strata, along with their variance-covariance matrices.
 9. **predicted_fits**: Predicted survival proportions over the supplied times for each strata.
 
@@ -341,7 +329,7 @@ fit_check[["fit_plots"]][["Male"]]
 <br>
 
 ## Exporting results to Excel
-All of the objects created by the set of *quick* functions, are formatted in such a way that they export easily to Excel. For those who want to export all of these results, we can leverage the `openxlsx` package. We'll start by creating a new blank workbook.
+All of the objects created by the set of *quick* functions are formatted in such a way that they export easily to Excel. For those who want to export all of these results, we can leverage the `openxlsx` package. We'll start by creating a new blank workbook.
 
 ```{r excel-wb}
 ## Excel Exports ----------------------------------------------------------------
@@ -350,7 +338,7 @@ All of the objects created by the set of *quick* functions, are formatted in suc
 wb <- openxlsx::createWorkbook()
 ```
 
-We can now use the `quick_to_XL` function to take each of the objects created by the *quick* functions and put them in the blank workbook. As with above, these are set up conditionally depending on what analyses were performed, so we can simply click through this section.
+We can now use the `quick_to_XL` function to take each of the objects created by the *quick* functions and put them in the blank workbook.
 
 ```{r excel-export, eval = F}
 # The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
@@ -366,7 +354,7 @@ if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
 if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)
 ```
 
-Lastly, we'll give this document a name, which is set to be *"easysurv output -"* along with the date and time, we'll save the document and we'll open it up!
+Lastly, we'll give this document a name, which is set to be *"easysurv output -"* along with the date and time. We'll save the document and open it up.
 
 ```{r excel-save-open, eval = F}
 # Give the workbook a name ending in .xlsx
