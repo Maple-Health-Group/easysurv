@@ -4,9 +4,9 @@
 #' The example simulated data set is based on large phase III clinical trials in
 #' breast cancer such as the ALTTO trial
 #' `https://ascopubs.org/doi/abs/10.1200/JCO.2015.62.1797`.
-#' The example “trial” aims to determine if a combination of two therapies
+#' The example trial aims to determine if a combination of two therapies
 #' tablemab (T) plus vismab (V) improves outcomes for metastatic human epidermal
-#' growth factor 2–positive breast cancer and increases the pathologic complete
+#' growth factor 2-positive breast cancer and increases the pathologic complete
 #' response in the neoadjuvant setting (i.e. treatment given as a first step to
 #' shrink a tumor before the main treatment or surgery).
 #'
@@ -16,10 +16,10 @@
 #' combination (T+V) for 52 weeks.
 #'
 #' The primary end point was progression-free survival (PFS) as defined by
-#' Cancer.gov: '“the length of time during and after the treatment of a disease,
+#' Cancer.gov: '"the length of time during and after the treatment of a disease,
 #' such as cancer, that a patient lives with the disease but it does not get
 #' worse. In a clinical trial, measuring the progression-free survival is one
-#' way to see how well a new treatment works”'.
+#' way to see how well a new treatment works"'.
 #'
 #' A number of baseline measurements (taken at randomization) are also included
 #' such as age, hormone receptor status and prior radiotherapy treatment.
