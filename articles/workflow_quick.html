@@ -95,27 +95,21 @@ hazards assumptions, and estimate &amp; inspect standard parametric
 survival extrapolations. <code>easysurv</code> can also assist in
 mixture cure and spline modelling, although these are not explained in
 detail here.</p>
-<p>This guide covers the <em><code>quick</code></em> family of functions
-(<code>quick_start</code>, <code>quick_KM</code>, <code>quick_PH</code>,
-<code>quick_fit</code>, <code>quick_to_XL</code>) for easy survival
-analysis in just a few steps. For finer control, explore other package
-functions in the <em>Survival Curve Extrapolation with easysurv</em>
-vignette.</p>
+<p>This guide covers the <em><code>quick</code></em> family of
+functions:</p>
+<ul>
+<li><code>quick_start</code></li>
+<li><code>quick_KM</code></li>
+<li><code>quick_PH</code></li>
+<li><code>quick_fit</code></li>
+<li><code>quick_to_XL</code></li>
+</ul>
+<p>for easy survival analysis in just a few steps.</p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Clean the R environment</strong> to ensure there’s no
-interference from pre-existing R objects or functions.</li>
-<li>
-<strong>Attach easysurv</strong> so we can use its functions.</li>
-<li>
-<strong>Load a template</strong> using the
-<code><a href="../reference/quick_start.html">quick_start()</a></code> function.</li>
-</ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Start from a clean environment</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span>list<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -123,27 +117,25 @@ interference from pre-existing R objects or functions.</li>
 <span><span class="co"># Attach the easysurv package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Maple-Health-Group/easysurv" class="external-link">easysurv</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Load a easysurv analysis template</span></span>
+<span><span class="co"># Load an easysurv analysis template</span></span>
 <span><span class="fu"><a href="../reference/quick_start.html">quick_start</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/quick_start.html">quick_start()</a></code> creates a new .R script in your R
 environment, pre-loaded with code for survival analysis using the
 <code>lung</code> dataset from the <code>survival</code> package.</p>
-<p>You can also explore <code><a href="../reference/quick_start2.html">quick_start2()</a></code> and
-<code><a href="../reference/quick_start3.html">quick_start3()</a></code>, which use different datasets: “bc” from the
-<code>flexsurv</code> package and simulated phase III breast cancer
-trial data from the <code>ggsurvfit</code> package, respectively.</p>
-<p>While the three templates share similarities in their analyses, the
-choice of starting data sets introduces some variations, making it
-beneficial to review all three templates for a comprehensive
+<p><code><a href="../reference/quick_start2.html">quick_start2()</a></code> and <code><a href="../reference/quick_start3.html">quick_start3()</a></code> use
+different data sets: “bc” from the <code>flexsurv</code> package and
+simulated phase III breast cancer trial data from the
+<code>ggsurvfit</code> package, respectively.</p>
+<p>The choice of starting data introduces some variations in code,
+making it beneficial to review all three templates for a comprehensive
 understanding of the package’s versatility.</p>
 <p><br></p>
 </div>
 <div class="section level2">
 <h2 id="preparing-your-data">Preparing Your Data<a class="anchor" aria-label="anchor" href="#preparing-your-data"></a>
 </h2>
-<p>You will need to import, assess, and clean your data before analysis.
-Below, we advise some practices to ensure that <code>easysurv</code> can
-handle your data.</p>
+<p>Below, we advise some practices to ensure that <code>easysurv</code>
+can handle your data.</p>
 <div class="section level3">
 <h3 id="data-import">Data Import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h3>
@@ -165,13 +157,10 @@ inspect the first few rows of the data.</p>
 <span><span class="co">## 4    5  6.899384      2  57   1       1       90        60     1150      11</span></span>
 <span><span class="co">## 5    1 29.010267      2  60   1       0      100        90       NA       0</span></span>
 <span><span class="co">## 6   12 33.577002      1  74   1       1       50        80      513       0</span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Toggle the next comment to see entire data.</span></span>
-<span><span class="co"># View(surv_data)</span></span></code></pre></div>
 <p>When importing your own data, there are a number of functions that
 can be used depending on the file format of the data. These lines of
 code are available in the script and can be activated as needed.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Here are some packages &amp; their functions you might use to import your data:</span></span>
 <span><span class="co"># - haven::read_sas() for SAS (.sas7bdat) files</span></span>
 <span><span class="co"># - haven::read_dta() for Stata (.dta) files</span></span>
@@ -182,15 +171,6 @@ code are available in the script and can be activated as needed.</p>
 <div class="section level3">
 <h3 id="data-manipulation">Data Manipulation<a class="anchor" aria-label="anchor" href="#data-manipulation"></a>
 </h3>
-<p>We’ll attach one more package, <code>dplyr</code>, for data
-manipulation, and adjust number formatting using
-<code>scipen</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Attach other packages for data manipulation</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Suppress scientific notation</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>scipen <span class="op">=</span> <span class="fl">999</span><span class="op">)</span></span></code></pre></div>
 <p>The data needs to be formatted in a certain way for the survival
 analysis to proceed smoothly. Don’t worry, the requirements are
 straightforward! The data will need:</p>
@@ -198,13 +178,17 @@ straightforward! The data will need:</p>
 <li>A <code>time</code> variable specifying the times to events.</li>
 <li>A binary <code>event</code> column specifying whether the event was
 right-censored (event = 0) or an event (event = 1).</li>
-<li>Optional: A <code>strata</code> column specifying some way to
-stratify the events if a comparison is of interest.</li>
+<li>A <code>strata</code> column specifying some way to stratify the
+events if a comparison is of interest.</li>
 </ol>
-<p>Let’s apply these requirements to the <code>lung</code> dataset we
-imported and stored as <code>surv_data</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">surv_data</span> <span class="op">&lt;-</span> <span class="va">surv_data</span> <span class="op">|&gt;</span></span>
+<p>Let’s apply these requirements to the <code>easy_lung</code> dataset
+we imported and stored as <code>surv_data</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Attach dplyr for data manipulation</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Manipulate the data to use with easysurv</span></span>
+<span><span class="va">surv_data</span> <span class="op">&lt;-</span> <span class="va">surv_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    time <span class="op">=</span> <span class="va">time</span>,</span>
 <span>    event <span class="op">=</span> <span class="va">status</span> <span class="op">-</span> <span class="fl">1</span>,</span>
@@ -219,22 +203,19 @@ imported and stored as <code>surv_data</code>.</p>
 <li>Generated <code>event</code> variable by transforming the existing
 <code>status</code> variable. <code>status</code> was coded as “1” for
 censoring and “2” for events, but our package (in line with standard
-survival packages) uses “0” for right-censoring and “1” for events. To
-fix this, we simply subtracted 1 from <code>status</code>.</li>
+survival packages) uses “0” for right-censoring and “1” for events. So
+we simply subtracted 1 from <code>status</code>.</li>
 <li>Generated the <code>strata</code> variable using <code>sex</code>,
 later converting it to a factor.</li>
-<li>Converted the dataset into a “tibble” for easier manipulation, and
-optionally, removed unnecessary columns using select() from
-<code>dplyr</code>.</li>
+<li>Converted the dataset into a “tibble” for easier handling, and
+removed unnecessary columns using <code><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select()</a></code>.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="data-labelling-and-inspection">Data Labelling and Inspection<a class="anchor" aria-label="anchor" href="#data-labelling-and-inspection"></a>
 </h3>
-<p>Let’s take a look at our <code>strata</code> column, to understand
-the sample size of each group.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># See the levels of the strata</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check the sample size of each strata</span></span>
 <span><span class="va">surv_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">##   strata     n</span></span>
@@ -243,10 +224,9 @@ the sample size of each group.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> 2         90</span></span></code></pre>
 <p>We see that there are 138 instances of the “1” value and 90 instances
 of the “2” value. Since we’re stratifying by sex, this isn’t very
-helpful. Let’s then rename these levels correctly as “Male” and
-“Female”.</p>
+helpful. Let’s then rename these levels as “Male” and “Female”.</p>
 <p>We can update other labeling too.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Assign strata labels in a consistent order with the levels command</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">surv_data</span><span class="op">$</span><span class="va">strata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">strata_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Male"</span>, <span class="st">"Female"</span><span class="op">)</span></span>
 <span></span>
@@ -257,8 +237,8 @@ helpful. Let’s then rename these levels correctly as “Male” and
 <span><span class="va">endpoint_label</span> <span class="op">&lt;-</span> <span class="st">"Overall Survival"</span></span></code></pre></div>
 <p>Our data should be ready for survival analysis now, but we want to
 make sure everything is set up correctly. We can take a look at the top
-few rows of our “tibble”.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+few rows of our tibble, and perform some final sense checks.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make sure the data appears as expected.</span></span>
 <span><span class="co"># A tibble prints the first 10 rows by default</span></span>
 <span><span class="va">surv_data</span></span></code></pre></div>
@@ -276,18 +256,17 @@ few rows of our “tibble”.</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span>  7.16     1 Male  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span>  5.45     1 Male  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 218 more rows</span></span></span></code></pre>
-<p>We’ll do a final sense check of sample sizes and the number of
-censors/events.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># See sample sizes and censor/event counts</span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># See sample sizes</span></span>
 <span><span class="va">surv_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">##   strata     n</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> Male     138</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> Female    90</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">surv_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">strata</span>, <span class="va">event</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># See censor/event counts</span></span>
+<span><span class="va">surv_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">strata</span>, <span class="va">event</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
 <span><span class="co">##   strata event     n</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -295,26 +274,22 @@ censors/events.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> Male       1   112</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> Female     0    37</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> Female     1    53</span></span></code></pre>
-<p>This summary is more informative than before. It shows more males
-than females were in the data, and that a greater proportion of females
-were right censored. This could be something to be mindful of as we
-proceed with the analysis.</p>
 <p><br></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="quick-workflow-using-easysurv">Quick Workflow Using <code>easysurv</code><a class="anchor" aria-label="anchor" href="#quick-workflow-using-easysurv"></a>
 </h2>
-<p>Now that our data set is properly set up, we can begin with the
-<code>easysurv</code> analysis! In this <em>quick</em> workflow, most of
-the heavy lifting will be done by a set of functions with the
-<em><code>quick_</code></em> prefix. The first of these is the
-<code>quick_KM</code> function.</p>
+<p>Now that our data is properly set up, we can begin with the
+<code>easysurv</code> analysis.</p>
+<p>In this <em>quick</em> workflow, most of the heavy lifting will be
+done by a set of functions with the <em><code>quick_</code></em> prefix.
+The first of these is the <code>quick_KM</code> function.</p>
 <div class="section level3">
 <h3 id="kaplan-meier-analysis">Kaplan Meier analysis<a class="anchor" aria-label="anchor" href="#kaplan-meier-analysis"></a>
 </h3>
 <p>The <code>quick_KM</code> function produces an object with 5
-components, containing all the of Kaplan-Meier data we might need:</p>
+components:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>KM_all</strong>: A <code>survfit</code> model that includes
@@ -329,12 +304,12 @@ each individual strata in the data set using
 over time, but presented in a “stepped” manner that is useful for
 plotting in Excel.</li>
 <li>
-<strong>KM_plot</strong>: A plot of the Kaplan Meier curve using the
+<strong>KM_plot</strong>: A plot of the Kaplan-Meier curve using the
 <code>easysurv</code> theme.</li>
 <li>
 <strong>KM_summary</strong>: Summary information for each of the
 strata, which includes sample sizes, the number of events, restricted
-mean survival, median survial and corresponding confidence
+mean survival, median survival and corresponding confidence
 intervals.</li>
 </ol>
 <p>We’ll run this function with our <code>surv_data</code> tibble,
@@ -342,7 +317,7 @@ providing the names used for the <code>time</code>, <code>event</code>
 and <code>strata</code> variables, along with a few optional arguments
 that you can learn about in more detail by typing <code><a href="../reference/quick_KM.html">?quick_KM</a></code>
 into your console.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">KM_check</span> <span class="op">&lt;-</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="fu"><a href="../reference/quick_KM.html">quick_KM</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">surv_data</span>,</span>
 <span>  time <span class="op">=</span> <span class="st">"time"</span>,</span>
@@ -381,51 +356,48 @@ into your console.</p>
 <span><span class="co">##        Median follow-up</span></span>
 <span><span class="co">## Male           27.59754</span></span>
 <span><span class="co">## Female         17.37988</span></span></code></pre>
-<p>The <code>quick_KM</code> function works by combining uses of the
-<code><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survival::survfit()</a></code>, <code><a href="../reference/plot_KM.html">easysurv::plot_KM</a></code>,
+<p>The <code>quick_KM</code> function combines uses of the
+<code><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survival::survfit</a></code>, <code><a href="../reference/plot_KM.html">easysurv::plot_KM</a></code>,
 <code><a href="../reference/summarise_KM.html">easysurv::summarise_KM</a></code> and <code><a href="../reference/step_KM.html">easysurv::step_KM</a></code>
 functions.</p>
-<p>We stored the output in <code>KM_check</code>. Calling KM_check gives
-us a quick summary but, since it’s a list object, if we want to look at
-any individual component, we need to call it by name in double square
-brackets. For example,</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">KM_check</span><span class="op">[[</span><span class="st">"KM_plot"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p><img src="workflow_quick_files/figure-html/KM-plot-1.png" width="576"></p>
+<p>To see specific elements of the output, call it by name in double
+square brackets. For example,</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Not run here</span></span>
+<span><span class="va">KM_check</span><span class="op">[[</span><span class="st">"KM_plot"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="diagnostic-tests">Diagnostic tests<a class="anchor" aria-label="anchor" href="#diagnostic-tests"></a>
 </h3>
-<p>Next, we want to run some diagnostics tests, which will be
-informative for future curve fitting. For this, we’ll use another
-consolidated function, <code><a href="../reference/quick_PH.html">quick_PH()</a></code>. The output is another
-list object with five components:</p>
+<p>Statistical tests and plots can inform curve fitting approach
+selection.</p>
+<p>The <code><a href="../reference/quick_PH.html">quick_PH()</a></code> function, where PH = proportional
+hazards, outputs a list object with five components:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>cloglog_plot</strong>: A log cumulative hazard plot with the
 <code>easysurv</code> theme.</li>
 <li>
-<strong>coxph_model</strong>: A <code>summary.coxPH</code> object
-containing statistical test outputs, namely the Cox PH hazard ratio and
-confidence intervals.</li>
+<strong>coxph_model</strong>: A
+<code>survival::summary.coxPH()</code> object containing statistical
+test outputs, namely the Cox PH hazard ratio and confidence
+intervals.</li>
 <li>
-<strong>survdiff</strong>: A <code>survdiff</code> object that
-summarizes a log-rank test, which tests for differences in survival
-between strata. If p-values are &gt; 0.05, differences are not
+<strong>survdiff</strong>: A <code><a href="https://rdrr.io/pkg/survival/man/survdiff.html" class="external-link">survival::survdiff()</a></code>
+object that summarizes a log-rank test, which tests for differences in
+survival between strata. If p-values are &gt; 0.05, differences are not
 statistically significant.</li>
 <li>
-<strong>coxzph_ph_test</strong>: A <code>summary.coxPH</code> object
-containing statistical test outputs, namely around whether the data
-violates the proportional hazards assumption or not.</li>
+<strong>coxzph_ph_test</strong>: A
+<code>survival::summary.coxPH()</code> object containing statistical
+test outputs, namely around whether the data violates the proportional
+hazards assumption or not.</li>
 <li>
 <strong>schoenfeld_plot</strong>: A Schoenfeld residuals plot in the
 <code>easysurv</code> theme.</li>
 </ol>
-<p>We’ll run the function using <code>surv_data</code>, supplying the
-mostly self-explanatory arguments. You can type <code><a href="../reference/quick_PH.html">?quick_PH</a></code>
-in the console or visit the other vignette for more information.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">PH_check</span> <span class="op">&lt;-</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="fu"><a href="../reference/quick_PH.html">quick_PH</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">surv_data</span>,</span>
 <span>  time <span class="op">=</span> <span class="st">"time"</span>,</span>
@@ -505,34 +477,30 @@ in the console or visit the other vignette for more information.</p>
 <span><span class="co">##  </span></span>
 <span><span class="co">## The log cumulative hazard and Schoenfeld residuals plots have been automatically printed.</span></span></code></pre>
 <p><img src="workflow_quick_files/figure-html/quick-PH-1.png" width="576"><img src="workflow_quick_files/figure-html/quick-PH-2.png" width="576"></p>
-<p>This function combines the use of <code><a href="../reference/plot_KM.html">easysurv::plot_KM</a></code> for
-plotting the log cumulative hazard, <code><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">survival::coxph</a></code> and
-<code><a href="https://rdrr.io/pkg/survival/man/cox.zph.html" class="external-link">survival::cox.zph</a></code> for fitting a Cox model,
-<code><a href="https://rdrr.io/pkg/survival/man/survdiff.html" class="external-link">survival::survdiff</a></code> for testing differences in survival, and
-<code>easysurv::ggcoxdiagnostics</code> for producing a Schoenfeld
+<p>This function combines the use of <code><a href="../reference/plot_KM.html">easysurv::plot_KM()</a></code>
+for plotting the log cumulative hazard, <code><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">survival::coxph()</a></code>
+and <code><a href="https://rdrr.io/pkg/survival/man/cox.zph.html" class="external-link">survival::cox.zph()</a></code> for fitting a Cox model,
+<code><a href="https://rdrr.io/pkg/survival/man/survdiff.html" class="external-link">survival::survdiff()</a></code> for testing differences in survival,
+and <code>easysurv::ggcoxdiagnostics()</code> for producing a Schoenfeld
 plot.</p>
-<p>As with KM_check, PH_check is a list object, so individual components
-can be called using double square brackets. However, the output of this
-object supplies all the plots and tests in quick succession, which we
-can scroll/click through as needed.</p>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="fitting-survival-models">Fitting Survival Models<a class="anchor" aria-label="anchor" href="#fitting-survival-models"></a>
 </h3>
 <p>Now that we have better statistical awareness of our data, we can fit
-curves to the data. Off the top, we need to decide what kind of analysis
-we want to do. <code>easysurv</code> has 4 different options, and we can
-choose one, some or all of them:</p>
+parametric curves.</p>
+<p><code>easysurv</code> supports 4 different options:</p>
 <ul>
 <li>Separate parametric model fitting</li>
 <li>Joint parametric model fitting</li>
 <li>Mixture cure model fitting</li>
 <li>Spline model fitting</li>
 </ul>
-<p>Once decided, we can set our preferences. In this instance, we will
-choose to do just the standard separate parametric fits.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<p>In the <code><a href="../reference/quick_start.html">quick_start()</a></code> template, we include toggles to
+decide which of these analyses to perform. This isn’t necessary in all
+workflows.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Choose Model Fit Approaches ---------------------------------------------</span></span>
 <span></span>
 <span><span class="co"># After assessing the Kaplan Meier and Proportional Hazards outputs,</span></span>
@@ -542,10 +510,10 @@ choose to do just the standard separate parametric fits.</p>
 <span><span class="va">do_joint</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># TRUE: run standard parametric model fits (joint)</span></span>
 <span><span class="va">do_cure</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># TRUE: run mixture cure model fits</span></span>
 <span><span class="va">do_splines</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span> <span class="co"># TRUE: run spline model fits</span></span></code></pre></div>
-<p>We also need to select our distributions of interest. We can choose
-as many or as few as we want, so long as it’s available as a dist option
-in <code>flexsurvreg</code>, which is the underlying function of our
-custom fitting function.</p>
+<p>We need to specify our distributions of interest. We can choose as
+many or as few as we want, so long as it’s available as a dist option in
+<code>flexsurvreg</code>, which is the underlying function of our custom
+fitting function.</p>
 <p>Here, we’re going to fit curves to “Exponential”, “Gamma”,
 “Generalized Gamma”, “Gompertz”, “log-logistic”, “log-normal” and
 “Weibull” distributions. With gamma as an exception, these are the
@@ -555,7 +523,7 @@ analysis: Extrapolating patient data”</a>. Gamma has been included
 because it has been required by other HTA bodies, including CADTH. The
 notation for these distributions is defined per
 <code>flexsurvreg</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dists_global</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"exp"</span>,</span>
 <span>  <span class="st">"gamma"</span>,</span>
@@ -570,7 +538,7 @@ extrapolations Here, we’ll use the <code><a href="https://rdrr.io/r/base/seq.h
 at time = 0 and go out to 5 times the maximum supplied survival value
 from the data set. We’ll also specify that between these two times, we
 want 200 equally spaced time points.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Times over which to generate/plot extrapolations</span></span>
 <span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  from <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -591,11 +559,7 @@ the console.</p>
 specifically find the <em>quick_fit</em> functions we want to use and
 avoid the ones we don’t. We can simply click through the whole <em>“##
 Model Fitting —-”</em> section.</p>
-<p>As we click through this section, we’ll execute the
-<code><a href="../reference/quick_fit.html">quick_fit()</a></code> function. Of note, we supplied our times over
-which we want to generate/plot extrapolations in the <code>times</code>
-argument.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### Separate fits --------------------------------------------------------------</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">do_standard</span><span class="op">)</span> <span class="op">{</span></span>
@@ -615,13 +579,11 @@ argument.</p>
 <span>    times <span class="op">=</span> <span class="va">times</span>,</span>
 <span>    strata_labels <span class="op">=</span> <span class="va">strata_labels</span>,</span>
 <span>    xlab <span class="op">=</span> <span class="st">"Months"</span>,</span>
-<span>    add_interactive_plots <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    add_interactive_plots <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>To view the output of this object, we can continue to click through
-the next section, <em>“## See Outputs —-”</em>, which are also set up
-conditionally, so we don’t need to specifically find the outputs we
-created and avoid the ones we didn’t.</p>
+the next section, <em>“## See Outputs —-”</em>.</p>
 <p>As with the other <em>quick</em> objects, <code>fit_check</code> is a
 list object with 9 components than can be called individually using
 double square brackets:</p>
@@ -630,7 +592,7 @@ double square brackets:</p>
 <strong>converged</strong>: A list of all the successfully converged
 distributions for each strata.</li>
 <li>
-<strong>fits</strong>: A <code><a href="https://rdrr.io/pkg/survHE/man/fit.models.html" class="external-link">survHE::fit.models</a></code> output,
+<strong>fits</strong>: A <code><a href="https://rdrr.io/pkg/survHE/man/fit.models.html" class="external-link">survHE::fit.models()</a></code> output,
 containing the <code>flexsurv</code> objects for each converged
 distribution for each strata.</li>
 <li>
@@ -651,8 +613,9 @@ the supplied times for each strata.</li>
 <code>TRUE</code>.</em> A set of interactive <code>plotly</code>
 survival plots, that can accessed in the Viewer panel of RStudio, for
 each strata.</li>
-<li>**goodness_of_fit: AIC and BIC outputs, along with their relative
-ranks for each distribution.</li>
+<li>
+<strong>goodness_of_fit</strong>: AIC and BIC outputs, along with
+their relative ranks for each distribution.</li>
 <li>
 <strong>surv_params</strong>: The <code>flexsurv</code> parameters
 for each distribution and strata, along with their variance-covariance
@@ -665,7 +628,7 @@ the supplied times for each strata.</li>
 curve extrapolations by calling our newly created <code>fit_check</code>
 and specifying the component of interest using double square
 brackets.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_check</span><span class="op">[[</span><span class="st">"fit_plots"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Male"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p><img src="workflow_quick_files/figure-html/fit-check-1.png" width="576"></p>
 <p><br></p>
@@ -673,22 +636,20 @@ brackets.</p>
 <div class="section level3">
 <h3 id="exporting-results-to-excel">Exporting results to Excel<a class="anchor" aria-label="anchor" href="#exporting-results-to-excel"></a>
 </h3>
-<p>All of the objects created by the set of <em>quick</em> functions,
-are formatted in such a way that they export easily to Excel. For those
-who want to export all of these results, we can leverage the
+<p>All of the objects created by the set of <em>quick</em> functions are
+formatted in such a way that they export easily to Excel. For those who
+want to export all of these results, we can leverage the
 <code>openxlsx</code> package. We’ll start by creating a new blank
 workbook.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Excel Exports ----------------------------------------------------------------</span></span>
 <span></span>
 <span><span class="co"># Create a new workbook object</span></span>
 <span><span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu">openxlsx</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openxlsx/man/createWorkbook.html" class="external-link">createWorkbook</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>We can now use the <code>quick_to_XL</code> function to take each of
 the objects created by the <em>quick</em> functions and put them in the
-blank workbook. As with above, these are set up conditionally depending
-on what analyses were performed, so we can simply click through this
-section.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+blank workbook.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The "quick_to_XL" function prepares easysurv outputs for Excel exporting.</span></span>
 <span><span class="co"># Note that plots will be reproduced at a different DPI setting for Excel.</span></span>
 <span><span class="co"># This may make them appear strange in R temporarily.</span></span>
@@ -701,9 +662,9 @@ section.</p>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">do_cure</span><span class="op">)</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="fu"><a href="../reference/quick_to_XL.html">quick_to_XL</a></span><span class="op">(</span>wb <span class="op">=</span> <span class="va">wb</span>, quick_object <span class="op">=</span> <span class="va">fit_check_cure</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">do_splines</span><span class="op">)</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="fu"><a href="../reference/quick_to_XL.html">quick_to_XL</a></span><span class="op">(</span>wb <span class="op">=</span> <span class="va">wb</span>, quick_object <span class="op">=</span> <span class="va">fit_check_splines</span><span class="op">)</span></span></code></pre></div>
 <p>Lastly, we’ll give this document a name, which is set to be
-<em>“easysurv output -”</em> along with the date and time, we’ll save
-the document and we’ll open it up!</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<em>“easysurv output -”</em> along with the date and time. We’ll save
+the document and open it up.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Give the workbook a name ending in .xlsx</span></span>
 <span><span class="va">output_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
 <span>  <span class="st">"easysurv output - "</span>,</span>
