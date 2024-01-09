@@ -18,6 +18,7 @@ quick_fit_joint(
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
   add_interactive_plots = FALSE,
+  plot_predictions = "flexsurv",
   get_mean = FALSE
 )
 }
@@ -61,6 +62,9 @@ corresponding to a variable name within the data.}
 
 \item{add_interactive_plots}{Optional. Whether to include \code{plotly} outputs
 for hazard and fit plots. Default is FALSE.}
+
+\item{plot_predictions}{Optional. Whether to plot the predictions from
+\code{flexsurv} or \code{survHE}. Default is "flexsurv".}
 
 \item{get_mean}{Optional. Whether to attempt to calculate mean survival times
 for the fit_averages object. Defaults to FALSE.}

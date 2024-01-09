@@ -36,6 +36,8 @@
 #' \code{seq(from = 0, to = ceiling(max(data$time)*2.5), length.out = 200)}
 #' @param get_mean Optional. Whether to attempt to calculate mean survival times
 #' for the fit_averages object. Defaults to FALSE.
+#' @param plot_predictions Optional. Whether to plot the predictions using
+#' the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".
 #'
 #' @importFrom rlang f_rhs
 #' @importFrom dplyr nest_by
@@ -101,6 +103,7 @@ quick_fit_select <- function(fit_type,
                              font.family = "Roboto Condensed",
                              plot.theme = theme_easysurv(),
                              add_interactive_plots = FALSE,
+                             plot_predictions = plot_predictions,
                              get_mean = FALSE) {
   # Validate argument inputs ----
   function_name <- switch(fit_type,
@@ -281,7 +284,8 @@ quick_fit_select <- function(fit_type,
       xlab = xlab,
       plot.theme = plot.theme,
       font.family = font.family,
-      lab.profile = my_labels
+      lab.profile = my_labels,
+      plot_predictions = plot_predictions
     ))
 
     if (add_interactive_plots) {
@@ -293,7 +297,8 @@ quick_fit_select <- function(fit_type,
         plot.theme = plot.theme,
         font.family = font.family,
         use_plotly = TRUE,
-        lab.profile = my_labels
+        lab.profile = my_labels,
+        plot_predictions = plot_predictions
       ))
     } else {
       fit_plotly <- "Not generated. Use add_interactive_plots = TRUE."
@@ -456,7 +461,8 @@ quick_fit_select <- function(fit_type,
       t = times,
       xlab = xlab,
       plot.theme = plot.theme,
-      font.family = font.family
+      font.family = font.family,
+      plot_predictions = plot_predictions
     ))
 
     hazard_plots[tx] <- list(easysurv::plot_smoothed_hazards(
@@ -503,6 +509,7 @@ quick_fit_select <- function(fit_type,
         xlab = xlab,
         plot.theme = plot.theme,
         font.family = font.family,
+        plot_predictions = plot_predictions,
         use_plotly = TRUE
       ))
 

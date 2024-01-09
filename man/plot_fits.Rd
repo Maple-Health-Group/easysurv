@@ -13,6 +13,7 @@ plot_fits(
   font.family = "Roboto Condensed",
   plot.theme = theme_easysurv(),
   use_plotly = FALSE,
+  plot_predictions = "flexsurv",
   t = NULL,
   ...
 )
@@ -38,6 +39,9 @@ curve to the plot.}
 
 \item{use_plotly}{Optional. Whether to return a \code{plotly} output
 for the plots. Default is FALSE.}
+
+\item{plot_predictions}{Optional. Whether to plot the predictions from
+\code{flexsurv} or \code{survHE}. Default is "flexsurv".}
 
 \item{t}{the vector of times to plot}
 
