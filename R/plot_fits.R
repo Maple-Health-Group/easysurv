@@ -23,6 +23,9 @@
 #' @param use_plotly Optional. Whether to return a `plotly` output
 #' for the plots. Default is FALSE.
 #'
+#' @param plot_predictions Optional. Whether to plot the predictions using
+#' the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".
+#'
 #' @param ... Additional parameters that are passed to the
 #' \code{\link[survHE]{plot.survHE}} function.
 #'
@@ -63,6 +66,7 @@ plot_fits <- function(models,
                       font.family = "Roboto Condensed",
                       plot.theme = theme_easysurv(),
                       use_plotly = FALSE,
+                      plot_predictions = "flexsurv",
                       t = NULL,
                       ...) {
 
@@ -77,8 +81,21 @@ plot_fits <- function(models,
                              ...
   )
 
-  # Deal with survHE not plotting flexsurvcure predictions
-  if (inherits(models$models[[1]], "flexsurvcure")) {
+  # Error if plot_predictions is not either "flexsurv" or "survHE"
+  if (!(plot_predictions %in% c("flexsurv", "survHE"))) {
+    stop(
+      "Predictions can only come from 'flexsurv' or 'survHE'. The 'plot_predictions' argument must be either 'flexsurv' or 'survHE'.",
+      call. = FALSE
+      )
+  }
+
+  # Issuing a warning if the "flexsurv" prediction is requested but the model method is not "mle"
+  if (plot_predictions == "flexsurv" & models$method != "mle") {
+    warning("The 'flexsurv' prediction is only available for models fitted using the 'mle' method. The 'survHE' prediction will be used instead.")
+  }
+
+  # Deal with survHE not plotting flexsurvcure predictions and using different curve parameters from the "predict_fits()" function
+  if ((inherits(models$models[[1]], "flexsurvcure") | plot_predictions == "flexsurv") & models$method == "mle") {
 
     get_times <- unique(out[["layers"]][[1]][["data"]][["time"]])
     strata_list <- levels(droplevels(as.factor((out[["layers"]][[1]][["data"]][["strata"]]))))
