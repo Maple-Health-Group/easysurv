@@ -110,6 +110,7 @@ quick_fit <- function(data,
                    xlab = xlab,
                    font.family = font.family,
                    plot.theme = plot.theme,
+                   add_interactive_plots = add_interactive_plots,
                    plot_predictions = plot_predictions,
                    get_mean = get_mean)
 }
