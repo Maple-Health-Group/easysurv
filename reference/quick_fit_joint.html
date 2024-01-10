@@ -77,6 +77,7 @@ information.</p>
 <span>  font.family <span class="op">=</span> <span class="st">"Roboto Condensed"</span>,</span>
 <span>  plot.theme <span class="op">=</span> <span class="fu"><a href="theme_easysurv.html">theme_easysurv</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  add_interactive_plots <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot_predictions <span class="op">=</span> <span class="st">"flexsurv"</span>,</span>
 <span>  get_mean <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -147,6 +148,11 @@ corresponding to a variable name within the data.</p></dd>
 <dt>add_interactive_plots</dt>
 <dd><p>Optional. Whether to include <code>plotly</code> outputs
 for hazard and fit plots. Default is FALSE.</p></dd>
+
+
+<dt>plot_predictions</dt>
+<dd><p>Optional. Whether to plot the predictions from
+<code>flexsurv</code> or <code>survHE</code>. Default is "flexsurv".</p></dd>
 
 
 <dt>get_mean</dt>

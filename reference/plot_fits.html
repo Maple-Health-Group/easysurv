@@ -78,6 +78,7 @@ a Kaplan-Meier (KM) curve to the plot if desired.</p>
 <span>  font.family <span class="op">=</span> <span class="st">"Roboto Condensed"</span>,</span>
 <span>  plot.theme <span class="op">=</span> <span class="fu"><a href="theme_easysurv.html">theme_easysurv</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  use_plotly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot_predictions <span class="op">=</span> <span class="st">"flexsurv"</span>,</span>
 <span>  t <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -120,6 +121,11 @@ curve to the plot.</p></dd>
 <dt>use_plotly</dt>
 <dd><p>Optional. Whether to return a <code>plotly</code> output
 for the plots. Default is FALSE.</p></dd>
+
+
+<dt>plot_predictions</dt>
+<dd><p>Optional. Whether to plot the predictions from
+<code>flexsurv</code> or <code>survHE</code>. Default is "flexsurv".</p></dd>
 
 
 <dt>t</dt>
