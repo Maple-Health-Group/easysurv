@@ -49,6 +49,12 @@
     title = "Font initialization plot",
     subtitle = "If the font fails to load, try library(easysurv) again"
   )$plot))
+
+  packageStartupMessage(
+    paste0("easysurv version ",
+           packageVersion("easysurv"),
+           " loaded.")
+    )
 }
 
 # Previous attempts that were associated with issues.
