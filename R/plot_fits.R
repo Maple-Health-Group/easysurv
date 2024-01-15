@@ -104,7 +104,7 @@ plot_fits <- function(models,
 
     # Remake the predictions
     for (i in seq_along(strata_list)) {
-      new_predicts[i] <- list(easysurv::predict_fits(models, get_times, group = i))
+      new_predicts[i] <- list(easysurv::predict_fits(models, get_times, group = i)[[1]])
     }
 
     new_S_list <- list()

@@ -40,8 +40,8 @@ curve to the plot.}
 \item{use_plotly}{Optional. Whether to return a \code{plotly} output
 for the plots. Default is FALSE.}
 
-\item{plot_predictions}{Optional. Whether to plot the predictions from
-\code{flexsurv} or \code{survHE}. Default is "flexsurv".}
+\item{plot_predictions}{Optional. Whether to plot the predictions using
+the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".}
 
 \item{t}{the vector of times to plot}
 

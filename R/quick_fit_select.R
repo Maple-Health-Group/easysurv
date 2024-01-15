@@ -354,7 +354,7 @@ quick_fit_select <- function(fit_type,
         fits = fits[[1]],
         t = times,
         group = tx
-      ))
+      )[[1]])
     }
 
     names(hazard_plots) <-
@@ -487,7 +487,7 @@ quick_fit_select <- function(fit_type,
     )
 
     predicted_fits[tx] <- list(
-      easysurv::predict_fits(fits = fits[[tx]], t = times)
+      easysurv::predict_fits(fits = fits[[tx]], t = times)[[1]]
     )
 
     fit_averages[tx] <- list(
