@@ -4,8 +4,9 @@ test_that("output is correct", {
                              data = survival::lung,
                              dist = c("exponential", "weibull")
   )
-  t <- seq(from = 0, to = 1000, length.out = 100)
+  t <- c(1:50)
   expect_equal({
+    set.seed(1234) # need to set seed since CI generation uses simulated data
     predict_fits(fits, t, group = 1)
   },
   readRDS(test_path("fixtures", "predicted_fits.rds"))
