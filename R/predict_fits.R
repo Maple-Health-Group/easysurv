@@ -15,6 +15,8 @@
 #' \code{\link[survHE]{fit.models}} object, the index of the "strata" of
 #' interest (e.g., In data frames with two treatments, \code{group = "1"} or
 #' \code{group = "2"})
+#' @param include_ci Logical indicating whether to include confidence intervals in the
+#' output.
 #'
 #' @export
 #'
@@ -45,7 +47,7 @@
 #' predict_fits(fits, t, group = 2)
 #' }
 #'
-predict_fits <- function(fits, t, group = 1) {
+predict_fits <- function(fits, t, group = 1, include_ci = TRUE) {
 
   # Pre-allocation for speed
   num_times <- length(t)
@@ -57,15 +59,31 @@ predict_fits <- function(fits, t, group = 1) {
 
   colnames(predicts) <- c("t", names(fits$models))
 
+  # Create objects to store predictions
   predicts[, 1] <- t
+  low <- predicts
+  upp <- predicts
 
   # Compute survival probabilities for each models
   for (i in seq_len(num_models)) {
     dist <- fits$models[[i]]
-    pred_surv <- summary(dist, type = "survival", t = t, ci = FALSE)[[group]][2]
-    predicts[, i + 1] <- as.matrix(pred_surv)
+    pred_surv <- summary(dist, type = "survival", t = t, ci = TRUE)[[group]]
+    predicts[, i + 1] <- as.matrix(pred_surv[2])
+    low[, i + 1] <- as.matrix(pred_surv[3])
+    upp[, i + 1] <- as.matrix(pred_surv[4])
   }
 
-  return(tibble::as_tibble(predicts))
+  # Output is a list object, including lower and upper CI values, if ci is enabled, otherwise it is a data.frame.
+  if (include_ci) {
+    out <- list(tibble::as_tibble(predicts),
+                tibble::as_tibble(low),
+                tibble::as_tibble(upp))
+
+    names(out) <- c("predictions", "lower", "upper")
+  } else {
+    out <- list(tibble::as_tibble(predicts))
+  }
+
+  return(out)
 
 }

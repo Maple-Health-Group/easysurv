@@ -19,6 +19,7 @@ quick_fit_splines(
   plot.theme = theme_easysurv(),
   add_interactive_plots = FALSE,
   plot_predictions = "flexsurv",
+  include_ci = TRUE,
   get_mean = FALSE
 )
 }
@@ -63,8 +64,11 @@ corresponding to a variable name within the data.}
 \item{add_interactive_plots}{Optional. Whether to include \code{plotly} outputs
 for hazard and fit plots. Default is FALSE.}
 
-\item{plot_predictions}{Optional. Whether to plot the predictions from
-\code{flexsurv} or \code{survHE}. Default is "flexsurv".}
+\item{plot_predictions}{Optional. Whether to plot the predictions using
+the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".}
+
+\item{include_ci}{Logical indicating whether to include confidence intervals in the
+survival probability predictions. Default is TRUE.}
 
 \item{get_mean}{Optional. Whether to attempt to calculate mean survival times
 for the fit_averages object. Defaults to FALSE.}

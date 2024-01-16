@@ -36,6 +36,8 @@
 #' for hazard and fit plots. Default is FALSE.
 #' @param plot_predictions Optional. Whether to plot the predictions using
 #' the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".
+#' @param include_ci Logical indicating whether to include confidence intervals in the
+#' survival probability predictions. Default is TRUE.
 #' @param get_mean Optional. Whether to attempt to calculate mean survival times
 #' for the fit_averages object. Defaults to FALSE.
 #'
@@ -102,6 +104,7 @@ quick_fit_splines <- function(data,
                               plot.theme = theme_easysurv(),
                               add_interactive_plots = FALSE,
                               plot_predictions = "flexsurv",
+                              include_ci = TRUE,
                               get_mean = FALSE) {
 
   quick_fit_select(fit_type = "splines",
@@ -119,5 +122,6 @@ quick_fit_splines <- function(data,
                    plot.theme = plot.theme,
                    add_interactive_plots = add_interactive_plots,
                    plot_predictions = plot_predictions,
+                   include_ci = include_ci,
                    get_mean = get_mean)
 }

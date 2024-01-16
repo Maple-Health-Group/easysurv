@@ -332,16 +332,44 @@ quick_to_XL <- function(wb, quick_object) {
         startRow = 2
       )
 
+      # determining whether predictions include CIs
+      if (length(quick_object$predicted_fits[[tx]]) == 3) {
+        include.ci = TRUE
+      } else {
+        include.ci = FALSE
+      }
 
-      # predicted_fits dataframe
-      openxlsx::writeData(
-        wb = wb,
-        x = quick_object$predicted_fits[[tx]],
-        sheet = sheet_name,
-        colNames = TRUE,
-        startCol = 2,
-        startRow = 3
-      )
+      # predicted_fits dataframes in the case that they include CIs
+      if (include.ci) {
+        for (aspect in seq_along(quick_object$predicted_fits[[tx]])) {
+          openxlsx::writeData(
+            wb = wb,
+            x = names(quick_object$predicted_fits[[tx]][aspect]),
+            sheet = sheet_name,
+            startCol = 2 + ncol(quick_object$predicted_fits[[tx]][[aspect]]) * (aspect - 1),
+            startRow = 3
+          )
+
+          openxlsx::writeData(
+            wb = wb,
+            x = quick_object$predicted_fits[[tx]][[aspect]],
+            sheet = sheet_name,
+            colNames = TRUE,
+            startCol = 2 + ncol(quick_object$predicted_fits[[tx]][[aspect]]) * (aspect - 1),
+            startRow = 4
+          )
+        }
+      } else {
+        # predicted_fits dataframe if there are no CIs
+        openxlsx::writeData(
+          wb = wb,
+          x = quick_object$predicted_fits[[tx]][[1]],
+          sheet = sheet_name,
+          colNames = TRUE,
+          startCol = 2,
+          startRow = 3
+        )
+      }
     }
 
   }

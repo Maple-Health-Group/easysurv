@@ -38,6 +38,8 @@
 #' for the fit_averages object. Defaults to FALSE.
 #' @param plot_predictions Optional. Whether to plot the predictions using
 #' the \code{flexsurv} package or \code{survHE} package. Default is "flexsurv".
+#' @param include_ci Logical indicating whether to include confidence intervals in the
+#' survival probability predictions. Default is TRUE.
 #'
 #' @importFrom rlang f_rhs
 #' @importFrom dplyr nest_by
@@ -104,6 +106,7 @@ quick_fit_select <- function(fit_type,
                              plot.theme = theme_easysurv(),
                              add_interactive_plots = FALSE,
                              plot_predictions = plot_predictions,
+                             include_ci = TRUE,
                              get_mean = FALSE) {
   # Validate argument inputs ----
   function_name <- switch(fit_type,
@@ -353,8 +356,9 @@ quick_fit_select <- function(fit_type,
       predicted_fits[tx] <- list(easysurv::predict_fits(
         fits = fits[[1]],
         t = times,
-        group = tx
-      ))
+        group = tx,
+        include_ci = include_ci
+        ))
     }
 
     names(hazard_plots) <-
@@ -487,7 +491,7 @@ quick_fit_select <- function(fit_type,
     )
 
     predicted_fits[tx] <- list(
-      easysurv::predict_fits(fits = fits[[tx]], t = times)
+      easysurv::predict_fits(fits = fits[[tx]], t = times, include_ci = include_ci)
     )
 
     fit_averages[tx] <- list(
