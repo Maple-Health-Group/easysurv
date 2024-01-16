@@ -1,3 +1,4 @@
+#' @importFrom utils packageVersion
 #' @importFrom survminer ggsurvplot
 #' @importFrom survival Surv
 #' @importFrom survival survfit
@@ -6,11 +7,10 @@
 #' @importFrom showtext showtext_auto
 #' @importFrom grDevices pdf
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(
-    "Loading easysurv ...",
-    "\n",
-    "Installing Roboto Condensed font ..."
-  )
+
+  # Per: https://github.com/r-lib/cli/issues/589
+  # Suppressed to avoid red text.
+  suppressPackageStartupMessages(greet_startup())
 
   # This only work with an internet connection
   sysfonts::font_add_google(
@@ -50,11 +50,32 @@
     subtitle = "If the font fails to load, try library(easysurv) again"
   )$plot))
 
-  packageStartupMessage(
-    paste0("easysurv version ",
-           packageVersion("easysurv"),
-           " loaded.")
-    )
+  # Suppressed to avoid red text.
+  suppressPackageStartupMessages(greet_done())
+
+}
+
+#' @importFrom cli cli_alert_info
+#' @importFrom rlang inform
+greet_startup <- function() {
+  msg <- paste0(
+    cli::cli_alert_info(
+      "Loading {.emph easysurv} and installing {.emph Roboto Condensed} font ..."
+      )
+  )
+  rlang::inform(cli::format_inline(msg), class = "packageStartupMessage")
+}
+
+#' @importFrom cli cli_alert_success
+#' @importFrom rlang inform
+#' @importFrom utils packageVersion
+greet_done <- function() {
+  msg <- paste0(
+    cli::cli_alert_success(
+      "{.emph easysurv v{packageVersion('easysurv')}} loaded."
+      )
+  )
+  rlang::inform(cli::format_inline(msg), class = "packageStartupMessage")
 }
 
 # Previous attempts that were associated with issues.

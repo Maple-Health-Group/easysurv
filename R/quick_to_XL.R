@@ -3,6 +3,7 @@
 #' @param wb A Workbook object containing a worksheet
 #' @param quick_object The output of quick_... command
 #'
+#' @importFrom cli cli_alert_info
 #' @importFrom openxlsx addWorksheet
 #' @importFrom openxlsx writeData
 #' @importFrom openxlsx setColWidths
@@ -101,6 +102,8 @@ quick_to_XL <- function(wb, quick_object) {
     }
 
     ## KM Plot
+    cli::cli_alert_info(paste0("{.emph quick_to_XL:} KM plot size temporarily altered in R to account for Excel DPI differences."))
+
     sheet_name <- "KM Plot"
     easysurv::add_sheet(wb, sheet_name)
 
@@ -131,6 +134,8 @@ quick_to_XL <- function(wb, quick_object) {
 
     sheet_name <- "PH Plots"
     easysurv::add_sheet(wb, sheet_name)
+
+    cli::cli_alert_info(paste0("{.emph quick_to_XL:} loglog and schoenfeld plot sizes temporarily altered in R to account for Excel DPI differences."))
 
     suppressWarnings(print(quick_object$cloglog_plot))
     openxlsx::insertPlot(wb, sheet_name,
@@ -175,6 +180,8 @@ quick_to_XL <- function(wb, quick_object) {
                          "quick_fit_splines" = "Splines - Hazard Plots")
 
     easysurv::add_sheet(wb, sheet_name)
+
+    cli::cli_alert_info(paste0("{.emph quick_to_XL:} hazard and fit plot sizes temporarily altered in R to account for Excel DPI differences."))
 
     for (plot_id in seq_along(quick_object$hazard_plots)) {
       suppressWarnings(print(quick_object$hazard_plots[[plot_id]]))
@@ -346,7 +353,7 @@ quick_to_XL <- function(wb, quick_object) {
             wb = wb,
             x = names(quick_object$predicted_fits[[tx]][aspect]),
             sheet = sheet_name,
-            startCol = 2 + ncol(quick_object$predicted_fits[[tx]][[aspect]]) * (aspect - 1),
+            startCol = 2 + (1 + ncol(quick_object$predicted_fits[[tx]][[aspect]])) * (aspect - 1),
             startRow = 3
           )
 
@@ -355,7 +362,7 @@ quick_to_XL <- function(wb, quick_object) {
             x = quick_object$predicted_fits[[tx]][[aspect]],
             sheet = sheet_name,
             colNames = TRUE,
-            startCol = 2 + ncol(quick_object$predicted_fits[[tx]][[aspect]]) * (aspect - 1),
+            startCol = 2 + (1 + ncol(quick_object$predicted_fits[[tx]][[aspect]])) * (aspect - 1),
             startRow = 4
           )
         }
