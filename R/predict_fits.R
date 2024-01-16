@@ -15,7 +15,7 @@
 #' \code{\link[survHE]{fit.models}} object, the index of the "strata" of
 #' interest (e.g., In data frames with two treatments, \code{group = "1"} or
 #' \code{group = "2"})
-#' @param ci Logical indicating whether to include confidence intervals in the
+#' @param include_ci Logical indicating whether to include confidence intervals in the
 #' output.
 #'
 #' @export
@@ -47,7 +47,7 @@
 #' predict_fits(fits, t, group = 2)
 #' }
 #'
-predict_fits <- function(fits, t, group = 1, ci = TRUE) {
+predict_fits <- function(fits, t, group = 1, include_ci = TRUE) {
 
   # Pre-allocation for speed
   num_times <- length(t)
@@ -74,14 +74,14 @@ predict_fits <- function(fits, t, group = 1, ci = TRUE) {
   }
 
   # Output is a list object, including lower and upper CI values, if ci is enabled, otherwise it is a data.frame.
-  if (ci) {
+  if (include_ci) {
     out <- list(tibble::as_tibble(predicts),
                 tibble::as_tibble(low),
                 tibble::as_tibble(upp))
 
     names(out) <- c("predictions", "lower", "upper")
   } else {
-    out <- tibble::as_tibble(predicts)
+    out <- list(tibble::as_tibble(predicts))
   }
 
   return(out)

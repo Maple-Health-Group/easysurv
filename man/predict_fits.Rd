@@ -5,7 +5,7 @@
 \title{Generate a data frame of predicted survival from a fit.models or
 fit.models.cure object}
 \usage{
-predict_fits(fits, t, group = 1, ci = TRUE)
+predict_fits(fits, t, group = 1, include_ci = TRUE)
 }
 \arguments{
 \item{fits}{An object obtained from \code{\link[survHE]{fit.models}} or
@@ -19,7 +19,7 @@ e.g., \code{seq(from = 0, to = 1000, length.out = 100)}}
 interest (e.g., In data frames with two treatments, \code{group = "1"} or
 \code{group = "2"})}
 
-\item{ci}{Logical indicating whether to include confidence intervals in the
+\item{include_ci}{Logical indicating whether to include confidence intervals in the
 output.}
 }
 \value{
