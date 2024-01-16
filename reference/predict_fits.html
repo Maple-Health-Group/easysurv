@@ -20,7 +20,7 @@ specified times."><meta property="og:image" content="https://maple-health-group.
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@ specified times.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">predict_fits</span><span class="op">(</span><span class="va">fits</span>, <span class="va">t</span>, group <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">predict_fits</span><span class="op">(</span><span class="va">fits</span>, <span class="va">t</span>, group <span class="op">=</span> <span class="fl">1</span>, include_ci <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -92,6 +92,11 @@ e.g., <code>seq(from = 0, to = 1000, length.out = 100)</code></p></dd>
 <code><a href="https://rdrr.io/pkg/survHE/man/fit.models.html" class="external-link">fit.models</a></code> object, the index of the "strata" of
 interest (e.g., In data frames with two treatments, <code>group = "1"</code> or
 <code>group = "2"</code>)</p></dd>
+
+
+<dt>include_ci</dt>
+<dd><p>Logical indicating whether to include confidence intervals in the
+output.</p></dd>
 
 </dl></div>
     <div class="section level2">
