@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   workflow_quick: workflow_quick.html
-last_built: 2024-01-16T13:06Z
+last_built: 2024-01-16T15:21Z
 urls:
   reference: https://maple-health-group.github.io/easysurv/reference
   article: https://maple-health-group.github.io/easysurv/articles
