@@ -39,6 +39,7 @@ Imports:
     sysfonts,
     tibble,
     usethis,
+    utils,
     whisker,
     xfun
 Suggests:
