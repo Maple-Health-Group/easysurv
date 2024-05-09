@@ -3,7 +3,6 @@
 \docType{package}
 \name{easysurv-package}
 \alias{easysurv-package}
-\alias{_PACKAGE}
 \alias{easysurv}
 \title{easysurv: Estimate and inspect parametric survival models}
 \description{
