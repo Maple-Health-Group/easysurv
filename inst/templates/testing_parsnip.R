@@ -18,7 +18,8 @@ new_fits <- function(data,
                      time = "time",
                      event = "event",
                      covariates = 1,
-                     repeat_for = NULL,
+                     subset_on = NULL,
+                     predict_for = NULL,
                      dists,
                      eval_time = NULL,
                      engine = "flexsurv") {
@@ -45,8 +46,8 @@ new_fits <- function(data,
   }
 
   # Are the required columns present?
-  # note if repeat_for is NULL, it is dropped.
-  required_cols <- c(time, event, repeat_for)
+  # note if subset_on is NULL, it is dropped.
+  required_cols <- c(time, event, subset_on)
 
   if (!all(required_cols %in% names(data))) {
     stop(
@@ -78,10 +79,10 @@ new_fits <- function(data,
   ## Check covariates ----
   #...
 
-  ## Check repeat_for ----
+  ## Check subset_on ----
   #...
 
-  # Check that covariates don't contain what's in repeat_for
+  # Check that covariates don't contain what's in subset_on
 
   ## Check dists ----
   # Check that dists isn't missing
@@ -112,8 +113,8 @@ new_fits <- function(data,
 
   # Fit models ----
 
-  ## Non-stratified models ----
-  if (is.null(repeat_for)) {
+  ## No sub-setting ----
+  if (is.null(subset_on)) {
     models <- purrr::map(
       purrr::set_names(dists, dists), ~ {
         parsnip::survival_reg(dist = .x) |>
@@ -128,18 +129,51 @@ new_fits <- function(data,
     distributions <- list(dists_attempted = dists,
                           dists_success = names(models)[!is.null(models)],
                           dists_failed = names(models)[is.null(models)])
+
+    models <- models |> purrr::discard(is.null)
+
+    if (is.null(predict_for)) {
+
+      # If predicting across whole dataset
+      predictions <- lapply(models, predict,
+                             new_data = data,
+                             type = "survival",
+                             eval_time = eval_time) |>
+        purrr::map(~ .x |>
+                     slice(1) |>
+                     tidyr::unnest(col = .pred))
+
+      names(predictions) <- names(models)
+
+    } else {
+
+      predict_list <- levels(droplevels(as.factor(data[[predict_for]])))
+
+      for (looper_pred in seq_along(predict_list)) {
+
+        predict_for_subset <- data |> dplyr::filter((!!rlang::sym(predict_for)) == predict_list[looper_pred])
+
+        predictions[[looper_pred]] <- lapply(models, predict,
+                                       new_data = predict_for_subset,
+                                       type = "survival",
+                                       eval_time = eval_time) |>
+          purrr::map(~ .x |>
+                       slice(1) |>
+                       tidyr::unnest(col = .pred))
+      }
+    }
   }
 
 
-  ## Stratified models ----
-  if (!is.null(repeat_for)) {
-    repeat_list <- levels(droplevels(as.factor(data[[repeat_for]])))
-    nested <- data |> tidyr::nest(.by = repeat_for)
+  ## Sub-setting ----
+  if (!is.null(subset_on)) {
+    subset_list <- levels(droplevels(as.factor(data[[subset_on]])))
+    nested <- data |> tidyr::nest(.by = subset_on)
 
-    for (tx in seq_along(repeat_list)) {
-      data_subset <- nested[["data"]][[tx]]
+    for (looper_sub in seq_along(subset_list)) {
+      data_subset <- nested[["data"]][[looper_sub]]
 
-      models[[tx]] <- purrr::map(
+      models[[looper_sub]] <- purrr::map(
         purrr::set_names(dists, dists), ~ {
           parsnip::survival_reg(dist = .x) |>
             parsnip::set_engine(engine) |>
@@ -150,13 +184,46 @@ new_fits <- function(data,
         }
       )
 
-      distributions[[tx]] <- list(dists_attempted = dists,
-                                  dists_success = names(models[[tx]])[!is.null(models[[tx]])],
-                                  dists_failed = names(models[[tx]])[is.null(models[[tx]])])
+      distributions[[looper_sub]] <- list(dists_attempted = dists,
+                                  dists_success = names(models[[looper_sub]])[!is.null(models[[looper_sub]])],
+                                  dists_failed = names(models[[looper_sub]])[is.null(models[[looper_sub]])])
+
+      models[[looper_sub]] <- models[[looper_sub]] |> purrr::discard(is.null)
+
+      if (is.null(predict_for)) {
+
+        predictions[[looper_sub]] <- lapply(models[[looper_sub]], predict,
+                              new_data = data_subset,
+                              type = "survival",
+                              eval_time = eval_time) |>
+          purrr::map(~ .x |>
+                       slice(1) |>
+                       tidyr::unnest(col = .pred))
+
+        names(predictions) <- names(models)
+      } else {
+
+        predict_list <- levels(droplevels(as.factor(data[[predict_for]])))
+
+        for (looper_pred in seq_along(predict_list)) {
+          predict_for_subset <- data |> dplyr::filter((!!rlang::sym(predict_for)) == predict_list[looper_pred])
+
+          predictions[[looper_sub]][[looper_pred]] <- lapply(models[[looper_sub]], predict,
+                                      new_data = predict_for_subset,
+                                      type = "survival",
+                                      eval_time = eval_time) |>
+            purrr::map(~ .x |>
+                         slice(1) |>
+                         tidyr::unnest(col = .pred))
+        }
+
+      } # end of models fitting loop
+
+
     }
 
     names(models) <-
-      names(distributions) <- repeat_list
+      names(distributions) <- subset_list
   }
 
   out <- list(
@@ -172,13 +239,74 @@ new_fits <- function(data,
 }
 
 
-# when you want to repeat the model fitting for different groups, use repeat_for
-output_repeats <- new_fits(
+# when you want to repeat the model fitting for different groups, use subset_on
+
+output_stratified <- new_fits(
   data = surv_data,
   time = "time",
   event = "event",
   dists = dists,
-  repeat_for = "group"
+  subset_on = "group",
+  predict_for = "group"
+)
+
+output_stratified <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists,
+  covariates = 1,
+  subset_on = "group"
+)
+
+# If you wanted separate fits:
+# covariates = 1, subset_on = "group"
+# In this situation, you would want predictions for each group
+
+
+# If you wanted joint fits:
+# covariates = "group", subset_on = NULL
+# In this situation, you would want predictions for each group
+#
+
+
+
+
+
+
+
+predict_list <- levels(droplevels(as.factor(surv_data[["group"]])))
+my_predictions <- list()
+for (looper_pred in seq_along(predict_list)) {
+  predict_for_subset <- surv_data |> dplyr::filter(group == predict_list[looper_pred])
+
+  my_predictions[[looper_pred]] <- lapply(output_stratified$models, predict,
+                              new_data = predict_for_subset,
+                              type = "survival",
+                              eval_time = c(1,2,3)) |>
+    purrr::map(~ .x |>
+                 slice(1) |>
+                 tidyr::unnest(col = .pred))
+}
+
+names(my_predictions) <- names(predict_list)
+
+
+output_stratified <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists,
+  subset_on = "group"
+)
+
+output_stratified <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists,
+  subset_on = "group",
+  predict_for = "group"
 )
 
 # when you want to specify a covariate, use covariates
@@ -187,13 +315,68 @@ output_joint <- new_fits(
   time = "time",
   event = "event",
   dists = dists,
-  covariates = "group"
+  covariates = "group",
+  predict_for = "group"
 )
 
-# when you want to fit all models to the same data, don't specify  repeat_for or covariates
+# when you want to fit all models to the same data, don't specify  subset_on or covariates
 output_all <- new_fits(
   data = surv_data,
   time = "time",
   event = "event",
   dists = dists
 )
+
+
+example_model <- parsnip::survival_reg(dist = "weibull") |>
+  parsnip::set_engine("flexsurv") |>
+  pfit(
+    formula = survival::Surv(time = time, event = event) ~ 1,
+    data = surv_data
+  )
+
+some_predictions <- predict(example_model,
+        surv_data,
+        type = "survival",
+        eval_time = c(1, 2, 3))
+
+one_prediction <- some_predictions |>
+  slice(1) |>
+  tidyr::unnest(col = .pred)
+
+
+
+example_model2 <- parsnip::survival_reg(dist = "weibull") |>
+  parsnip::set_engine("flexsurv") |>
+  pfit(
+    formula = survival::Surv(time = time, event = event) ~ group,
+    data = surv_data
+  )
+
+some_predictions <- predict(example_model2,
+                            surv_data,
+                            type = "survival",
+                            eval_time = c(1, 2, 3))
+
+
+
+lapply(list(example_model), predict,
+       new_data = surv_data,
+       type = "survival",
+       eval_time = c(1, 2, 3)) |>
+  purrr::map(~ .x |>
+               slice(1) |>
+               tidyr::unnest(col = .pred))
+
+
+lapply(list(example_model), predict,
+       new_data = surv_data,
+       type = "survival",
+       eval_time = c(1, 2, 3)) |>
+  purrr::map(~ .x |>
+               slice(1) |>
+               tidyr::unnest(col = .pred))
+
+one_prediction <- some_predictions |>
+  slice(1) |>
+  tidyr::unnest(col = .pred)
