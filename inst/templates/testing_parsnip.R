@@ -89,12 +89,12 @@ new_fits <- function(data,
   }
 
   if (!is.null(group) & group_as_covariate) {
-    approach <- "joint_fit"
+    approach <- "joint_fits"
     covariate <- group
   }
 
   if (!is.null(group) & !group_as_covariate) {
-    approach <- "separate_fit"
+    approach <- "separate_fits"
     covariate <- 1
   }
 
@@ -128,7 +128,7 @@ new_fits <- function(data,
 
   # Fit models ----
 
-  if (approach == "no_groups" | approach == "joint_fit") {
+  if (approach == "no_groups" | approach == "joint_fits") {
     models <- purrr::map(
       purrr::set_names(dists, dists), ~ {
         parsnip::survival_reg(dist = .x) |>
@@ -147,7 +147,7 @@ new_fits <- function(data,
     models <- models |> purrr::discard(is.null)
   }
 
-  if (approach == "separate_fit") {
+  if (approach == "separate_fits") {
 
     group_list <- levels(droplevels(as.factor(data[[group]])))
     nested <- data |> tidyr::nest(.by = group)
@@ -196,7 +196,7 @@ new_fits <- function(data,
 
   }
 
-  if (approach == "joint_fit") {
+  if (approach == "joint_fits") {
 
     for (tx in seq_along(group_list)) {
 
@@ -213,7 +213,7 @@ new_fits <- function(data,
     names(predictions) <- group_list
   }
 
-  if (approach == "separate_fit") {
+  if (approach == "separate_fits") {
 
     for (tx in seq_along(group_list)) {
 
@@ -232,6 +232,7 @@ new_fits <- function(data,
 
   # Return ----
   out <- list(
+    approach = approach,
     distributions = distributions,
     models = models,
     parameters = parameters,
