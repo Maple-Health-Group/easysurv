@@ -89,12 +89,12 @@ new_fits <- function(data,
   }
 
   if (!is.null(group) & group_as_covariate) {
-    approach <- "group_as_covariate"
+    approach <- "joint_fit"
     covariate <- group
   }
 
   if (!is.null(group) & !group_as_covariate) {
-    approach <- "group_as_subset"
+    approach <- "separate_fit"
     covariate <- 1
   }
 
@@ -128,7 +128,7 @@ new_fits <- function(data,
 
   # Fit models ----
 
-  if (approach == "no_groups" | approach == "group_as_covariate") {
+  if (approach == "no_groups" | approach == "joint_fit") {
     models <- purrr::map(
       purrr::set_names(dists, dists), ~ {
         parsnip::survival_reg(dist = .x) |>
@@ -147,7 +147,7 @@ new_fits <- function(data,
     models <- models |> purrr::discard(is.null)
   }
 
-  if (approach == "group_as_subset") {
+  if (approach == "separate_fit") {
 
     group_list <- levels(droplevels(as.factor(data[[group]])))
     nested <- data |> tidyr::nest(.by = group)
@@ -196,7 +196,7 @@ new_fits <- function(data,
 
   }
 
-  if (approach == "group_as_covariate") {
+  if (approach == "joint_fit") {
 
     for (tx in seq_along(group_list)) {
 
@@ -213,7 +213,7 @@ new_fits <- function(data,
     names(predictions) <- group_list
   }
 
-  if (approach == "group_as_subset") {
+  if (approach == "separate_fit") {
 
     for (tx in seq_along(group_list)) {
 
@@ -251,7 +251,8 @@ new_fits <- function(data,
 
 # bottom of function ----
 
-output_group_subset <- new_fits(
+# separate fits
+output_separate <- new_fits(
   data = surv_data,
   time = "time",
   event = "event",
@@ -260,7 +261,8 @@ output_group_subset <- new_fits(
   group_as_covariate = FALSE
 )
 
-output_group_covariate <- new_fits(
+# joint fits
+output_joint <- new_fits(
   data = surv_data,
   time = "time",
   event = "event",
@@ -269,6 +271,7 @@ output_group_covariate <- new_fits(
   group_as_covariate = TRUE
 )
 
+# group excluded
 output_no_groups <- new_fits(
   data = surv_data,
   time = "time",
