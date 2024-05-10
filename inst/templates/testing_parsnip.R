@@ -10,7 +10,7 @@ surv_data <- flexsurv::bc |>
     event = censrec
   )
 
-
+# For testing purposes, a data set that will fail.
 surv_data2 <- surv_data[c(5:6, 269:270),]
 
 dists <- c("gengamma", "weibull", "exponential")
@@ -229,14 +229,8 @@ new_fits <- function(data,
     names(predictions) <- names(models)
   }
 
-  # Naming ----
 
-  if (approach != "no_groups") {
-#    names(models) <-
-#      names(predictions) <- group_list
-  }
-
-
+  # Return ----
   out <- list(
     distributions = distributions,
     models = models,
