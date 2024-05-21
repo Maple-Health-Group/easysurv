@@ -384,5 +384,4 @@ output_no_groups <- new_fits(
 )
 
 
-get_survival_parameters(output_separate$models$Poor)
 get_survival_parameters(output_joint$models)
