@@ -14,8 +14,9 @@ surv_data <- flexsurv::bc |>
 surv_data2 <- surv_data[c(5:6, 269:270), ]
 
 dists <- c("gengamma", "weibull", "exponential")
-dists <- c("gengamma", "weibull", "exp", "lognorm", "llog", "gamma")
+dists <- c("gengamma", "weibull", "exp", "lognorm", "llog", "gamma", "gompertz")
 
+# Note: would not export.
 extract_predictions <- function(pred_list, col_name) {
   Reduce(
     function(x, y) merge(x, y, by = ".eval_time", all = TRUE),
@@ -48,37 +49,14 @@ get_survival_parameters <- function(models) {
     # Make the column names consistent between models (v1, v2, v3, ...)
     colnames(get_vcov) <- paste0("v", seq_along(models[[i]]$fit$coefficients))
 
-    # Track covariates
-    get_vcov$covariate_marker <- NA
-    if (!is.null(models[[i]]$fit$covpars)) {
-      get_vcov$covariate_marker[models[[i]]$fit$covpars] <- "covariate"
-    }
-
     # Combine all results
     combined_results <- cbind(distribution, get_parameters, get_vcov)
 
-    # Assign covariate_marker based on conditions
-    # Helps the user know how to treat covariates when applying surv params.
-    combined_results$covariate_marker <- dplyr::case_when(
-      (distribution %in% c(
-        "exp",
-        "gamma",
-        "gompertz"
-      ) & (combined_results$covariate_marker == "covariate" |
-        combined_results$parameter == "rate")) ~ "rate",
-      (distribution %in% c(
-        "llogis",
-        "weibull.quiet"
-      ) & (combined_results$covariate_marker == "covariate" |
-        combined_results$parameter == "scale")) ~ "scale",
-      (distribution == "gengamma" &
-        (combined_results$covariate_marker == "covariate" |
-          combined_results$parameter == "mu")) ~ "mu",
-      (distribution == "lnorm" &
-        (combined_results$covariate_marker == "covariate" |
-          combined_results$parameter == "meanlog")) ~ "meanlog",
-      is.na(combined_results$covariate_marker) ~ combined_results$parameter
-    )
+    # Track location for covariate parameter
+    combined_results$covariate_marker <- combined_results$parameter
+    if (!is.null(models[[i]]$fit$covpars)) {
+      combined_results$covariate_marker[models[[i]]$fit$covpars] <- models[[i]]$fit$dlist$location
+    }
 
     # Variance-covariance matrices
     surv_params[[i]] <- combined_results
@@ -93,7 +71,6 @@ get_survival_parameters <- function(models) {
 }
 
 # define new functions
-pfit <- purrr::possibly(.f = parsnip::fit)
 new_fits <- function(data,
                      time,
                      event,
@@ -103,6 +80,10 @@ new_fits <- function(data,
                      eval_time = NULL,
                      engine = "flexsurv",
                      include_ci = FALSE) {
+
+  # Create supporting pfit ----
+  pfit <- purrr::possibly(.f = parsnip::fit)
+
   # Create key objects ----
   distributions <- list()
   models <- list()
