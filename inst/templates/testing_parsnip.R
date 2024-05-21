@@ -117,6 +117,146 @@ get_survival_parameters <- function(models) {
   return(surv_params)
 }
 
+
+
+get_fit_averages2 <- function(mod,
+                             get_median = TRUE,
+                             get_rmst = TRUE,
+                             get_mean = FALSE) {
+  if (!get_median & !get_rmst & !get_mean) {
+    stop("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function")
+  }
+
+  # Checking if the distribution is a spline model.
+  distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
+    mod$fit$k,
+    "knot",
+    mod$fit$scale
+  ))
+
+  # MEDIAN
+  if (get_median) {
+    median <- tryCatch(
+      {
+        summary(mod$fit, type = "median")
+      },
+      error = function(e) {
+        message(paste(
+          "warning:",
+          distribution,
+          "median survival time not calculable."
+        ))
+        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+      }
+    )
+  }
+
+  # RESTRICTED MEAN
+  if (get_rmst) {
+    restricted_mean <- tryCatch(
+      {
+        summary(mod$fit, type = "rmst")
+      },
+      error = function(e) {
+        message(paste(
+          "warning:",
+          distribution,
+          "restricted mean survival time not calculable."
+        ))
+        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+      }
+    )
+  }
+
+  # MEAN (most likely to fail)
+  if (get_mean) {
+    mean <- tryCatch(
+      {
+        summary(mod$fit, type = "mean")
+      },
+      error = function(e) {
+        message(paste(
+          "warning:",
+          distribution,
+          "mean survival time not calculable",
+          "(likely due to a plateau in survival predictions)"
+        ))
+        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+      }
+    )
+  }
+
+  if (get_median) {
+    myseq <- median
+  } else if (get_rmst) {
+    myseq <- restricted_mean
+  } else {
+    myseq <- mean
+  }
+
+  # In case of strata, use seq_along
+  for (i in seq_along(myseq)) {
+    if (get_median) {
+      median[[i]] <- median[[i]] |>
+        dplyr::rename_with(~ paste0("median.", .x))
+    }
+
+    if (get_rmst) {
+      restricted_mean[[i]] <- restricted_mean[[i]] |>
+        dplyr::rename_with(~ paste0("rmst.", .x))
+    }
+
+    if (get_mean) {
+      mean[[i]] <- mean[[i]] |>
+        dplyr::rename_with(~ paste0("mean.", .x))
+    }
+  }
+
+  out <- list()
+
+  # Combine into list per strata
+  for (i in seq_along(myseq)) {
+
+    #out[[i]] <- distribution
+    out[[i]] <- data.frame(distribution = distribution)
+
+    if (!is.null(names(myseq)[i])) {
+      strata <- names(myseq)[i]
+      out[[i]] <- cbind(
+        out[[i]],
+        strata
+      )
+    }
+
+    if (get_median) {
+      out[[i]] <- cbind(
+        out[[i]],
+        median[[i]]
+      )
+    }
+
+    if (get_rmst) {
+      out[[i]] <- cbind(
+        out[[i]],
+        restricted_mean[[i]]
+      )
+    }
+
+    if (get_mean) {
+      out[[i]] <- cbind(
+        out[[i]],
+        mean[[i]]
+      )
+    }
+  }
+
+  names(out) <- names(myseq)
+
+  out <- data.table::rbindlist(out)
+
+  return(out)
+}
+
 # define new functions
 new_fits <- function(data,
                      time,
@@ -254,6 +394,14 @@ new_fits <- function(data,
     models <- models |> purrr::discard(is.null)
 
     parameters <- get_survival_parameters(models)
+
+    summary <- list(fit_averages =
+      data.table::rbindlist(lapply(models,
+                                   get_fit_averages2,
+                                   get_mean = FALSE)) |> as_tibble()
+    )
+
+
   }
 
   if (approach == "separate_fits") {
@@ -284,11 +432,19 @@ new_fits <- function(data,
       models[[tx]] <- models[[tx]] |> purrr::discard(is.null)
 
       parameters[[tx]] <- get_survival_parameters(models[[tx]])
+
+      summary[[tx]] <- list(fit_averages =
+        data.table::rbindlist(lapply(models[[tx]],
+                                     get_fit_averages2,
+                                     get_mean = FALSE)) |> as_tibble()
+      )
+
     }
 
     names(models) <-
       names(distributions) <-
       names(parameters) <-
+      names(summary) <-
       group_list
   }
 
@@ -334,6 +490,15 @@ new_fits <- function(data,
 
     names(predictions) <- names(models)
   }
+
+  # Create plots ----
+
+  #...
+
+
+  # Create summary ----
+
+
 
 
   # Return ----
@@ -382,6 +547,5 @@ output_no_groups <- new_fits(
   event = "event",
   dists = dists
 )
-
 
 get_survival_parameters(output_joint$models)
