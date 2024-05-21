@@ -16,16 +16,63 @@ surv_data2 <- surv_data[c(5:6, 269:270), ]
 dists <- c("gengamma", "weibull", "exponential")
 dists <- c("gengamma", "weibull", "exp", "lognorm", "llog", "gamma", "gompertz")
 
-# Note: would not export.
-extract_predictions <- function(pred_list, col_name) {
-  Reduce(
-    function(x, y) merge(x, y, by = ".eval_time", all = TRUE),
-    (lapply(names(pred_list), function(model) {
-      df <- pred_list[[model]][, c(".eval_time", col_name)]
-      colnames(df)[2] <- model
-      return(df)
-    }))
-  ) |> as_tibble()
+tidy_predict_survival <- function(models,
+                                  new_data,
+                                  eval_time,
+                                  interval = "none") {
+
+  # make the predictions (survival)
+  predictions <- lapply(models,
+    predict,
+    new_data = new_data,
+    type = "survival",
+    eval_time = eval_time,
+    interval = interval
+  ) |>
+    purrr::map(~ .x |>
+      slice(1) |>
+      tidyr::unnest(col = .pred))
+
+  # inner function to extract predictions
+  extract_predictions <- function(pred_list, col_name) {
+    Reduce(
+      function(x, y) merge(x, y, by = ".eval_time", all = TRUE),
+      (lapply(names(pred_list), function(model) {
+        df <- pred_list[[model]][, c(".eval_time", col_name)]
+        colnames(df)[2] <- model
+        return(df)
+      }))
+    ) |> as_tibble()
+  }
+
+  # Extract to summary tables
+  out <- list(pred_surv = extract_predictions(predictions, ".pred_survival"))
+
+  if (interval == "confidence") {
+    out <- c(
+      out,
+      list(pred_surv_lower = extract_predictions(predictions, ".pred_lower")),
+      list(pred_surv_upper = extract_predictions(predictions, ".pred_upper"))
+    )
+  }
+
+  # make the predictions (hazard)
+  predictions <- lapply(models,
+                        predict,
+                        new_data = new_data,
+                        type = "hazard",
+                        eval_time = eval_time,
+                        interval = interval
+  ) |>
+    purrr::map(~ .x |>
+                 slice(1) |>
+                 tidyr::unnest(col = .pred))
+
+
+  out <- c(out,
+           list(pred_hazard = extract_predictions(predictions, ".pred_hazard")))
+
+
 }
 
 get_survival_parameters <- function(models) {
@@ -256,85 +303,20 @@ new_fits <- function(data,
 
   if (approach == "no_groups") {
 
-    predicted_survival <- lapply(models, predict,
-      new_data = data,
-      type = "survival",
-      eval_time = eval_time,
-      interval = interval
-    ) |>
-      purrr::map(~ .x |>
-        slice(1) |>
-        tidyr::unnest(col = .pred))
+    predictions <- tidy_predict_survival(models = models,
+                                         new_data = data,
+                                         eval_time = eval_time,
+                                         interval = interval)
 
-    # Extract to summary tables
-    predictions <- list(pred_surv = extract_predictions(predicted_survival, ".pred_survival"))
-
-    if (include_ci) {
-      predictions <- c(
-        predictions,
-        list(pred_surv_lower = extract_predictions(predicted_survival, ".pred_lower")),
-        list(pred_surv_upper = extract_predictions(predicted_survival, ".pred_upper"))
-      )
-    }
-
-    predicted_hazard <- lapply(models, predict,
-      new_data = data,
-      type = "hazard",
-      eval_time = eval_time,
-      interval = interval
-    ) |>
-      purrr::map(~ .x |>
-        slice(1) |>
-        tidyr::unnest(col = .pred))
-
-    predictions <- c(
-      predictions,
-      list(pred_hazard = extract_predictions(predicted_hazard, ".pred_hazard"))
-    )
   }
 
   if (approach == "joint_fits") {
     for (tx in seq_along(group_list)) {
-      # Create predictions (survival)
-      predicted_survival <- lapply(models, predict,
-        new_data = data.frame(group = group_list[tx]),
-        type = "survival",
-        eval_time = eval_time,
-        interval = interval
-      ) |>
-        purrr::map(~ .x |>
-          slice(1) |>
-          tidyr::unnest(col = .pred))
 
-
-      # Extract to summary tables
-      predictions[[tx]] <- list(pred_surv = extract_predictions(predicted_survival, ".pred_survival"))
-
-      if (include_ci) {
-        predictions[[tx]] <- c(
-          predictions[[tx]],
-          list(pred_surv_lower = extract_predictions(predicted_survival, ".pred_lower")),
-          list(pred_surv_upper = extract_predictions(predicted_survival, ".pred_upper"))
-        )
-      }
-
-      # Create predictions (hazard)
-      predicted_hazard <- lapply(models, predict,
-        new_data = data.frame(group = group_list[tx]),
-        type = "hazard",
-        eval_time = eval_time,
-        interval = interval
-      ) |>
-        purrr::map(~ .x |>
-          slice(1) |>
-          tidyr::unnest(col = .pred))
-
-
-      # Extract to summary tables
-      predictions[[tx]] <- c(
-        predictions[[tx]],
-        list(pred_hazard = extract_predictions(predicted_hazard, ".pred_hazard"))
-      )
+      predictions[[tx]] <- tidy_predict_survival(models = models,
+                                                  new_data = data.frame(group = group_list[tx]),
+                                                  eval_time = eval_time,
+                                                  interval = interval)
     }
 
     names(predictions) <- group_list
@@ -342,42 +324,12 @@ new_fits <- function(data,
 
   if (approach == "separate_fits") {
     for (tx in seq_along(group_list)) {
-      # Create predictions (survival)
-      predicted_survival <- lapply(models[[tx]], predict,
-        new_data = data.frame(group = group_list[tx]),
-        type = "survival",
-        eval_time = eval_time,
-        interval = interval
-      ) |>
-        purrr::map(~ .x |>
-          slice(1) |>
-          tidyr::unnest(col = .pred))
 
-      # Extract to summary tables
-      predictions[[tx]] <- list(pred_surv = extract_predictions(predicted_survival, ".pred_survival"))
+      predictions[[tx]] <- tidy_predict_survival(models = models[[tx]],
+                                                  new_data = data.frame(group = group_list[tx]),
+                                                  eval_time = eval_time,
+                                                  interval = interval)
 
-      if (include_ci) {
-        predictions[[tx]] <- c(
-          predictions[[tx]],
-          list(pred_surv_lower = extract_predictions(predicted_survival, ".pred_lower")),
-          list(pred_surv_upper = extract_predictions(predicted_survival, ".pred_upper"))
-        )
-      }
-
-      # Create predictions (hazard) - interval isn't an option in underlying predict function
-      predicted_hazard <- lapply(models[[tx]], predict,
-        new_data = data.frame(group = group_list[tx]),
-        type = "hazard",
-        eval_time = eval_time
-      ) |>
-        purrr::map(~ .x |>
-          slice(1) |>
-          tidyr::unnest(col = .pred))
-
-      predictions[[tx]] <- c(
-        predictions[[tx]],
-        list(pred_hazard = extract_predictions(predicted_hazard, ".pred_hazard"))
-      )
     }
 
     names(predictions) <- names(models)
