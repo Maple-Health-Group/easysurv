@@ -257,6 +257,25 @@ get_fit_averages2 <- function(mod,
   return(out)
 }
 
+get_goodness_of_fit <- function(mod) {
+
+  AIC_values <- sapply(mod, function(x) x$fit$AIC)
+  BIC_values <- sapply(mod, function(x) x$fit$BIC)
+
+  AIC_ranks <- rank(AIC_values)
+  BIC_ranks <- rank(BIC_values)
+
+  out <- tibble::tibble("dist" = names(mod),
+                        "AIC" = AIC_values,
+                        "BIC" = BIC_values,
+                        "AIC_rank" = AIC_ranks,
+                        "BIC_rank" = BIC_ranks)
+
+  out[order(out$dist), ]
+}
+
+
+
 # define new functions
 new_fits <- function(data,
                      time,
@@ -401,6 +420,10 @@ new_fits <- function(data,
                                    get_mean = FALSE)) |> as_tibble()
     )
 
+    # NOTE TO SELF: CAN TIDY THIS UP BY RETURNING FIRST THEN PUTTING IN SUMMARY?
+    summary <- c(summary,
+                 list(goodness_of_fit = get_goodness_of_fit(models)))
+
 
   }
 
@@ -438,6 +461,9 @@ new_fits <- function(data,
                                      get_fit_averages2,
                                      get_mean = FALSE)) |> as_tibble()
       )
+
+      summary[[tx]] <- c(summary[[tx]],
+                   list(goodness_of_fit = get_goodness_of_fit(models[[tx]])))
 
     }
 
@@ -549,3 +575,4 @@ output_no_groups <- new_fits(
 )
 
 get_survival_parameters(output_joint$models)
+get_goodness_of_fit(output_separate[["models"]][["Good"]])
