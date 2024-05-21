@@ -21,8 +21,17 @@ tidy_predict_survival <- function(models,
                                   eval_time,
                                   interval = "none") {
 
+  # Start with NULLs to make dropping them easy with c()
+
+  list_pred_surv <-
+    list_pred_hazard <-
+    table_pred_surv <-
+    table_pred_surv_lower <-
+    table_pred_surv_upper <-
+    table_pred_hazard <- NULL
+
   # make the predictions (survival)
-  predictions <- lapply(models,
+  list_pred_surv <- lapply(models,
     predict,
     new_data = new_data,
     type = "survival",
@@ -33,7 +42,7 @@ tidy_predict_survival <- function(models,
       slice(1) |>
       tidyr::unnest(col = .pred))
 
-  # inner function to extract predictions
+  # inner function to extract predictions into a table
   extract_predictions <- function(pred_list, col_name) {
     Reduce(
       function(x, y) merge(x, y, by = ".eval_time", all = TRUE),
@@ -46,18 +55,15 @@ tidy_predict_survival <- function(models,
   }
 
   # Extract to summary tables
-  out <- list(pred_surv = extract_predictions(predictions, ".pred_survival"))
-
+  table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
   if (interval == "confidence") {
-    out <- c(
-      out,
-      list(pred_surv_lower = extract_predictions(predictions, ".pred_lower")),
-      list(pred_surv_upper = extract_predictions(predictions, ".pred_upper"))
-    )
+    table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
+    table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
   }
 
+
   # make the predictions (hazard)
-  predictions <- lapply(models,
+  list_pred_hazard <- lapply(models,
                         predict,
                         new_data = new_data,
                         type = "hazard",
@@ -68,12 +74,42 @@ tidy_predict_survival <- function(models,
                  slice(1) |>
                  tidyr::unnest(col = .pred))
 
+  table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
 
-  out <- c(out,
-           list(pred_hazard = extract_predictions(predictions, ".pred_hazard")))
+  out <- c(list(list_pred_surv = list_pred_surv),
+           list(list_pred_hazard = list_pred_hazard),
+           list(table_pred_surv = table_pred_surv),
+           list(table_pred_surv_lower = table_pred_surv_lower),
+           list(table_pred_surv_upper = table_pred_surv_upper))
+
+  return(out)
+
+}
+
+plot_fits2 <- function(data) {
+
+  # Pivot_longer so that ggplot2 is happy (requires data frame)
+  long_data <- tidyr::pivot_longer(data,
+                                   cols = -".eval_time",
+                                   names_to = "Model",
+                                   values_to = "Survival")
+
+  p <- ggplot(data = long_data, aes(x = .eval_time, y = Survival))
+  p <- p + geom_line(aes(color = Model, group = Model))
+  p <- p + labs(x = "Time",
+                y = "Survival",
+                color = ifelse(length(unique(long_data$Model))==1,"Model","Models"))
+  p <- p + theme_bw()
+
+  return(p)
+}
+
+plot_km2 <- function(data) {
+
 
 
 }
+
 
 get_survival_parameters <- function(models) {
   # Initialize an empty list to store results
@@ -298,6 +334,10 @@ new_fits <- function(data,
   plots <- list()
   summary <- list()
 
+  # Create NULL objects ----
+  KM <- NULL
+  KM_plot <- NULL
+
   # Validate argument inputs ----
 
   ## Check data ----
@@ -347,19 +387,21 @@ new_fits <- function(data,
   # Set approach
   if (is.null(group)) {
     approach <- "no_groups"
-    covariate <- 1
+    fit_covariate <- 1
+    KM_covariate <- 1
   } else {
     group_list <- levels(droplevels(as.factor(data[[group]])))
+    KM_covariate <- group
   }
 
   if (!is.null(group) & group_as_covariate) {
     approach <- "joint_fits"
-    covariate <- group
+    fit_covariate <- group
   }
 
   if (!is.null(group) & !group_as_covariate) {
     approach <- "separate_fits"
-    covariate <- 1
+    fit_covariate <- 1
   }
 
 
@@ -381,14 +423,34 @@ new_fits <- function(data,
 
   # Create formula ----
 
-  formula <- as.formula(paste0(
+  fit_formula <- stats::as.formula(paste0(
     "survival::Surv(time = ",
     time,
     ", event = ",
     event,
     ") ~",
-    covariate
+    fit_covariate
   ))
+
+  KM_formula <- stats::as.formula(paste0(
+    "survival::Surv(time = ",
+    time,
+    ", event = ",
+    event,
+    ") ~",
+    KM_covariate
+  ))
+
+  # Create KMs
+  KM <- survminer::surv_fit(
+    formula = KM_formula,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
+  )
+
+  KM_plot <- survminer::ggsurvplot(KM, data = data, ggtheme = theme_bw())
+
 
   # Fit models ----
 
@@ -398,7 +460,7 @@ new_fits <- function(data,
         parsnip::survival_reg(dist = .x) |>
           parsnip::set_engine(engine) |>
           pfit(
-            formula = formula,
+            formula = fit_formula,
             data = data
           )
       }
@@ -439,7 +501,7 @@ new_fits <- function(data,
           parsnip::survival_reg(dist = .x) |>
             parsnip::set_engine(engine) |>
             pfit(
-              formula = formula,
+              formula = fit_formula,
               data = data_subset
             )
         }
@@ -475,7 +537,7 @@ new_fits <- function(data,
   }
 
 
-  # Predict models ----
+  # Predict models and create plots ----
 
   if (include_ci) {
     interval <- "confidence"
@@ -490,6 +552,8 @@ new_fits <- function(data,
                                          eval_time = eval_time,
                                          interval = interval)
 
+    plots <- plot_fits2(predictions$table_pred_surv)
+
   }
 
   if (approach == "joint_fits") {
@@ -499,9 +563,12 @@ new_fits <- function(data,
                                                   new_data = data.frame(group = group_list[tx]),
                                                   eval_time = eval_time,
                                                   interval = interval)
+
+      plots[[tx]] <- plot_fits2(predictions[[tx]]$table_pred_surv)
+
     }
 
-    names(predictions) <- group_list
+    names(predictions) <- names(plots) <- group_list
   }
 
   if (approach == "separate_fits") {
@@ -512,9 +579,11 @@ new_fits <- function(data,
                                                   eval_time = eval_time,
                                                   interval = interval)
 
+      plots[[tx]] <- plot_fits2(predictions[[tx]]$table_pred_surv)
+
     }
 
-    names(predictions) <- names(models)
+    names(predictions) <- names(plots) <- names(models)
   }
 
   # Create plots ----
@@ -535,7 +604,9 @@ new_fits <- function(data,
     parameters = parameters,
     predictions = predictions,
     plots = plots,
-    summary = summary
+    summary = summary,
+    KM = KM,
+    KM_plot = KM_plot
   )
 
   return(out)
@@ -576,3 +647,4 @@ output_no_groups <- new_fits(
 
 get_survival_parameters(output_joint$models)
 get_goodness_of_fit(output_separate[["models"]][["Good"]])
+plot_fits2(output_separate$predictions$Good$table_pred_surv)
