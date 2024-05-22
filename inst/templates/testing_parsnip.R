@@ -23,7 +23,6 @@ tidy_predict_survival <- function(models,
                                   new_data,
                                   eval_time,
                                   interval = "none") {
-
   # Start with NULLs to make dropping them easy with c()
 
   list_pred_surv <-
@@ -67,41 +66,44 @@ tidy_predict_survival <- function(models,
 
   # make the predictions (hazard)
   list_pred_hazard <- lapply(models,
-                        predict,
-                        new_data = new_data,
-                        type = "hazard",
-                        eval_time = eval_time,
-                        interval = interval
+    predict,
+    new_data = new_data,
+    type = "hazard",
+    eval_time = eval_time,
+    interval = interval
   ) |>
     purrr::map(~ .x |>
-                 slice(1) |>
-                 tidyr::unnest(col = .pred))
+      slice(1) |>
+      tidyr::unnest(col = .pred))
 
   table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
 
-  out <- c(list(list_pred_surv = list_pred_surv),
-           list(list_pred_hazard = list_pred_hazard),
-           list(table_pred_surv = table_pred_surv),
-           list(table_pred_surv_lower = table_pred_surv_lower),
-           list(table_pred_surv_upper = table_pred_surv_upper))
+  out <- c(
+    list(list_pred_surv = list_pred_surv),
+    list(list_pred_hazard = list_pred_hazard),
+    list(table_pred_surv = table_pred_surv),
+    list(table_pred_surv_lower = table_pred_surv_lower),
+    list(table_pred_surv_upper = table_pred_surv_upper)
+  )
 
   return(out)
-
 }
 
 plot_fits2 <- function(data) {
-
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(data,
-                                   cols = -".eval_time",
-                                   names_to = "Model",
-                                   values_to = "Survival")
+    cols = -".eval_time",
+    names_to = "Model",
+    values_to = "Survival"
+  )
 
   p <- ggplot(data = long_data, aes(x = .eval_time, y = Survival))
   p <- p + geom_line(aes(color = Model, group = Model))
-  p <- p + labs(x = "Time",
-                y = "Survival",
-                color = ifelse(length(unique(long_data$Model))==1,"Model","Models"))
+  p <- p + labs(
+    x = "Time",
+    y = "Survival",
+    color = ifelse(length(unique(long_data$Model)) == 1, "Model", "Models")
+  )
   p <- p + theme_bw()
 
   return(p)
@@ -119,18 +121,16 @@ get_survival_parameters <- function(models) {
   surv_params <- list()
 
   for (i in seq_along(models)) {
-
     engine <- models[[i]]$spec$engine
 
     distribution <- switch(engine,
-                           "flexsurv" = models[[i]]$fit$dlist$name,
-                           "flexsurvspline" = names(models[i]),
-                           "survival" = models[[i]]$fit$dist,
-                           stop("Unknown engine type")
+      "flexsurv" = models[[i]]$fit$dlist$name,
+      "flexsurvspline" = names(models[i]),
+      "survival" = models[[i]]$fit$dist,
+      stop("Unknown engine type")
     )
 
     if (engine == "flexsurv" | engine == "flexsurvspline") {
-
       # Get parameters from res.t
       get_parameters <- models[[i]]$fit$res.t |>
         as.data.frame() |>
@@ -151,9 +151,7 @@ get_survival_parameters <- function(models) {
       if (!is.null(models[[i]]$fit$covpars)) {
         combined_results$covariate_marker[models[[i]]$fit$covpars] <- models[[i]]$fit$dlist$location
       }
-
     } else if (engine == "survival") {
-
       # With the survival package, it's a bit tricky.
       # Get number of parameters using degrees of freedom
       par_length <- length(models[[i]]$fit$df)
@@ -339,19 +337,14 @@ get_fit_averages2 <- function(mod,
     names(out) <- names(myseq)
 
     out <- data.table::rbindlist(out)
-
   } else if (engine == "survival") {
-
-
     distribution <- mod$fit$dist
 
     # Check for groups
     if (!is.null(mod$fit$xlevels)) {
-
       n_xlevels <- length(mod$fit$xlevels)
 
       for (i in seq_along(n_xlevels)) {
-
         out[[i]] <- data.frame(distribution = distribution)
 
         # Create a single row data frame for prediction data
@@ -361,37 +354,33 @@ get_fit_averages2 <- function(mod,
 
         # Get the median
         median[[i]] <- predict(mod$fit,
-                              newdata = new_data,
-                              type = "quantile",
-                              p=c(0.5))
+          newdata = new_data,
+          type = "quantile",
+          p = c(0.5)
+        )
 
         out[[i]] <- cbind(out[[i]], median[[i]])
       }
 
       out <- data.table::rbindlist(out)
-
-
     } else {
-
       out <- data.frame(distribution = distribution)
 
       # Get the median (newdata does not matter)
       median <- predict(mod$fit,
-                        newdata = data.frame(testing = 123),
-                        type = "quantile",
-                        p=c(0.5))
+        newdata = data.frame(testing = 123),
+        type = "quantile",
+        p = c(0.5)
+      )
 
       out <- cbind(out, median)
-
     }
-
   }
 
   return(out)
 }
 
 get_goodness_of_fit <- function(mod) {
-
   # Get AIC and BIC values using stats:: because engine=survival doesn't record these
   AIC_values <- sapply(mod, function(x) stats::AIC(x$fit))
   BIC_values <- sapply(mod, function(x) stats::BIC(x$fit))
@@ -399,11 +388,13 @@ get_goodness_of_fit <- function(mod) {
   AIC_ranks <- rank(AIC_values)
   BIC_ranks <- rank(BIC_values)
 
-  out <- tibble::tibble("dist" = names(mod),
-                        "AIC" = AIC_values,
-                        "BIC" = BIC_values,
-                        "AIC_rank" = AIC_ranks,
-                        "BIC_rank" = BIC_ranks)
+  out <- tibble::tibble(
+    "dist" = names(mod),
+    "AIC" = AIC_values,
+    "BIC" = BIC_values,
+    "AIC_rank" = AIC_ranks,
+    "BIC_rank" = BIC_ranks
+  )
 
   out[order(out$dist), ]
 }
@@ -419,11 +410,9 @@ new_fits <- function(data,
                      dists = c("exp", "gamma", "gengamma", "gompertz", "llog", "lognorm", "weibull"),
                      eval_time = NULL,
                      engine = "flexsurv",
-                     k = c(1,2,3),
+                     k = c(1, 2, 3),
                      scale = c("hazard"),
-                     include_ci = FALSE
-                     ) {
-
+                     include_ci = FALSE) {
   # Create supporting pfit ----
   pfit <- purrr::possibly(.f = parsnip::fit)
 
@@ -556,9 +545,7 @@ new_fits <- function(data,
   # Fit models ----
 
   if (approach == "no_groups" | approach == "joint_fits") {
-
     if (engine == "flexsurvspline") {
-
       combinations <- tidyr::expand_grid(k, scale)
 
       models <- purrr::pmap(combinations, function(k, scale) {
@@ -579,9 +566,7 @@ new_fits <- function(data,
         dists_success = models |> purrr::discard(is.null) |> names(),
         dists_failed = models |> purrr::keep(is.null) |> names()
       )
-
     } else {
-
       models <- purrr::map(
         purrr::set_names(dists, dists), ~ {
           parsnip::survival_reg(dist = .x) |>
@@ -604,17 +589,19 @@ new_fits <- function(data,
 
     parameters <- get_survival_parameters(models)
 
-    summary <- list(fit_averages =
-      data.table::rbindlist(lapply(models,
-                                   get_fit_averages2,
-                                   get_mean = FALSE)) |> as_tibble()
+    summary <- list(
+      fit_averages =
+        data.table::rbindlist(lapply(models,
+          get_fit_averages2,
+          get_mean = FALSE
+        )) |> as_tibble()
     )
 
     # NOTE TO SELF: CAN TIDY THIS UP BY RETURNING FIRST THEN PUTTING IN SUMMARY?
-    summary <- c(summary,
-                 list(goodness_of_fit = get_goodness_of_fit(models)))
-
-
+    summary <- c(
+      summary,
+      list(goodness_of_fit = get_goodness_of_fit(models))
+    )
   }
 
   if (approach == "separate_fits") {
@@ -625,7 +612,6 @@ new_fits <- function(data,
       data_subset <- nested[["data"]][[tx]]
 
       if (engine == "flexsurvspline") {
-
         combinations <- tidyr::expand_grid(k, scale)
 
         models[[tx]] <- purrr::pmap(combinations, function(k, scale) {
@@ -646,9 +632,7 @@ new_fits <- function(data,
           dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
           dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
         )
-
       } else {
-
         models[[tx]] <- purrr::map(
           purrr::set_names(dists, dists), ~ {
             parsnip::survival_reg(dist = .x) |>
@@ -671,15 +655,18 @@ new_fits <- function(data,
 
       parameters[[tx]] <- get_survival_parameters(models[[tx]])
 
-      summary[[tx]] <- list(fit_averages =
-        data.table::rbindlist(lapply(models[[tx]],
-                                     get_fit_averages2,
-                                     get_mean = FALSE)) |> as_tibble()
+      summary[[tx]] <- list(
+        fit_averages =
+          data.table::rbindlist(lapply(models[[tx]],
+            get_fit_averages2,
+            get_mean = FALSE
+          )) |> as_tibble()
       )
 
-      summary[[tx]] <- c(summary[[tx]],
-                   list(goodness_of_fit = get_goodness_of_fit(models[[tx]])))
-
+      summary[[tx]] <- c(
+        summary[[tx]],
+        list(goodness_of_fit = get_goodness_of_fit(models[[tx]]))
+      )
     }
 
     names(models) <-
@@ -699,26 +686,26 @@ new_fits <- function(data,
   }
 
   if (approach == "no_groups") {
-
-    predictions <- tidy_predict_survival(models = models,
-                                         new_data = data,
-                                         eval_time = eval_time,
-                                         interval = interval)
+    predictions <- tidy_predict_survival(
+      models = models,
+      new_data = data,
+      eval_time = eval_time,
+      interval = interval
+    )
 
     plots <- plot_fits2(predictions$table_pred_surv)
-
   }
 
   if (approach == "joint_fits") {
     for (tx in seq_along(group_list)) {
-
-      predictions[[tx]] <- tidy_predict_survival(models = models,
-                                                  new_data = data.frame(group = group_list[tx]),
-                                                  eval_time = eval_time,
-                                                  interval = interval)
+      predictions[[tx]] <- tidy_predict_survival(
+        models = models,
+        new_data = data.frame(group = group_list[tx]),
+        eval_time = eval_time,
+        interval = interval
+      )
 
       plots[[tx]] <- plot_fits2(predictions[[tx]]$table_pred_surv)
-
     }
 
     names(predictions) <- names(plots) <- group_list
@@ -726,14 +713,14 @@ new_fits <- function(data,
 
   if (approach == "separate_fits") {
     for (tx in seq_along(group_list)) {
-
-      predictions[[tx]] <- tidy_predict_survival(models = models[[tx]],
-                                                  new_data = data.frame(group = group_list[tx]),
-                                                  eval_time = eval_time,
-                                                  interval = interval)
+      predictions[[tx]] <- tidy_predict_survival(
+        models = models[[tx]],
+        new_data = data.frame(group = group_list[tx]),
+        eval_time = eval_time,
+        interval = interval
+      )
 
       plots[[tx]] <- plot_fits2(predictions[[tx]]$table_pred_surv)
-
     }
 
     names(predictions) <- names(plots) <- names(models)
@@ -741,7 +728,7 @@ new_fits <- function(data,
 
   # Create plots ----
 
-  #...
+  # ...
 
 
   # Create summary ----
@@ -799,6 +786,7 @@ output_no_groups <- new_fits(
   dists = dists
 )
 
+# splines
 output_separate_spline <- new_fits(
   data = surv_data,
   time = "time",
@@ -806,37 +794,51 @@ output_separate_spline <- new_fits(
   dists = dists,
   group = "group",
   engine = "flexsurvspline",
-  k = c(1,2,3),
+  k = c(1, 2, 3),
+  scale = c("hazard", "odds"),
   group_as_covariate = FALSE,
   include_ci = TRUE
 )
 
-get_survival_parameters(output_joint$models)
-get_goodness_of_fit(output_separate[["models"]][["Good"]])
-plot_fits2(output_separate$predictions$Good$table_pred_surv)
-
-pfit <- purrr::possibly(.f = parsnip::fit)
-diff_models <- purrr::map(
-  purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
-    parsnip::survival_reg(dist = .x) |>
-      parsnip::set_engine("survival") |>
-      pfit(
-        formula = survival::Surv(time = time, event = event) ~ group,
-        data = surv_data
-      )
-  }
+# using the "survival" engine
+output_separate_diff_engine <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists_survival_engine,
+  engine = "survival",
+  group = "group",
+  group_as_covariate = FALSE,
+  include_ci = FALSE
 )
 
-diff_models_sep <- purrr::map(
-  purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
-    parsnip::survival_reg(dist = .x) |>
-      parsnip::set_engine("survival") |>
-      pfit(
-        formula = survival::Surv(time = time, event = event) ~ 1,
-        data = surv_data
-      )
-  }
-)
+#
+# get_survival_parameters(output_joint$models)
+# get_goodness_of_fit(output_separate[["models"]][["Good"]])
+# plot_fits2(output_separate$predictions$Good$table_pred_surv)
+#
+# pfit <- purrr::possibly(.f = parsnip::fit)
+# diff_models <- purrr::map(
+#   purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       parsnip::set_engine("survival") |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ group,
+#         data = surv_data
+#       )
+#   }
+# )
+#
+# diff_models_sep <- purrr::map(
+#   purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       parsnip::set_engine("survival") |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
 
 #
 # output_separate_diff_engine <- new_fits(
