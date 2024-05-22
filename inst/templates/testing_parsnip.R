@@ -121,11 +121,15 @@ get_survival_parameters <- function(models) {
   for (i in seq_along(models)) {
 
     engine <- models[[i]]$spec$engine
-    if (engine == "flexsurv") {
 
-      # Set the distribution name. This is based on dlist so that, for example:
-      # "exponential" and "exp" both become "exp"
-      distribution <- models[[i]]$fit$dlist$name
+    distribution <- switch(engine,
+                           "flexsurv" = models[[i]]$fit$dlist$name,
+                           "flexsurvspline" = names(models[i]),
+                           "survival" = models[[i]]$fit$dist,
+                           stop("Unknown engine type")
+    )
+
+    if (engine == "flexsurv" | engine == "flexsurvspline") {
 
       # Get parameters from res.t
       get_parameters <- models[[i]]$fit$res.t |>
@@ -149,9 +153,6 @@ get_survival_parameters <- function(models) {
       }
 
     } else if (engine == "survival") {
-
-      # Get distribution name
-      distribution <- models[[i]]$fit$dist
 
       # With the survival package, it's a bit tricky.
       # Get number of parameters using degrees of freedom
@@ -418,7 +419,10 @@ new_fits <- function(data,
                      dists = c("exp", "gamma", "gengamma", "gompertz", "llog", "lognorm", "weibull"),
                      eval_time = NULL,
                      engine = "flexsurv",
-                     include_ci = FALSE) {
+                     k = c(1,2,3),
+                     scale = c("hazard"),
+                     include_ci = FALSE
+                     ) {
 
   # Create supporting pfit ----
   pfit <- purrr::possibly(.f = parsnip::fit)
@@ -552,22 +556,49 @@ new_fits <- function(data,
   # Fit models ----
 
   if (approach == "no_groups" | approach == "joint_fits") {
-    models <- purrr::map(
-      purrr::set_names(dists, dists), ~ {
-        parsnip::survival_reg(dist = .x) |>
-          parsnip::set_engine(engine) |>
+
+    if (engine == "flexsurvspline") {
+
+      combinations <- tidyr::expand_grid(k, scale)
+
+      models <- purrr::pmap(combinations, function(k, scale) {
+        parsnip::survival_reg() |>
+          parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
           pfit(
             formula = fit_formula,
             data = data
           )
-      }
-    )
+      })
 
-    distributions <- list(
-      dists_attempted = dists,
-      dists_success = models |> purrr::discard(is.null) |> names(),
-      dists_failed = models |> purrr::keep(is.null) |> names()
-    )
+      names(models) <- purrr::pmap_chr(combinations, function(k, scale) {
+        paste(k, "knot", scale, "scale", sep = "_")
+      })
+
+      distributions <- list(
+        dists_attempted = combinations,
+        dists_success = models |> purrr::discard(is.null) |> names(),
+        dists_failed = models |> purrr::keep(is.null) |> names()
+      )
+
+    } else {
+
+      models <- purrr::map(
+        purrr::set_names(dists, dists), ~ {
+          parsnip::survival_reg(dist = .x) |>
+            parsnip::set_engine(engine) |>
+            pfit(
+              formula = fit_formula,
+              data = data
+            )
+        }
+      )
+
+      distributions <- list(
+        dists_attempted = dists,
+        dists_success = models |> purrr::discard(is.null) |> names(),
+        dists_failed = models |> purrr::keep(is.null) |> names()
+      )
+    }
 
     models <- models |> purrr::discard(is.null)
 
@@ -593,23 +624,48 @@ new_fits <- function(data,
     for (tx in seq_along(group_list)) {
       data_subset <- nested[["data"]][[tx]]
 
-      models[[tx]] <- purrr::map(
-        purrr::set_names(dists, dists), ~ {
-          parsnip::survival_reg(dist = .x) |>
-            parsnip::set_engine(engine) |>
+      if (engine == "flexsurvspline") {
+
+        combinations <- tidyr::expand_grid(k, scale)
+
+        models[[tx]] <- purrr::pmap(combinations, function(k, scale) {
+          parsnip::survival_reg() |>
+            parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
             pfit(
               formula = fit_formula,
               data = data_subset
             )
-        }
-      )
+        })
 
-      distributions[[tx]] <- list(
-        dists_attempted = dists,
-        dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
-        dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
-      )
+        names(models[[tx]]) <- purrr::pmap_chr(combinations, function(k, scale) {
+          paste(k, "knot", scale, "scale", sep = "_")
+        })
 
+        distributions[[tx]] <- list(
+          dists_attempted = combinations,
+          dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
+          dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
+        )
+
+      } else {
+
+        models[[tx]] <- purrr::map(
+          purrr::set_names(dists, dists), ~ {
+            parsnip::survival_reg(dist = .x) |>
+              parsnip::set_engine(engine) |>
+              pfit(
+                formula = fit_formula,
+                data = data_subset
+              )
+          }
+        )
+
+        distributions[[tx]] <- list(
+          dists_attempted = dists,
+          dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
+          dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
+        )
+      }
 
       models[[tx]] <- models[[tx]] |> purrr::discard(is.null)
 
@@ -696,6 +752,7 @@ new_fits <- function(data,
   # Return ----
   out <- list(
     approach = approach,
+    engine = engine,
     distributions = distributions,
     models = models,
     parameters = parameters,
@@ -742,6 +799,18 @@ output_no_groups <- new_fits(
   dists = dists
 )
 
+output_separate_spline <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists,
+  group = "group",
+  engine = "flexsurvspline",
+  k = c(1,2,3),
+  group_as_covariate = FALSE,
+  include_ci = TRUE
+)
+
 get_survival_parameters(output_joint$models)
 get_goodness_of_fit(output_separate[["models"]][["Good"]])
 plot_fits2(output_separate$predictions$Good$table_pred_surv)
@@ -769,15 +838,135 @@ diff_models_sep <- purrr::map(
   }
 )
 
-
-output_separate_diff_engine <- new_fits(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  dists = dists_survival_engine,
-  engine = "survival",
-  group = "group",
-  group_as_covariate = FALSE,
-  include_ci = FALSE
-)
-
+#
+# output_separate_diff_engine <- new_fits(
+#   data = surv_data,
+#   time = "time",
+#   event = "event",
+#   dists = dists_survival_engine,
+#   engine = "survival",
+#   group = "group",
+#   group_as_covariate = FALSE,
+#   include_ci = FALSE
+# )
+#
+#
+# spline_models <- purrr::map(
+#   purrr::set_names(dists, dists), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       parsnip::set_engine("flexsurvspline", k = 1) |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
+#
+# spline_models2 <- purrr::map(
+#   purrr::set_names(dists, dists), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       parsnip::set_engine("flexsurvspline", k = 1, scale = "odds") |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
+#
+# not_spline_models <- purrr::map(
+#   purrr::set_names(dists, dists), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       parsnip::set_engine("flexsurv") |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
+#
+#
+# my_engine <- "flexsurv"
+#
+#
+# not_spline_models <- purrr::map(
+#   purrr::set_names(dists, dists), ~ {
+#     parsnip::survival_reg(dist = .x) |>
+#       dplyr::case_when(
+#         my_engine == "flexsurv" ~ parsnip::set_engine("flexsurv"),
+#         my_engine == "flexsurvspline" ~ parsnip::set_engine("flexsurvspline", k = 1)) |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# k <- 1
+# scale <- "hazard"
+#
+#
+# testing123
+#
+# testing123names <- purrr::pmap_chr(testing123, function(k, scale) {
+#   paste("knot", k, "scale", scale, sep = "_")
+# })
+#
+#
+#
+# # This section to keep:
+#
+# k <- c(1,2,3)
+# scale <- c("odds", "hazard")
+# combinations <- tidyr::expand_grid(k, scale)
+#
+# testing_output <- purrr::pmap(combinations, function(k, scale) {
+#   parsnip::survival_reg() |>
+#     parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
+#     pfit(
+#       formula = survival::Surv(time = time, event = event) ~ 1,
+#       data = surv_data
+#     )
+# })
+#
+# names(testing_output) <- purrr::pmap_chr(combinations, function(k, scale) {
+#   paste(k, "knot", scale, "scale", sep = "_")
+# })
+# ####################
+#
+#
+#
+# testing_output <- purrr::pmap(purrr::set_names(testing123, testing123names), function(k, scale) {
+#   parsnip::survival_reg() |>
+#     parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
+#     pfit(
+#       formula = survival::Surv(time = time, event = event) ~ 1,
+#       data = surv_data
+#     )
+# })
+#
+# purrr::set_names(testing123, testing123names)
+#
+# testing123
+#
+# # this works
+# spline_models <- purrr::map(
+#   purrr::set_names(my_knots, my_knots), ~ {
+#     parsnip::survival_reg() |>
+#       parsnip::set_engine("flexsurvspline", k = .x, scale = "odds") |>
+#       pfit(
+#         formula = survival::Surv(time = time, event = event) ~ 1,
+#         data = surv_data
+#       )
+#   }
+# )
