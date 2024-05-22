@@ -677,7 +677,7 @@ new_fits <- function(data,
   }
 
 
-  # Predict models and create plots ----
+  # Predict and plot ----
 
   if (include_ci) {
     interval <- "confidence"
@@ -725,11 +725,6 @@ new_fits <- function(data,
 
     names(predictions) <- names(plots) <- names(models)
   }
-
-  # Create plots ----
-
-  # ...
-
 
   # Create summary ----
 
