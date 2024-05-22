@@ -16,6 +16,9 @@ surv_data2 <- surv_data[c(5:6, 269:270), ]
 dists <- c("gengamma", "weibull", "exponential")
 dists <- c("gengamma", "weibull", "exp", "lognorm", "llog", "gamma", "gompertz")
 
+dists_survival_engine <- names(survival::survreg.distributions)[1:8] # predicting from t dist not available yet (throws error)
+names(flexsurv::flexsurv.dists)
+
 tidy_predict_survival <- function(models,
                                   new_data,
                                   eval_time,
@@ -56,7 +59,7 @@ tidy_predict_survival <- function(models,
 
   # Extract to summary tables
   table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
-  if (interval == "confidence") {
+  if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
     table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
     table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
   }
@@ -116,29 +119,72 @@ get_survival_parameters <- function(models) {
   surv_params <- list()
 
   for (i in seq_along(models)) {
-    # Set the distribution name. This is based on dlist so that, for example:
-    # "exponential" and "exp" both become "exp"
-    distribution <- models[[i]]$fit$dlist$name
 
-    # Get parameters from res.t
-    get_parameters <- models[[i]]$fit$res.t |>
-      as.data.frame() |>
-      tibble::rownames_to_column(var = "parameter")
+    engine <- models[[i]]$spec$engine
+    if (engine == "flexsurv") {
 
-    # Get vcov matrix from cov
-    get_vcov <- models[[i]]$fit$cov |>
-      as.data.frame()
+      # Set the distribution name. This is based on dlist so that, for example:
+      # "exponential" and "exp" both become "exp"
+      distribution <- models[[i]]$fit$dlist$name
 
-    # Make the column names consistent between models (v1, v2, v3, ...)
-    colnames(get_vcov) <- paste0("v", seq_along(models[[i]]$fit$coefficients))
+      # Get parameters from res.t
+      get_parameters <- models[[i]]$fit$res.t |>
+        as.data.frame() |>
+        tibble::rownames_to_column(var = "parameter")
 
-    # Combine all results
-    combined_results <- cbind(distribution, get_parameters, get_vcov)
+      # Get vcov matrix
+      get_vcov <- models[[i]]$fit$cov |>
+        as.data.frame()
 
-    # Track location for covariate parameter
-    combined_results$covariate_marker <- combined_results$parameter
-    if (!is.null(models[[i]]$fit$covpars)) {
-      combined_results$covariate_marker[models[[i]]$fit$covpars] <- models[[i]]$fit$dlist$location
+      # Make the column names consistent between models (v1, v2, v3, ...)
+      colnames(get_vcov) <- paste0("v", seq_along(models[[i]]$fit$coefficients))
+
+      # Combine all results
+      combined_results <- cbind(distribution, get_parameters, get_vcov)
+
+      # Track location for covariate parameter
+      combined_results$covariate_marker <- combined_results$parameter
+      if (!is.null(models[[i]]$fit$covpars)) {
+        combined_results$covariate_marker[models[[i]]$fit$covpars] <- models[[i]]$fit$dlist$location
+      }
+
+    } else if (engine == "survival") {
+
+      # Get distribution name
+      distribution <- models[[i]]$fit$dist
+
+      # With the survival package, it's a bit tricky.
+      # Get number of parameters using degrees of freedom
+      par_length <- length(models[[i]]$fit$df)
+
+      # Get initial parameters from coefficients
+      get_parameters <- models[[i]]$fit$coefficients |>
+        as.data.frame() |>
+        tibble::rownames_to_column(var = "parameter")
+      colnames(get_parameters) <- c("parameter", "est")
+
+      # If there's an additional parameter not included in coefficients, add it
+      if (tail(names(models[[i]]$fit$icoef), 1) != tail(names(models[[i]]$fit$coefficients), 1)) {
+        get_additional_parameters <- tail(models[[i]]$fit$icoef, 1) |>
+          as.data.frame() |>
+          tibble::rownames_to_column(var = "parameter")
+        colnames(get_additional_parameters) <- c("parameter", "est")
+
+        get_parameters <- rbind(get_parameters, get_additional_parameters)
+      }
+
+      # Get vcov matrix
+      get_vcov <- models[[i]]$fit$var |>
+        as.data.frame()
+
+      # Make the column names consistent between models (v1, v2, v3, ...)
+      colnames(get_vcov) <- paste0("v", seq_along(get_parameters$parameter))
+
+      # Combine all results
+      combined_results <- cbind(distribution, get_parameters, get_vcov)
+
+      # Track location for covariate parameter (not reported in survival output)
+      combined_results$covariate_marker <- "NR"
     }
 
     # Variance-covariance matrices
@@ -154,149 +200,200 @@ get_survival_parameters <- function(models) {
 }
 
 
-
 get_fit_averages2 <- function(mod,
-                             get_median = TRUE,
-                             get_rmst = TRUE,
-                             get_mean = FALSE) {
+                              get_median = TRUE,
+                              get_rmst = TRUE,
+                              get_mean = FALSE) {
   if (!get_median & !get_rmst & !get_mean) {
     stop("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function")
   }
 
-  # Checking if the distribution is a spline model.
-  distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
-    mod$fit$k,
-    "knot",
-    mod$fit$scale
-  ))
-
-  # MEDIAN
-  if (get_median) {
-    median <- tryCatch(
-      {
-        summary(mod$fit, type = "median")
-      },
-      error = function(e) {
-        message(paste(
-          "warning:",
-          distribution,
-          "median survival time not calculable."
-        ))
-        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
-      }
-    )
-  }
-
-  # RESTRICTED MEAN
-  if (get_rmst) {
-    restricted_mean <- tryCatch(
-      {
-        summary(mod$fit, type = "rmst")
-      },
-      error = function(e) {
-        message(paste(
-          "warning:",
-          distribution,
-          "restricted mean survival time not calculable."
-        ))
-        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
-      }
-    )
-  }
-
-  # MEAN (most likely to fail)
-  if (get_mean) {
-    mean <- tryCatch(
-      {
-        summary(mod$fit, type = "mean")
-      },
-      error = function(e) {
-        message(paste(
-          "warning:",
-          distribution,
-          "mean survival time not calculable",
-          "(likely due to a plateau in survival predictions)"
-        ))
-        return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
-      }
-    )
-  }
-
-  if (get_median) {
-    myseq <- median
-  } else if (get_rmst) {
-    myseq <- restricted_mean
-  } else {
-    myseq <- mean
-  }
-
-  # In case of strata, use seq_along
-  for (i in seq_along(myseq)) {
-    if (get_median) {
-      median[[i]] <- median[[i]] |>
-        dplyr::rename_with(~ paste0("median.", .x))
-    }
-
-    if (get_rmst) {
-      restricted_mean[[i]] <- restricted_mean[[i]] |>
-        dplyr::rename_with(~ paste0("rmst.", .x))
-    }
-
-    if (get_mean) {
-      mean[[i]] <- mean[[i]] |>
-        dplyr::rename_with(~ paste0("mean.", .x))
-    }
-  }
-
   out <- list()
 
-  # Combine into list per strata
-  for (i in seq_along(myseq)) {
+  engine <- mod$spec$engine
 
-    #out[[i]] <- distribution
-    out[[i]] <- data.frame(distribution = distribution)
+  if (engine == "flexsurv" | engine == "flexsurvspline") {
+    # Checking if the distribution is a spline model.
+    distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
+      mod$fit$k,
+      "knot",
+      mod$fit$scale
+    ))
 
-    if (!is.null(names(myseq)[i])) {
-      strata <- names(myseq)[i]
-      out[[i]] <- cbind(
-        out[[i]],
-        strata
+    # MEDIAN
+    if (get_median) {
+      median <- tryCatch(
+        {
+          summary(mod$fit, type = "median")
+        },
+        error = function(e) {
+          message(paste(
+            "warning:",
+            distribution,
+            "median survival time not calculable."
+          ))
+          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+        }
+      )
+    }
+
+    # RESTRICTED MEAN
+    if (get_rmst) {
+      restricted_mean <- tryCatch(
+        {
+          summary(mod$fit, type = "rmst")
+        },
+        error = function(e) {
+          message(paste(
+            "warning:",
+            distribution,
+            "restricted mean survival time not calculable."
+          ))
+          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+        }
+      )
+    }
+
+    # MEAN (most likely to fail)
+    if (get_mean) {
+      mean <- tryCatch(
+        {
+          summary(mod$fit, type = "mean")
+        },
+        error = function(e) {
+          message(paste(
+            "warning:",
+            distribution,
+            "mean survival time not calculable",
+            "(likely due to a plateau in survival predictions)"
+          ))
+          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+        }
       )
     }
 
     if (get_median) {
-      out[[i]] <- cbind(
-        out[[i]],
-        median[[i]]
-      )
+      myseq <- median
+    } else if (get_rmst) {
+      myseq <- restricted_mean
+    } else {
+      myseq <- mean
     }
 
-    if (get_rmst) {
-      out[[i]] <- cbind(
-        out[[i]],
-        restricted_mean[[i]]
-      )
+    # In case of strata, use seq_along
+    for (i in seq_along(myseq)) {
+      if (get_median) {
+        median[[i]] <- median[[i]] |>
+          dplyr::rename_with(~ paste0("median.", .x))
+      }
+
+      if (get_rmst) {
+        restricted_mean[[i]] <- restricted_mean[[i]] |>
+          dplyr::rename_with(~ paste0("rmst.", .x))
+      }
+
+      if (get_mean) {
+        mean[[i]] <- mean[[i]] |>
+          dplyr::rename_with(~ paste0("mean.", .x))
+      }
     }
 
-    if (get_mean) {
-      out[[i]] <- cbind(
-        out[[i]],
-        mean[[i]]
-      )
+
+
+    # Combine into list per strata
+    for (i in seq_along(myseq)) {
+      # out[[i]] <- distribution
+      out[[i]] <- data.frame(distribution = distribution)
+
+      if (!is.null(names(myseq)[i])) {
+        strata <- names(myseq)[i]
+        out[[i]] <- cbind(
+          out[[i]],
+          strata
+        )
+      }
+
+      if (get_median) {
+        out[[i]] <- cbind(
+          out[[i]],
+          median[[i]]
+        )
+      }
+
+      if (get_rmst) {
+        out[[i]] <- cbind(
+          out[[i]],
+          restricted_mean[[i]]
+        )
+      }
+
+      if (get_mean) {
+        out[[i]] <- cbind(
+          out[[i]],
+          mean[[i]]
+        )
+      }
     }
+
+    names(out) <- names(myseq)
+
+    out <- data.table::rbindlist(out)
+
+  } else if (engine == "survival") {
+
+
+    distribution <- mod$fit$dist
+
+    # Check for groups
+    if (!is.null(mod$fit$xlevels)) {
+
+      n_xlevels <- length(mod$fit$xlevels)
+
+      for (i in seq_along(n_xlevels)) {
+
+        out[[i]] <- data.frame(distribution = distribution)
+
+        # Create a single row data frame for prediction data
+        new_data <- data.frame(column1 = mod$fit$xlevels[[1]][i])
+        # Rename the column to match that in the original data
+        colnames(new_data) <- names(mod$fit$xlevels)
+
+        # Get the median
+        median[[i]] <- predict(mod$fit,
+                              newdata = new_data,
+                              type = "quantile",
+                              p=c(0.5))
+
+        out[[i]] <- cbind(out[[i]], median[[i]])
+      }
+
+      out <- data.table::rbindlist(out)
+
+
+    } else {
+
+      out <- data.frame(distribution = distribution)
+
+      # Get the median (newdata does not matter)
+      median <- predict(mod$fit,
+                        newdata = data.frame(testing = 123),
+                        type = "quantile",
+                        p=c(0.5))
+
+      out <- cbind(out, median)
+
+    }
+
   }
-
-  names(out) <- names(myseq)
-
-  out <- data.table::rbindlist(out)
 
   return(out)
 }
 
 get_goodness_of_fit <- function(mod) {
 
-  AIC_values <- sapply(mod, function(x) x$fit$AIC)
-  BIC_values <- sapply(mod, function(x) x$fit$BIC)
+  # Get AIC and BIC values using stats:: because engine=survival doesn't record these
+  AIC_values <- sapply(mod, function(x) stats::AIC(x$fit))
+  BIC_values <- sapply(mod, function(x) stats::BIC(x$fit))
 
   AIC_ranks <- rank(AIC_values)
   BIC_ranks <- rank(BIC_values)
@@ -318,7 +415,7 @@ new_fits <- function(data,
                      event,
                      group = NULL,
                      group_as_covariate = FALSE,
-                     dists,
+                     dists = c("exp", "gamma", "gengamma", "gompertz", "llog", "lognorm", "weibull"),
                      eval_time = NULL,
                      engine = "flexsurv",
                      include_ci = FALSE) {
@@ -648,3 +745,39 @@ output_no_groups <- new_fits(
 get_survival_parameters(output_joint$models)
 get_goodness_of_fit(output_separate[["models"]][["Good"]])
 plot_fits2(output_separate$predictions$Good$table_pred_surv)
+
+pfit <- purrr::possibly(.f = parsnip::fit)
+diff_models <- purrr::map(
+  purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
+    parsnip::survival_reg(dist = .x) |>
+      parsnip::set_engine("survival") |>
+      pfit(
+        formula = survival::Surv(time = time, event = event) ~ group,
+        data = surv_data
+      )
+  }
+)
+
+diff_models_sep <- purrr::map(
+  purrr::set_names(dists_survival_engine, dists_survival_engine), ~ {
+    parsnip::survival_reg(dist = .x) |>
+      parsnip::set_engine("survival") |>
+      pfit(
+        formula = survival::Surv(time = time, event = event) ~ 1,
+        data = surv_data
+      )
+  }
+)
+
+
+output_separate_diff_engine <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists_survival_engine,
+  engine = "survival",
+  group = "group",
+  group_as_covariate = FALSE,
+  include_ci = FALSE
+)
+
