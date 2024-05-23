@@ -105,6 +105,10 @@ plot_fits2 <- function(data) {
   )
   p <- p + theme_bw()
 
+  # more can be done here to improve this.
+
+  # may want an optional KM argument.
+
   return(p)
 }
 
@@ -401,8 +405,11 @@ get_goodness_of_fit <- function(mod) {
 
 
 
+# Create supporting pfit ----
+pfit <- purrr::possibly(.f = parsnip::fit)
+
 # define new functions
-new_fits <- function(data,
+fit_models <- function(data,
                      time,
                      event,
                      group = NULL,
@@ -413,8 +420,6 @@ new_fits <- function(data,
                      k = c(1, 2, 3),
                      scale = c("hazard"),
                      include_ci = FALSE) {
-  # Create supporting pfit ----
-  pfit <- purrr::possibly(.f = parsnip::fit)
 
   # Create key objects ----
   distributions <- list()
@@ -508,7 +513,9 @@ new_fits <- function(data,
   # ...
 
   ## Check engine ----
-  # ...
+  match.arg(engine,
+            c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
+            several.ok = FALSE)
 
 
   # Create formula ----
@@ -751,7 +758,7 @@ new_fits <- function(data,
 # bottom of function ----
 
 # separate fits
-output_separate <- new_fits(
+output_separate <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -763,7 +770,7 @@ output_separate <- new_fits(
 
 
 # joint fits
-output_joint <- new_fits(
+output_joint <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -774,7 +781,7 @@ output_joint <- new_fits(
 )
 
 # group excluded
-output_no_groups <- new_fits(
+output_no_groups <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -782,7 +789,7 @@ output_no_groups <- new_fits(
 )
 
 # splines
-output_separate_spline <- new_fits(
+output_separate_spline <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -796,7 +803,7 @@ output_separate_spline <- new_fits(
 )
 
 # using the "survival" engine
-output_separate_diff_engine <- new_fits(
+output_separate_diff_engine <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -811,7 +818,7 @@ source("inst/templates/flexsurvcure_attempt.R")
 make_survival_reg_flexsurvcure()
 
 # using the flexsurvcure engine
-output_cure <- new_fits(
+output_cure <- fit_models(
   data = surv_data,
   time = "time",
   event = "event",
@@ -852,7 +859,7 @@ output_cure <- new_fits(
 # )
 
 #
-# output_separate_diff_engine <- new_fits(
+# output_separate_diff_engine <- fit_models(
 #   data = surv_data,
 #   time = "time",
 #   event = "event",
