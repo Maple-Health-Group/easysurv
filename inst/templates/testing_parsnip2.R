@@ -75,7 +75,7 @@ output_separate_diff_engine <- fit_models(
   include_ci = FALSE
 )
 
-# using the flexsurvcure engine
+# using the flexsurvcure engine (expect warnings due to summary means being Inf)
 output_cure <- fit_models(
   data = surv_data,
   time = "time",

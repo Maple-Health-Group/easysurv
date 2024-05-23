@@ -1,14 +1,10 @@
 ###########
 # This file WAS CREATED for the new easysurv release.
+# It is under construction.
 ###########
 
-#' @importFrom data.table rbindlist
-#' @importFrom parsnip survival_reg set_engine
-#' @importFrom purrr map discard keep pmap pmap_chr set_names
 #' @importFrom stats as.formula
 #' @importFrom survminer ggsurvplot surv_fit
-#' @importFrom tibble as_tibble
-#' @importFrom tidyr expand_grid
 #'
 #' @export
 #'
@@ -151,62 +147,22 @@ fit_models <- function(data,
 
   if (approach == "no_groups" | approach == "joint_fits") {
     if (engine == "flexsurvspline") {
-      combinations <- tidyr::expand_grid(k, scale)
 
-      models <- purrr::pmap(combinations, function(k, scale) {
-        parsnip::survival_reg() |>
-          parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
-          pfit(
-            formula = fit_formula,
-            data = data
-          )
-      })
+      out <- process_spline_combinations(k, scale, fit_formula, data)
 
-      names(models) <- purrr::pmap_chr(combinations, function(k, scale) {
-        paste(k, "knot", scale, "scale", sep = "_")
-      })
-
-      distributions <- list(
-        dists_attempted = combinations,
-        dists_success = models |> purrr::discard(is.null) |> names(),
-        dists_failed = models |> purrr::keep(is.null) |> names()
-      )
     } else {
-      models <- purrr::map(
-        purrr::set_names(dists, dists), ~ {
-          parsnip::survival_reg(dist = .x) |>
-            parsnip::set_engine(engine) |>
-            pfit(
-              formula = fit_formula,
-              data = data
-            )
-        }
-      )
 
-      distributions <- list(
-        dists_attempted = dists,
-        dists_success = models |> purrr::discard(is.null) |> names(),
-        dists_failed = models |> purrr::keep(is.null) |> names()
-      )
+      out <- process_distributions(dists, fit_formula, data, engine)
     }
 
-    models <- models |> purrr::discard(is.null)
+    models <- out$models
+    distributions <- out$distributions
 
     parameters <- get_surv_parameters(models)
 
-    summary <- list(
-      fit_averages =
-        data.table::rbindlist(lapply(models,
-                                     get_fit_averages,
-                                     get_mean = FALSE
-        )) |> tibble::as_tibble()
-    )
+    summary <- list(fit_averages = get_fit_averages_summary(models),
+                    goodness_of_fit = get_goodness_of_fit(models))
 
-    # NOTE TO SELF: CAN TIDY THIS UP BY RETURNING FIRST THEN PUTTING IN SUMMARY?
-    summary <- c(
-      summary,
-      list(goodness_of_fit = get_goodness_of_fit(models))
-    )
   }
 
   if (approach == "separate_fits") {
@@ -217,61 +173,22 @@ fit_models <- function(data,
       data_subset <- nested[["data"]][[tx]]
 
       if (engine == "flexsurvspline") {
-        combinations <- tidyr::expand_grid(k, scale)
 
-        models[[tx]] <- purrr::pmap(combinations, function(k, scale) {
-          parsnip::survival_reg() |>
-            parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
-            pfit(
-              formula = fit_formula,
-              data = data_subset
-            )
-        })
+        out <- process_spline_combinations(k, scale, fit_formula, data_subset)
 
-        names(models[[tx]]) <- purrr::pmap_chr(combinations, function(k, scale) {
-          paste(k, "knot", scale, "scale", sep = "_")
-        })
-
-        distributions[[tx]] <- list(
-          dists_attempted = combinations,
-          dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
-          dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
-        )
       } else {
-        models[[tx]] <- purrr::map(
-          purrr::set_names(dists, dists), ~ {
-            parsnip::survival_reg(dist = .x) |>
-              parsnip::set_engine(engine) |>
-              pfit(
-                formula = fit_formula,
-                data = data_subset
-              )
-          }
-        )
 
-        distributions[[tx]] <- list(
-          dists_attempted = dists,
-          dists_success = models[[tx]] |> purrr::discard(is.null) |> names(),
-          dists_failed = models[[tx]] |> purrr::keep(is.null) |> names()
-        )
+        out <- process_distributions(dists, fit_formula, data_subset, engine)
       }
 
-      models[[tx]] <- models[[tx]] |> purrr::discard(is.null)
+      models[[tx]] <- out$models
+      distributions[[tx]] <- out$distributions
 
       parameters[[tx]] <- get_surv_parameters(models[[tx]])
 
-      summary[[tx]] <- list(
-        fit_averages =
-          data.table::rbindlist(lapply(models[[tx]],
-                                       get_fit_averages,
-                                       get_mean = FALSE
-          )) |> tibble::as_tibble()
-      )
+      summary[[tx]] <- list(fit_averages = get_fit_averages_summary(models[[tx]]),
+                            goodness_of_fit = get_goodness_of_fit(models[[tx]]))
 
-      summary[[tx]] <- c(
-        summary[[tx]],
-        list(goodness_of_fit = get_goodness_of_fit(models[[tx]]))
-      )
     }
 
     names(models) <-
@@ -352,3 +269,67 @@ fit_models <- function(data,
 
   return(out)
 }
+
+
+
+
+
+# Helper functions ----
+
+#' @importFrom parsnip survival_reg set_engine
+#' @importFrom purrr map discard keep pmap pmap_chr set_names
+#' @importFrom tidyr expand_grid
+process_spline_combinations <- function(k, scale, fit_formula, data) {
+
+  combinations <- tidyr::expand_grid(k, scale)
+
+  models <- purrr::pmap(combinations, function(k, scale) {
+    parsnip::survival_reg() |>
+      parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
+      pfit(
+        formula = fit_formula,
+        data = data
+      )
+  })
+
+  names(models) <- purrr::pmap_chr(combinations, function(k, scale) {
+    paste(k, "knot", scale, "scale", sep = "_")
+  })
+
+  distributions <- list(
+    dists_attempted = combinations,
+    dists_success = models |> purrr::discard(is.null) |> names(),
+    dists_failed = models |> purrr::keep(is.null) |> names()
+  )
+
+  models <- models |> purrr::discard(is.null)
+
+  return(list(models = models, distributions = distributions))
+}
+
+
+#' @importFrom parsnip survival_reg set_engine
+#' @importFrom purrr map discard keep pmap pmap_chr set_names
+process_distributions <- function(dists, fit_formula, data, engine) {
+  models <- purrr::map(
+    purrr::set_names(dists, dists), ~ {
+      parsnip::survival_reg(dist = .x) |>
+        parsnip::set_engine(engine) |>
+        pfit(
+          formula = fit_formula,
+          data = data
+        )
+    }
+  )
+
+  distributions <- list(
+    dists_attempted = dists,
+    dists_success = models |> purrr::discard(is.null) |> names(),
+    dists_failed = models |> purrr::keep(is.null) |> names()
+  )
+
+  models <- models |> purrr::discard(is.null)
+
+  return(list(models = models, distributions = distributions))
+}
+

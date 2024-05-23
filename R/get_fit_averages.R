@@ -186,3 +186,21 @@ get_fit_averages <- function(mod,
 
   return(out)
 }
+
+#' @importFrom data.table rbindlist
+#' @importFrom tibble as_tibble
+get_fit_averages_summary <- function(models,
+                                     get_median = TRUE,
+                                     get_rmst = TRUE,
+                                     get_mean = FALSE) {
+  out <- lapply(models,
+                get_fit_averages,
+                get_median = get_median,
+                get_rmst = get_rmst,
+                get_mean = get_mean
+  )
+
+  out <- data.table::rbindlist(out) |> tibble::as_tibble()
+
+  return(out)
+}
