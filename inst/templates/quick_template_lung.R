@@ -53,46 +53,32 @@ head(surv_data, 6)
 # We recommend defining a "tibble" with the following variables:
 # - "time"       [Numeric] Time of event/censor
 # - "event"      [Numeric] Status (0 = right censored, 1 = event)
-# - "strata"     [Factor]  The treatment arm / grouping.
+# - "group"     [Factor]  The treatment arm / grouping.
 
 surv_data <- surv_data |>
   # dplyr::filter(PARAMCD == "PFS") |> # Filtering may be relevant for your data
   dplyr::mutate(
     time = time,
     event = status - 1,
-    strata = sex
+    group = sex
   ) |>
-  dplyr::mutate_at("strata", as.factor) |>
+  dplyr::mutate_at("group", as.factor) |>
   dplyr::as_tibble() |>
-  dplyr::select(time, event, strata) # Optional: Just keep variables of interest
-
-surv_data
+  dplyr::select(time, event, group) # Optional: Just keep variables of interest
 
 
-# Data Labeling ---------------------------------------------------------------
+# Data Labelling and Assessment ------------------------------------------------
 
 # Overwrite any labels impacted by re-coding
 attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
 
-# See the levels of the strata
-surv_data |> count(strata)
+# Assign group labels in a consistent order with the levels command
+levels(surv_data$group) <- group_labels <- c("Male", "Female")
 
-# Assign strata labels in a consistent order with the levels command
-levels(surv_data$strata) <- strata_labels <- c("Male", "Female")
-
-# Define an endpoint label which can be used in plots (if desired)
-endpoint_label <- "Overall Survival"
-
-
-# Data Assessment --------------------------------------------------------------
-
-# Make sure the data appears as expected.
-# A tibble prints the first 10 rows by default
+# See the levels of the groups
+surv_data |> count(group)
+surv_data |> count(group, event)
 surv_data
-
-# See sample sizes and censor/event counts
-surv_data |> count(strata)
-surv_data |> count(strata, event)
 
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
@@ -103,43 +89,33 @@ surv_data |> count(strata, event)
 # easysurv analysis -----------------------------------------------------------
 ## Kaplan Meier analysis -------------------------------------------------------
 
-# Toggle the comment on the next line to see more about quick_KM
-# ?quick_KM
+# Toggle the comment on the next line to see more about get_KM
+# ?get_KM
 
-KM_check <- easysurv::quick_KM(
+KM_check <- easysurv::get_KM(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "strata",
+  group = "group",
 
-  # Some of the optional arguments for easysurv...
-  strata_labels = strata_labels,
-  add_time_0 = TRUE,
-
-  # Some of the optional arguments for ggsurvplot...
-  title = "Kaplan-Meier Plot",
-  subtitle = endpoint_label,
-  ylab = endpoint_label,
+  # Some of the optional arguments for ggsurvplot
   xlab = "Months",
   xscale = 1,       # display in months (original)
-  break.x.by =  3   # 3 month breaks
-
+  break.x.by = 3   # 3 month breaks
 )
 
 KM_check
 
 ## Proportional Hazards Tests ------------------------------------------
 
-# Toggle the comment on the next line to see more about quick_PH
-# ?quick_PH
+# Toggle the comment on the next line to see more about test_PH
+# ?test_PH
 
-PH_check <- easysurv::quick_PH(
+PH_check <- easysurv::test_PH(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "strata",
-  strata_labels = strata_labels, # Optional
-  subtitle = endpoint_label # Optional
+  group = "group"
 )
 
 PH_check
@@ -150,20 +126,10 @@ PH_check
 # After assessing the Kaplan Meier and Proportional Hazards outputs,
 # choose a set of analyses to perform.
 
-do_standard <- TRUE # TRUE: run standard parametric model fits (separate)
-do_joint <- FALSE # TRUE: run standard parametric model fits (joint)
-do_cure <- FALSE # TRUE: run mixture cure model fits
-do_splines <- FALSE # TRUE: run spline model fits
-
-dists_global <- c(
-  "exp",
-  "gamma",
-  "gengamma",
-  "gompertz",
-  "llogis",
-  "lnorm",
-  "weibull"
-)
+do_separate <- TRUE # TRUE: run standard parametric model fits (separate)
+do_joint <- TRUE # TRUE: run standard parametric model fits (joint)
+do_splines <- TRUE # TRUE: run spline model fits
+do_cure <- TRUE # TRUE: run mixture cure model fits
 
 # Times over which to generate/plot extrapolations
 times <- seq(
@@ -174,121 +140,103 @@ times <- seq(
 
 ## Model Fitting ---------------------------------------------------------------
 
+# Toggle line below to see the function help
+# ?fit_models
+
 ### Separate fits --------------------------------------------------------------
 
-if (do_standard) {
-  dists <- dists_global
+if (do_separate) {
 
-  # Toggle line below to see the function help
-  # ?quick_fit
-
-  # Fit models
-  fit_check <- easysurv::quick_fit(
+  fit_check_separate <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
-    strata = "strata",
-    dists = dists,
-    # Optional easysurv arguments
-    times = times,
-    strata_labels = strata_labels,
-    xlab = "Months",
-    add_interactive_plots = TRUE
+    group = "group",
+    group_as_covariate = FALSE,
+    eval_time = times
   )
-}
 
+}
 
 ### Joint fits -----------------------------------------------------------------
 
 if (do_joint) {
-  dists <- dists_global
 
-  # Toggle line below to see the function help
-  # ?quick_fit_joint
+  fit_check_joint <- easysurv::fit_models(
+    data = surv_data,
+    time = "time",
+    event = "event",
+    group = "group",
+    group_as_covariate = TRUE,
+    eval_time = times
+  )
 
-  # Fit models
-  fit_check_joint <-
-    easysurv::quick_fit_joint(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Months",
-      add_interactive_plots = FALSE
-    )
+}
+
+### Spline fits ----------------------------------------------------------------
+
+if (do_splines) {
+
+  fit_check_splines <- easysurv::fit_models(
+    data = surv_data,
+    time = "time",
+    event = "event",
+    group = "group",
+    group_as_covariate = FALSE,
+    engine = "flexsurvspline",
+    k = c(1,2,3),
+    scale = "hazard",
+    eval_time = times
+  )
 }
 
 
 ### Mixture cure fits ----------------------------------------------------------
 
 if (do_cure) {
-  dists <- dists_global
 
-  # Toggle line below to see the function help
-  # ?quick_fit_cure
-
-  # Fit models
-  fit_check_cure <-
-    easysurv::quick_fit_cure(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Months",
-      add_interactive_plots = FALSE
-    )
-}
-
-### Spline fits ----------------------------------------------------------------
-
-if (do_splines) {
-  # Define distributions (splines require information on knots and scale)
-  spline_dists <- tibble(
-    "knots" = c(rep(1:3, 3)),
-    "scale" = c(
-      rep("odds", 3),
-      rep("hazard", 3),
-      rep("normal", 3)
-    )
+  fit_check_cure <- easysurv::fit_models(
+    data = surv_data,
+    time = "time",
+    event = "event",
+    group = "group",
+    group_as_covariate = FALSE,
+    engine = "flexsurvcure",
+    eval_time = times
   )
-
-  # Toggle line below to see the function help
-  # ?quick_fit_splines
-
-  # Fit models
-  fit_check_splines <-
-    easysurv::quick_fit_splines(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = spline_dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Months",
-      add_interactive_plots = FALSE
-    )
 }
-
 
 ## See Outputs ------------------------------------------------------------------
 
-if (do_standard) fit_check
-if (do_joint) fit_check_joint
-if (do_cure) fit_check_cure
-if (do_splines) fit_check_splines
+if (do_separate) View(fit_check_separate)
+if (do_joint) View(fit_check_joint)
+if (do_splines) View(fit_check_splines)
+if (do_cure) View(fit_check_cure)
 
 
 ## Excel Exports ----------------------------------------------------------------
+
+
+
+
+
+# Note to self: Set it up as an example that sends different items to different workbooks.
+# Like: KM to one, PH to another, and fit_models object to its own wb.
+
+# Toggle the comment on the next line to see more about quick_to_XL
+# ?quick_to_XL
+
+# probably call it easysurv_to_Excel or something like that.
+# easy_object instead of quick_object
+
+# base the exporting on easy_flexsurv style classes for fits.
+
+
+
+
+
+
+
 
 # Create a new workbook object
 wb <- openxlsx::createWorkbook()
@@ -300,7 +248,7 @@ wb <- openxlsx::createWorkbook()
 quick_to_XL(wb = wb, quick_object = KM_check)
 quick_to_XL(wb = wb, quick_object = PH_check)
 
-if (do_standard) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
+if (do_separate) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
 if (do_joint) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_joint)
 if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
 if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)

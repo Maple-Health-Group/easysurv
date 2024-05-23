@@ -255,7 +255,7 @@ get_goodness_of_fit <- function(mod) {
 #' @noRd
 get_surv_parameters <- function(models) {
   # Initialize an empty list to store results
-  surv_params <- list()
+  out <- list()
 
   for (i in seq_along(models)) {
     engine <- models[[i]]$spec$engine
@@ -325,15 +325,15 @@ get_surv_parameters <- function(models) {
     }
 
     # Variance-covariance matrices
-    surv_params[[i]] <- combined_results
+    out[[i]] <- combined_results
   }
 
   # Start the tibble with distribution, parameter and covariate_marker columns.
-  surv_params <- dplyr::bind_rows(surv_params) |>
+  out <- dplyr::bind_rows(out) |>
     dplyr::relocate("distribution", "parameter", "covariate_marker") |>
     tibble::as_tibble()
 
-  return(surv_params)
+  return(out)
 }
 
 #' @importFrom purrr map

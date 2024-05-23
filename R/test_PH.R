@@ -123,6 +123,9 @@ test_PH <- function(data,
     schoenfeld_plot = schoenfeld_plot
   )
 
+  # Assign a class
+  class(out) <- c(class(out), "easy_PH")
+
   return(out)
 
 }

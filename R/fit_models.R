@@ -334,5 +334,9 @@ fit_models <- function(data,
   # remove NULL
   out <- out |> purrr::discard(is.null)
 
+  # Assign a class
+  class_name <- paste0("easy_", engine)
+  class(out) <- c(class(out), class_name)
+
   return(out)
 }

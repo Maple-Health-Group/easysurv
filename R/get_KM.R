@@ -10,6 +10,9 @@
 #' event of interest occurred.
 #' @param group (Optional) The name of the column in \code{data} defining the
 #' grouping variable. Default is \code{NULL}.
+#' @param group_labels Optional character vector containing the names of
+#' the strata (default is NULL). Provide in a consistent order with
+#' \code{levels(as.factor(data$group))}.
 #' @param add_time_0 (Optional) Logical indicating whether to add time 0
 #' to the Kaplan-Meier estimates. Default is \code{FALSE}.
 #' @param ... (Optional) Parameters to pass to ggsurvplot.
@@ -38,6 +41,7 @@ get_KM <- function(data,
                    time,
                    event,
                    group = NULL,
+                   group_labels = NULL,
                    add_time_0 = FALSE,
                    ...) {
 
@@ -69,7 +73,7 @@ get_KM <- function(data,
   if (is.null(group)) {
     KM_covariate <- 1
   } else {
-    group_list <- levels(droplevels(as.factor(data[[group]])))
+    group_list <- `if`(is.null(group_labels), levels(droplevels(as.factor(data[[group]]))), group_labels)
     KM_covariate <- group
   }
 
@@ -129,13 +133,24 @@ get_KM <- function(data,
                                step_KM(x, add_time_0 = add_time_0)
                              })
                       )
+
+    KM_plot <- plot_KM(KM,
+                       legend.labs = group_list,
+                       ...)
+
+    KM_summary <- summarise_KM(KM,
+                               strata_labels = group_list)
+
+    rownames(KM_summary) <- group_list
+
   } else {
     KM_per_group <- NULL
+
+    KM_plot <- plot_KM(KM,
+                       ...)
+
+    KM_summary <- summarise_KM(KM)
   }
-
-  KM_plot <- plot_KM(KM, ...)
-
-  KM_summary <- summarise_KM(KM)
 
   KM_median_follow_up <- get_median_FU(
     data = data,
@@ -146,6 +161,8 @@ get_KM <- function(data,
 
   KM_summary <- cbind(KM_summary, KM_median_follow_up)
 
+  if (!is.null(group)) rownames(KM_summary) <- group_list
+
   out <- list(
     KM = KM,
     KM_for_Excel = KM_for_Excel,
@@ -153,6 +170,9 @@ get_KM <- function(data,
     KM_plot = KM_plot,
     KM_summary = KM_summary
   )
+
+  # Assign a class
+  class(out) <- c(class(out), "easy_KM")
 
   return(out)
 }
