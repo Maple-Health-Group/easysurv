@@ -3,6 +3,7 @@
 # It is under construction.
 ###########
 
+#' @importFrom purrr discard
 #' @importFrom stats as.formula
 #' @importFrom survminer ggsurvplot surv_fit
 #' @importFrom tidyr nest
@@ -32,6 +33,7 @@ fit_models <- function(data,
   # Create NULL objects ----
   KM <- NULL
   KM_plot <- NULL
+  cure_fractions <- NULL
 
   # Validate argument inputs ----
 
@@ -156,6 +158,7 @@ fit_models <- function(data,
 
     models <- out$models
     distributions <- out$distributions
+    if (engine == "flexsurvcure") cure_fractions <- out$cure_fractions
 
     parameters <- get_surv_parameters(models)
 
@@ -182,6 +185,7 @@ fit_models <- function(data,
 
       models[[tx]] <- out$models
       distributions[[tx]] <- out$distributions
+      if (engine == "flexsurvcure") cure_fractions[[tx]] <- out$cure_fractions
 
       parameters[[tx]] <- get_surv_parameters(models[[tx]])
 
@@ -195,6 +199,9 @@ fit_models <- function(data,
       names(parameters) <-
       names(summary) <-
       group_list
+
+    if (engine == "flexsurvcure") names(cure_fractions) <- group_list
+
   }
 
 
@@ -258,6 +265,7 @@ fit_models <- function(data,
     engine = engine,
     distributions = distributions,
     models = models,
+    cure_fractions = cure_fractions,
     parameters = parameters,
     predictions = predictions,
     plots = plots,
@@ -265,6 +273,9 @@ fit_models <- function(data,
     KM = KM,
     KM_plot = KM_plot
   )
+
+  # remove NULL
+  out <- out |> purrr::discard(is.null)
 
   return(out)
 }
@@ -328,6 +339,11 @@ process_distributions <- function(dists, fit_formula, data, engine) {
   )
 
   models <- models |> purrr::discard(is.null)
+
+  if (engine == "flexsurvcure") {
+    cure_fractions <- purrr::map(models, get_cure_fractions)
+    return(list(models = models, distributions = distributions, cure_fractions = cure_fractions))
+  }
 
   return(list(models = models, distributions = distributions))
 }
