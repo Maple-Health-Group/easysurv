@@ -110,7 +110,7 @@ test_PH <- function(data,
 
   schoenfeld_plot <-
     plot_schoenfeld(
-      fit = the_coxph,
+      fit_coxph = the_coxph,
       formula = PH_formula,
       data = data,
       plot.theme = plot.theme)
