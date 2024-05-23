@@ -40,7 +40,8 @@ plot_KM(
 \item{subtitle}{Optional subtitle for the Kaplan-Meier plot. Default is NULL.}
 
 \item{legend.labs}{Character vector specifying legend labels to replace
-strata names from the fit. Should be provided in the same order as the strata.}
+strata names from the fit. Should be provided in the same order as the
+strata.}
 
 \item{legend.title}{Title of the legend.}
 
@@ -51,7 +52,8 @@ strata names from the fit. Should be provided in the same order as the strata.}
 interval.}
 
 \item{conf.int.alpha}{Transparency level of the confidence interval fill
-color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is 0.3.}
+color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is
+0.3.}
 
 \item{conf.int.style}{Style of the confidence interval. Allowed values:
 "ribbon" or "step".}

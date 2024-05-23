@@ -34,12 +34,16 @@ get_median_FU <- function(data,
   # Find median quantile
   if (is.null(group)) {
     quantiles <- stats::quantile(
-      survminer::surv_fit(stats::as.formula(paste0("inverseSurv ~ 1")), data = data), 0.5
-    )
+      survminer::surv_fit(stats::as.formula(
+        paste0("inverseSurv ~ 1")),
+        data = data),
+      0.5)
   } else {
     quantiles <- stats::quantile(
-      survminer::surv_fit(stats::as.formula(paste0("inverseSurv ~ as.factor(", group, ")")), data = data), 0.5
-    )
+      survminer::surv_fit(stats::as.formula(
+        paste0("inverseSurv ~ as.factor(", group, ")")),
+        data = data),
+      0.5)
   }
 
   # Do not keep CI.

@@ -15,10 +15,10 @@ URL: https://github.com/Maple-Health-Group/easysurv,
     https://maple-health-group.github.io/easysurv/
 BugReports: https://github.com/Maple-Health-Group/easysurv/issues
 Depends: 
-    R (>= 4.1.0),
-    censored
+    R (>= 4.1.0)
 Imports: 
     bshazard,
+    censored,
     data.table,
     dplyr,
     fs,

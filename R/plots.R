@@ -50,14 +50,16 @@ plot_fits <- function(data) {
 #' @param title Optional title for the Kaplan-Meier plot. Default is NULL.
 #' @param subtitle Optional subtitle for the Kaplan-Meier plot. Default is NULL.
 #' @param legend.labs Character vector specifying legend labels to replace
-#' strata names from the fit. Should be provided in the same order as the strata.
+#' strata names from the fit. Should be provided in the same order as the
+#' strata.
 #' @param legend.title Title of the legend.
 #' @param legend.position Position of the legend in the plot. Allowed values:
 #' "left", "right", "bottom", "top", or "none".
 #' @param conf.int Logical value indicating whether to display the confidence
 #' interval.
 #' @param conf.int.alpha Transparency level of the confidence interval fill
-#' color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is 0.3.
+#' color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is
+#' 0.3.
 #' @param conf.int.style Style of the confidence interval. Allowed values:
 #' "ribbon" or "step".
 #' @param tables.col Color for all tables under the main plot. Default is
@@ -340,7 +342,9 @@ plot_schoenfeld <- function(
   )
 
   data2plot$covariate <-
-    stringr::str_replace_all(data2plot$covariate, stringr::fixed(formula_rhs), "")
+    stringr::str_replace_all(data2plot$covariate,
+                             stringr::fixed(formula_rhs),
+                             "")
 
   gplot <- ggplot2::ggplot(ggplot2::aes(xval, res), data = data2plot) +
     ggplot2::geom_point(

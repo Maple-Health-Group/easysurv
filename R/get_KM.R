@@ -135,7 +135,7 @@ get_KM <- function(data,
 
   KM_plot <- plot_KM(KM, ...)
 
-  KM_summary = summarise_KM(KM)
+  KM_summary <- summarise_KM(KM)
 
   KM_median_follow_up <- get_median_FU(
     data = data,
