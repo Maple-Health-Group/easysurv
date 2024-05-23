@@ -70,10 +70,10 @@ fit_models <- function(data,
   ## Check eval_time ----
   # If eval_time is missing, create a sequence from 0 to 2.5 times the maximum time
   if (is.null(eval_time)) {
-    eval_time <- seq(
-      from = 0, to = ceiling(max(data[[time]]) * 2.5),
-      length.out = 100
-    )
+    max_time <- max(data[[time]], na.rm = TRUE)
+    eval_time <- seq(0,
+                     ceiling(max_time * 2.5),
+                     length.out = 100)
   }
 
   ## Check covariate approach ----
@@ -86,16 +86,14 @@ fit_models <- function(data,
   } else {
     group_list <- levels(droplevels(as.factor(data[[group]])))
     KM_covariate <- group
-  }
 
-  if (!is.null(group) & group_as_covariate) {
-    approach <- "joint_fits"
-    fit_covariate <- group
-  }
-
-  if (!is.null(group) & !group_as_covariate) {
-    approach <- "separate_fits"
-    fit_covariate <- 1
+    if (group_as_covariate) {
+      approach <- "joint_fits"
+      fit_covariate <- group
+    } else {
+      approach <- "separate_fits"
+      fit_covariate <- 1
+    }
   }
 
 
