@@ -1,3 +1,7 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
 #' Summarize the data in a survfit object
 #'
 #' This function takes a survival object generated from a call to

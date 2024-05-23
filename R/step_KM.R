@@ -1,3 +1,7 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
 #' Tabulate KM data in a 'stepped' manner for external plotting
 #'
 #' This function takes a survival object generated from a call to

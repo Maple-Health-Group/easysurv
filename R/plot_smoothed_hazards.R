@@ -1,3 +1,8 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
+
 #' Plot smoothed hazards of survival data
 #'
 #' This function generates a plot showing the hazards of the underlying

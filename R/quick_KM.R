@@ -1,3 +1,8 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
+
 #' Generate Kaplan-Meier (KM) plot and related KM info.
 #'
 #' Returns a \code{easysurv}-themed Kaplan-Meier (KM) plot and related KM info.

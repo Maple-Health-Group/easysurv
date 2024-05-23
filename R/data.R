@@ -1,3 +1,7 @@
+###########
+# This file has NOT been updated for the new easysurv release.
+###########
+
 #' Example clinical trial data from `ggsurvfit`
 #'
 #' Background

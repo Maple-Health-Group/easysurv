@@ -1,3 +1,7 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
 #' Modified version of \code{\link[survminer]{ggcoxdiagnostics}} to replace
 #' \code{gather_} and set \code{geom_smooth} formulae
 #'
@@ -5,7 +9,7 @@
 #' Proportional Hazards Model fit, that
 #' can be calculated with \code{\link[survival]{coxph}} function.
 #' This function is largely identical to \code{ggcoxdiagnostics}
-#' from the /code{survminer} package with some minor alterations in order to
+#' from the \code{survminer} package with some minor alterations in order to
 #' accommodate \code{easysurv} functionality.
 #'
 #' @param fit_coxph An object of class \code{\link[survival]{coxph.object}} -

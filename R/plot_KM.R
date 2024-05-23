@@ -1,3 +1,8 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
+
 #' Plots a Kaplan-Meier Survival Curve using \code{ggsurvplot} with
 #' Custom Defaults
 #'

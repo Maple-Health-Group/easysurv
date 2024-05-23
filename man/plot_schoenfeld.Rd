@@ -72,7 +72,7 @@ Displays diagnostics graphs presenting goodness of Cox
 Proportional Hazards Model fit, that
 can be calculated with \code{\link[survival]{coxph}} function.
 This function is largely identical to \code{ggcoxdiagnostics}
-from the /code{survminer} package with some minor alterations in order to
+from the \code{survminer} package with some minor alterations in order to
 accommodate \code{easysurv} functionality.
 }
 \examples{

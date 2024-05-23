@@ -1,8 +1,7 @@
-#' @importFrom sysfonts font_add_google
-#' @importFrom showtext showtext_auto
+###########
+# This file WAS UPDATED for the new easysurv release.
+###########
+
 .onLoad <- function(libname, pkgname) {
-  sysfonts::font_add_google(name = "Roboto Condensed",
-                            family = "Roboto Condensed",
-                            db_cache = TRUE)
-  showtext::showtext_auto()
+  make_survival_reg_flexsurvcure()
 }

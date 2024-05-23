@@ -1,3 +1,8 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
+
 #' Print quick_PH objects.
 #' @param x a quick_PH object
 #' @param ... These dots are for future extensions and must be empty.

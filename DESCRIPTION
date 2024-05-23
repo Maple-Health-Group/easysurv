@@ -1,7 +1,7 @@
 Type: Package
 Package: easysurv
 Title: Estimate and Inspect Parametric Survival Models
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person("Niall", "Davison", , "niall.davison@maplehealthgroup.com", role = c("aut", "cre")),
     person("Brad", "Kievit", , "brad.kievit@maplehealthgroup.com", role = "aut")
@@ -21,39 +21,35 @@ Imports:
     cli,
     data.table,
     dplyr,
-    flexsurv,
-    flexsurvcure,
     fs,
     ggplot2,
-    grDevices,
     grid,
     openxlsx,
+    parsnip,
     plotly,
+    purrr,
     rlang,
-    rms,
-    showtext,
     stats,
     stringr,
-    survHE (>= 2.0.0),
     survival,
     survminer,
-    sysfonts,
     tibble,
+    tidyr,
     usethis,
     utils,
     whisker,
     xfun
 Suggests:
-    here,
+    flexsurv,
+    flexsurvcure,
     knitr,
     rmarkdown,
-    rstan,
     testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-VignetteIndexEntry: workflow_quick
+VignetteIndexEntry: 
 LazyData: true
 Config/testthat/edition: 3

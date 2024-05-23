@@ -1,3 +1,7 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
 #' Calculate the median follow-up time (or median time to censoring).
 #'
 #' Reverses the censoring/event variable to derive median follow-up time.

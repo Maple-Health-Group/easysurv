@@ -1,3 +1,7 @@
+###########
+# This file has NOT YET been updated for the new easysurv release.
+###########
+
 #' Adds a custom theme for the package to a \code{ggplot2} plot
 #'
 #' The custom theme is based on \code{\link[hrbrthemes]{theme_ipsum_rc}} from
