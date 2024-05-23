@@ -6,117 +6,39 @@
 \usage{
 plot_KM(
   fit,
-  title = NULL,
-  subtitle = NULL,
-  legend.labs = NULL,
-  legend.title = ggplot2::element_blank(),
-  legend.position = "top",
-  conf.int = TRUE,
-  conf.int.alpha = 0.3,
-  conf.int.style = "ribbon",
-  tables.col = "black",
-  risk.table = TRUE,
-  risk.table.pos = "out",
-  risk.table.fontsize = 4,
-  risk.table.title = "Number at risk",
-  cumevents = FALSE,
-  cumcensor = FALSE,
-  surv.median.line = "none",
-  axes.offset = FALSE,
-  plot.theme = theme_bw(),
-  risk.table.theme = theme_bw(),
-  fun = NULL,
-  surv.scale = "percent",
-  xlim = c(0, max(fit$time)),
-  ...
+  risk_table = TRUE,
+  median_line = TRUE,
+  legend_position = "bottom",
+  plot_theme = ggplot2::theme_bw(),
+  xlab = "Time",
+  ylab = "Survival Probability (\%)"
 )
 }
 \arguments{
-\item{fit}{A \code{\link[survival]{survfit}} object or a list of
-\code{\link[survival]{survfit}} objects.}
+\item{fit}{A \code{\link[survival]{survfit}} object representing the
+survival data.}
 
-\item{title}{Optional title for the Kaplan-Meier plot. Default is NULL.}
+\item{risk_table}{Logical value indicating whether to include a risk table
+below the plot. Default is \code{TRUE}.}
 
-\item{subtitle}{Optional subtitle for the Kaplan-Meier plot. Default is NULL.}
+\item{median_line}{Logical value indicating whether to include a line
+representing the median survival time. Default is \code{TRUE}.}
 
-\item{legend.labs}{Character vector specifying legend labels to replace
-strata names from the fit. Should be provided in the same order as the
-strata.}
+\item{legend_position}{Position of the legend in the plot. Default is
+"bottom".}
 
-\item{legend.title}{Title of the legend.}
+\item{plot_theme}{ggplot2 theme for the plot. Default is
+\code{ggplot2::theme_bw()}.}
 
-\item{legend.position}{Position of the legend in the plot. Allowed values:
-"left", "right", "bottom", "top", or "none".}
+\item{xlab}{Label for the x-axis. Default is "Time".}
 
-\item{conf.int}{Logical value indicating whether to display the confidence
-interval.}
-
-\item{conf.int.alpha}{Transparency level of the confidence interval fill
-color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is
-0.3.}
-
-\item{conf.int.style}{Style of the confidence interval. Allowed values:
-"ribbon" or "step".}
-
-\item{tables.col}{Color for all tables under the main plot. Default is
-"black", can be set to "strata".}
-
-\item{risk.table}{Logical value indicating whether to show the "number at
-risk" table.}
-
-\item{risk.table.pos}{Position of the risk table relative to the main plot.
-Allowed values: "out" (outside) or "in" (inside).}
-
-\item{risk.table.fontsize}{Font size for the risk table.}
-
-\item{risk.table.title}{Title for the risk table.}
-
-\item{cumevents}{Logical value indicating whether to include the cumulative
-events table. Default is FALSE.}
-
-\item{cumcensor}{Logical value indicating whether to include the cumulative
-censoring table. Default is FALSE.}
-
-\item{surv.median.line}{Specifies whether and how to draw a horizontal or
-vertical line at the median survival time. Allowed values: "none", "hv"
-(both horizontal and vertical), "h" (horizontal), or "v" (vertical).}
-
-\item{axes.offset}{Logical value indicating whether to set the plot axes to
-start at the origin. Default is FALSE. When FALSE, recommend setting xlim
-to avoid cutting off the end.}
-
-\item{plot.theme}{ggplot2 theme for the plot. Default is \code{theme_bw()}.}
-
-\item{risk.table.theme}{ggplot2 theme for the risk table. Default is
-\code{theme_bw()}.}
-
-\item{fun}{Survival function. Can take on "survival", "event", "cumhaz",
-"cloglog".}
-
-\item{surv.scale}{Scale transformation of survival curves. Allowed values:
-"default" or "percent". Default is "percent".}
-
-\item{xlim}{Numeric vector specifying the left and right limits of the
-x-axis scale.}
-
-\item{...}{Additional arguments to be passed to the
-\code{\link[survminer]{ggsurvplot}} function.}
+\item{ylab}{Label for the y-axis. Default is "Survival Probability (\%)".}
 }
 \value{
-A list containing the plot object and the risk table object.
+A ggplot object representing the Kaplan-Meier survival curve plot.
 }
 \description{
 Generates a Kaplan-Meier survival curve plot using
-\code{\link[survminer]{ggsurvplot}} with customizable options.
-This function provides sensible defaults while allowing for customization.
-}
-\examples{
-\dontrun{
-library(survival)
-fit <- survfit(Surv(time, status) ~ as.factor(sex), data = lung)
-plot_KM(fit,
-  legend.title = "Sex", legend.position = "bottom", conf.int = TRUE
-)
-}
-
+\code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
+This function provides sensible defaults while allowing for customisation.
 }

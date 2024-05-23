@@ -4,7 +4,7 @@
 \alias{get_KM}
 \title{Generate Kaplan-Meier estimates}
 \usage{
-get_KM(data, time, event, group = NULL, add_time_0 = FALSE, ...)
+get_KM(data, time, event, group = NULL, group_labels = NULL, ...)
 }
 \arguments{
 \item{data}{A data frame containing the survival data.}
@@ -18,10 +18,11 @@ event of interest occurred.}
 \item{group}{(Optional) The name of the column in \code{data} defining the
 grouping variable. Default is \code{NULL}.}
 
-\item{add_time_0}{(Optional) Logical indicating whether to add time 0
-to the Kaplan-Meier estimates. Default is \code{FALSE}.}
+\item{group_labels}{Optional character vector containing the names of
+the strata (default is NULL). Provide in a consistent order with
+\code{levels(as.factor(data$group))}.}
 
-\item{...}{(Optional) Parameters to pass to ggsurvplot.}
+\item{...}{(Optional) Parameters to pass to ggsurvfit.}
 }
 \value{
 A list containing Kaplan-Meier estimates, summary statistics, plots,

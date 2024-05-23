@@ -13,18 +13,15 @@
 #' @param group_labels Optional character vector containing the names of
 #' the strata (default is NULL). Provide in a consistent order with
 #' \code{levels(as.factor(data$group))}.
-#' @param add_time_0 (Optional) Logical indicating whether to add time 0
-#' to the Kaplan-Meier estimates. Default is \code{FALSE}.
-#' @param ... (Optional) Parameters to pass to ggsurvplot.
+#' @param ... (Optional) Parameters to pass to ggsurvfit.
 #'
 #' @return A list containing Kaplan-Meier estimates, summary statistics, plots,
 #' and additional outputs.
 #'
 #' @export
 #'
-#' @importFrom survival Surv
+#' @importFrom survival Surv survfit
 #' @importFrom stats as.formula
-#' @importFrom survminer surv_fit
 #' @importFrom tidyr nest
 #'
 #' @examples
@@ -42,7 +39,6 @@ get_KM <- function(data,
                    event,
                    group = NULL,
                    group_labels = NULL,
-                   add_time_0 = FALSE,
                    ...) {
 
   # Validate argument inputs ----
@@ -95,16 +91,14 @@ get_KM <- function(data,
     KM_covariate
   ))
 
-  KM <- survminer::surv_fit(
-    formula = KM_formula,
-    conf.int = 0.95,
-    data = data,
-    type = "kaplan-meier"
+  KM <- do.call(survival::survfit,
+          args = list(
+            formula = KM_formula,
+            conf.int = 0.95,
+            data = data,
+            type = "kaplan-meier"
+          )
   )
-
-  if (add_time_0) {
-    KM <- survival::survfit0(KM, start.time = 0)
-  }
 
   KM_for_Excel <- list(all = step_KM(KM))
 
@@ -115,14 +109,14 @@ get_KM <- function(data,
     KM_per_group <- lapply(
       purrr::set_names(nested$data, group_list),
       function(data) {
-        surv_out <- survminer::surv_fit(KM_formula_separate,
-                                        conf.int = 0.95,
-                                        data = data,
-                                        type = "kaplan-meier"
-        )
-        if (add_time_0) {
-          surv_out <- survival::survfit0(surv_out, start.time = 0)
-        }
+
+        surv_out <- survival::survfit(
+                              formula = KM_formula_separate,
+                              conf.int = 0.95,
+                              data = data,
+                              type = "kaplan-meier"
+                            )
+
         return(surv_out)
       }
     )
@@ -130,12 +124,11 @@ get_KM <- function(data,
     KM_for_Excel <- c(KM_for_Excel,
                       lapply(purrr::set_names(KM_per_group, group_list),
                              function(x) {
-                               step_KM(x, add_time_0 = add_time_0)
+                               step_KM(x)
                              })
                       )
 
     KM_plot <- plot_KM(KM,
-                       legend.labs = group_list,
                        ...)
 
     KM_summary <- summarise_KM(KM,

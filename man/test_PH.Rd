@@ -4,14 +4,7 @@
 \alias{test_PH}
 \title{Test Proportional Hazards Assumption}
 \usage{
-test_PH(
-  data,
-  time,
-  event,
-  group,
-  plot.theme = theme_bw(),
-  risk.table.theme = theme_bw()
-)
+test_PH(data, time, event, group, plot_theme = ggplot2::theme_bw())
 }
 \arguments{
 \item{data}{A data frame containing the survival data.}
@@ -25,11 +18,7 @@ event of interest occurred.}
 \item{group}{The name of the column in \code{data} defining the grouping
 variable.}
 
-\item{plot.theme}{(Optional) The theme for the ggplot2 plots. Default is
-\code{theme_bw()}.}
-
-\item{risk.table.theme}{(Optional) The theme for the risk table plot. Default
-is \code{theme_bw()}.}
+\item{plot_theme}{The theme to be used for the plots.}
 }
 \value{
 A list containing plots and test results related to the assessment

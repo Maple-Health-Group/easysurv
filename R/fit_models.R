@@ -44,9 +44,9 @@
 #' parameters, predictions, plots, and summary statistics.
 #' @export
 #'
+#' @importFrom survival survfit
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
-#' @importFrom survminer ggsurvplot surv_fit
 #' @importFrom tidyr nest
 #'
 #' @examples
@@ -191,14 +191,17 @@ fit_models <- function(data,
   ))
 
   # Create KMs
-  KM <- survminer::surv_fit(
-    formula = KM_formula,
-    conf.int = 0.95,
-    data = data,
-    type = "kaplan-meier"
+  # do.call allows for the formula to be passed how we want it.
+  KM <- do.call(survival::survfit,
+    args = list(
+      formula = KM_formula,
+      conf.int = 0.95,
+      data = data,
+      type = "kaplan-meier"
+    )
   )
 
-  KM_plot <- survminer::ggsurvplot(KM, data = data, ggtheme = theme_bw())
+  KM_plot <- plot_KM(KM)
 
 
   # Fit models ----

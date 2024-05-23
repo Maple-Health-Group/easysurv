@@ -10,10 +10,7 @@
 #' event of interest occurred.
 #' @param group The name of the column in \code{data} defining the grouping
 #' variable.
-#' @param plot.theme (Optional) The theme for the ggplot2 plots. Default is
-#' \code{theme_bw()}.
-#' @param risk.table.theme (Optional) The theme for the risk table plot. Default
-#' is \code{theme_bw()}.
+#' @param plot_theme The theme to be used for the plots.
 #'
 #' @return A list containing plots and test results related to the assessment
 #' of the proportional hazards assumption.
@@ -22,7 +19,6 @@
 #'
 #' @importFrom stats as.formula
 #' @importFrom survival cox.zph coxph survdiff Surv
-#' @importFrom survminer ggsurvplot surv_fit
 #'
 #' @examples
 #' \dontrun{
@@ -38,8 +34,7 @@ test_PH <- function(data,
                     time,
                     event,
                     group,
-                    plot.theme = theme_bw(),
-                    risk.table.theme = theme_bw()
+                    plot_theme = ggplot2::theme_bw()
                     ) {
 
   if (!is.data.frame(data)) {
@@ -77,7 +72,7 @@ test_PH <- function(data,
     ") ~ ", group
   ))
 
-  KM_all <- do.call(survminer::surv_fit,
+  KM_all <- do.call(survival::survfit,
                     args = list(
                       formula = PH_formula,
                       conf.int = 0.95,
@@ -86,14 +81,8 @@ test_PH <- function(data,
                     )
   )
 
-  cloglog_plot <- survminer::ggsurvplot(
-    KM_all,
-    data = data,
-    fun = "cloglog",
-    surv.median.line = "none",
-    axes.offset = TRUE,
-    plot.theme = plot.theme,
-    risk.table.theme = risk.table.theme)
+  cloglog_plot <- plot_cloglog(KM_all,
+                               plot_theme = plot_theme)
 
   the_coxph <- survival::coxph(
     formula = PH_formula,
@@ -113,7 +102,7 @@ test_PH <- function(data,
       fit_coxph = the_coxph,
       formula = PH_formula,
       data = data,
-      plot.theme = plot.theme)
+      plot.theme = plot_theme)
 
   out <- list(
     cloglog_plot = cloglog_plot,

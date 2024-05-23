@@ -38,204 +38,121 @@ plot_fits <- function(data) {
   return(p)
 }
 
-
 #' Plot Kaplan-Meier Data
 #'
 #' Generates a Kaplan-Meier survival curve plot using
-#' \code{\link[survminer]{ggsurvplot}} with customizable options.
-#' This function provides sensible defaults while allowing for customization.
+#' \code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
+#' This function provides sensible defaults while allowing for customisation.
 #'
-#' @param fit A \code{\link[survival]{survfit}} object or a list of
-#' \code{\link[survival]{survfit}} objects.
-#' @param title Optional title for the Kaplan-Meier plot. Default is NULL.
-#' @param subtitle Optional subtitle for the Kaplan-Meier plot. Default is NULL.
-#' @param legend.labs Character vector specifying legend labels to replace
-#' strata names from the fit. Should be provided in the same order as the
-#' strata.
-#' @param legend.title Title of the legend.
-#' @param legend.position Position of the legend in the plot. Allowed values:
-#' "left", "right", "bottom", "top", or "none".
-#' @param conf.int Logical value indicating whether to display the confidence
-#' interval.
-#' @param conf.int.alpha Transparency level of the confidence interval fill
-#' color, ranging from 0 (fully transparent) to 1 (fully opaque). Default is
-#' 0.3.
-#' @param conf.int.style Style of the confidence interval. Allowed values:
-#' "ribbon" or "step".
-#' @param tables.col Color for all tables under the main plot. Default is
-#' "black", can be set to "strata".
-#' @param risk.table Logical value indicating whether to show the "number at
-#' risk" table.
-#' @param risk.table.pos Position of the risk table relative to the main plot.
-#' Allowed values: "out" (outside) or "in" (inside).
-#' @param risk.table.fontsize Font size for the risk table.
-#' @param risk.table.title Title for the risk table.
-#' @param cumevents Logical value indicating whether to include the cumulative
-#' events table. Default is FALSE.
-#' @param cumcensor Logical value indicating whether to include the cumulative
-#' censoring table. Default is FALSE.
-#' @param surv.median.line Specifies whether and how to draw a horizontal or
-#' vertical line at the median survival time. Allowed values: "none", "hv"
-#' (both horizontal and vertical), "h" (horizontal), or "v" (vertical).
-#' @param axes.offset Logical value indicating whether to set the plot axes to
-#' start at the origin. Default is FALSE. When FALSE, recommend setting xlim
-#' to avoid cutting off the end.
-#' @param plot.theme ggplot2 theme for the plot. Default is \code{theme_bw()}.
-#' @param risk.table.theme ggplot2 theme for the risk table. Default is
-#' \code{theme_bw()}.
-#' @param fun Survival function. Can take on "survival", "event", "cumhaz",
-#' "cloglog".
-#' @param xlim Numeric vector specifying the left and right limits of the
-#' x-axis scale.
-#' @param surv.scale Scale transformation of survival curves. Allowed values:
-#' "default" or "percent". Default is "percent".
-#' @param ... Additional arguments to be passed to the
-#' \code{\link[survminer]{ggsurvplot}} function.
-#'
-#' @return A list containing the plot object and the risk table object.
+#' @param fit A \code{\link[survival]{survfit}} object representing the
+#' survival data.
+#' @param risk_table Logical value indicating whether to include a risk table
+#' below the plot. Default is \code{TRUE}.
+#' @param median_line Logical value indicating whether to include a line
+#' representing the median survival time. Default is \code{TRUE}.
+#' @param legend_position Position of the legend in the plot. Default is
+#' "bottom".
+#' @param plot_theme ggplot2 theme for the plot. Default is
+#' \code{ggplot2::theme_bw()}.
+#' @param xlab Label for the x-axis. Default is "Time".
+#' @param ylab Label for the y-axis. Default is "Survival Probability (%)".
+#' @return A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
 #'
-#' @importFrom dplyr filter
-#' @importFrom dplyr select
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 element_blank
-#' @importFrom ggplot2 labs
-#' @importFrom rlang .data
-#' @importFrom survminer ggsurvplot
-#'
-#' @examples
-#' \dontrun{
-#' library(survival)
-#' fit <- survfit(Surv(time, status) ~ as.factor(sex), data = lung)
-#' plot_KM(fit,
-#'   legend.title = "Sex", legend.position = "bottom", conf.int = TRUE
-#' )
-#' }
-#'
+#' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
+#' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
+#' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 plot_KM <- function(fit,
-                    # Optional arguments below
-                    title = NULL,
-                    subtitle = NULL,
-                    legend.labs = NULL,
-                    legend.title = ggplot2::element_blank(),
-                    legend.position = "top",
-                    conf.int = TRUE,
-                    conf.int.alpha = 0.3,
-                    conf.int.style = "ribbon",
-                    tables.col = "black",
-                    risk.table = TRUE,
-                    risk.table.pos = "out",
-                    risk.table.fontsize = 4,
-                    risk.table.title = "Number at risk",
-                    cumevents = FALSE,
-                    cumcensor = FALSE,
-                    surv.median.line = "none",
-                    axes.offset = FALSE,
-                    plot.theme = theme_bw(),
-                    risk.table.theme = theme_bw(),
-                    fun = NULL,
-                    surv.scale = "percent",
-                    xlim = c(0, max(fit$time)),
-                    ...) {
-  # Can't log(0), would return -Inf and an empty plot.
-  if (!is.null(fun)) {
-    surv.scale <- "default"
-    if (fun == "cloglog") xlim <- NULL
+                     risk_table = TRUE,
+                     median_line = TRUE,
+                    legend_position = "bottom",
+                    plot_theme = ggplot2::theme_bw(),
+                     xlab = "Time",
+                     ylab = "Survival Probability (%)") {
+
+  out <- ggsurvfit::ggsurvfit(fit,
+                              type = "survival",
+                              theme = plot_theme) +
+    ggsurvfit::add_censor_mark() +
+    xlab(xlab) +
+    ylab(ylab) +
+    theme(legend.position = legend_position)
+
+  if (risk_table) {
+    out <- out + ggsurvfit::add_risktable(
+    risktable_stats = "n.risk",
+    stats_label = list(n.risk = "Number at risk"),
+    theme = ggsurvfit::theme_risktable_boxed()
+    )
   }
 
-  out <- survminer::ggsurvplot(
-    fit = fit,
-    title = title,
-    subtitle = subtitle,
+  out <- out + scale_ggsurvfit()
 
-    # Legend arguments
-    legend.labs = legend.labs,
-    legend.title = legend.title,
-    legend = legend.position,
-
-    # Confidence interval
-    conf.int = conf.int,
-    conf.int.alpha = conf.int.alpha,
-    conf.int.style = conf.int.style,
-
-    # Risk table
-    tables.col = tables.col,
-    risk.table = risk.table,
-    risk.table.pos = risk.table.pos,
-    risk.table.fontsize = risk.table.fontsize,
-    risk.table.title = risk.table.title,
-
-    # Other tables
-    cumevents = cumevents,
-    cumcensor = cumcensor,
-
-    # Other arguments
-    surv.median.line = surv.median.line,
-    axes.offset = axes.offset,
-    fun = fun,
-    xlim = xlim,
-    surv.scale = surv.scale,
-
-    # Theme
-    ggtheme = plot.theme,
-    tables.theme = risk.table.theme,
-    ...
-  )
-
-  ## ggsurvplot returns an object with $plot and (conditionally) $table
-  # out$plot <- out$plot +
-  #   ggplot2::theme(legend.text = ggplot2::element_text(size = 11))  +
-  #   theme(text = element_text(family = font.family),
-  #         plot.title    = element_text(family = font.family),
-  #         plot.subtitle = element_text(family = font.family),
-  #         axis.title.x  = element_text(family = font.family),
-  #         axis.title.y  = element_text(family = font.family),
-  #         axis.text.x   = element_text(family = font.family),
-  #         axis.text.y   = element_text(family = font.family))
-
-  # if (risk.table) {
-  #   out$table <- out$table +
-  #     ggplot2::theme(plot.title = ggplot2::element_text(
-  #       size = 11,
-  #       face = "plain"
-  #     ))  +
-  #     theme(text          = element_text(family = font.family),
-  #           plot.title    = element_text(family = font.family),
-  #           plot.subtitle = element_text(family = font.family),
-  #           axis.title.x  = element_text(family = font.family),
-  #           axis.text.x   = element_text(family = font.family))
-  # }
-  #
-  # if (cumevents) {
-  #   out$cumevents <- out$cumevents +
-  #     ggplot2::theme(plot.title = ggplot2::element_text(
-  #       size = 11,
-  #       face = "plain"
-  #     ))  +
-  #     theme(text          = element_text(family = font.family),
-  #           plot.title    = element_text(family = font.family),
-  #           plot.subtitle = element_text(family = font.family),
-  #           axis.title.x  = element_text(family = font.family),
-  #           axis.text.x   = element_text(family = font.family))
-  # }
-  #
-  # if (cumcensor) {
-  #   out$ncensor.plot <- out$ncensor.plot +
-  #     ggplot2::theme(plot.title = ggplot2::element_text(
-  #       size = 11,
-  #       face = "plain"
-  #     ))  +
-  #     theme(text          = element_text(family = font.family),
-  #           plot.title    = element_text(family = font.family),
-  #           plot.subtitle = element_text(family = font.family),
-  #           axis.title.x  = element_text(family = font.family),
-  #           axis.text.x   = element_text(family = font.family))
-  # }
+  if (median_line) {
+    out <- out + ggsurvfit::add_quantile(linetype = 2)
+  }
 
   return(out)
 }
 
+#' Cumulative Log Log Plot
+#'
+#' Generates a Cumulative Log Log survival curve plot using
+#' \code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
+#' This function provides sensible defaults while allowing for customisation.
+#'
+#' @param fit A \code{\link[survival]{survfit}} object representing the
+#' survival data.
+#' @param risk_table Logical value indicating whether to include a risk table
+#' below the plot. Default is \code{TRUE}.
+#' @param median_line Logical value indicating whether to include a line
+#' representing the median survival time. Default is \code{TRUE}.
+#' @param legend_position Position of the legend in the plot. Default is
+#' "bottom".
+#' @param plot_theme ggplot2 theme for the plot. Default is
+#' \code{ggplot2::theme_bw()}.
+#' @param xlab Label for the x-axis. Default is "Time".
+#' @param ylab Label for the y-axis. Default is "Log Minus Log Survival".
+#' @return A ggplot object representing the Kaplan-Meier survival curve plot.
+#'
+#' @export
+#'
+#' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
+#' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
+#' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
+plot_cloglog <- function(fit,
+                    risk_table = FALSE,
+                    median_line = FALSE,
+                    legend_position = "bottom",
+                    plot_theme = ggplot2::theme_bw(),
+                    xlab = "Time",
+                    ylab = "Log Minus Log Survival") {
+
+  out <- ggsurvfit::ggsurvfit(fit,
+                              type = "cloglog",
+                              theme = plot_theme) +
+    ggsurvfit::add_censor_mark() +
+    xlab(xlab) +
+    ylab(ylab) +
+    theme(legend.position = legend_position) +
+    scale_x_continuous(transform = "log",
+                       labels = function(x) round(as.numeric(x), digits=2))
+
+  if (risk_table) {
+    out <- out + ggsurvfit::add_risktable(
+      risktable_stats = "n.risk",
+      stats_label = list(n.risk = "Number at risk"),
+      theme = ggsurvfit::theme_risktable_boxed()
+    )
+  }
+
+  if (median_line) {
+    out <- out + ggsurvfit::add_quantile(linetype = 2)
+  }
+
+  return(out)
+}
 
 #' Modified version of \code{\link[survminer]{ggcoxdiagnostics}} to replace
 #' \code{gather_} and set \code{geom_smooth} formulae

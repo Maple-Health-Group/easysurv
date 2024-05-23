@@ -8,7 +8,7 @@
 #' @param event The name of the event variable in data
 #' @param group The name of the group variable in data
 #'
-#' @importFrom survival survfit
+#' @importFrom ggsurvfit survfit2
 #' @importFrom survival Surv
 #' @importFrom stats quantile
 #' @importFrom stats as.formula
@@ -34,13 +34,13 @@ get_median_FU <- function(data,
   # Find median quantile
   if (is.null(group)) {
     quantiles <- stats::quantile(
-      survminer::surv_fit(stats::as.formula(
+      ggsurvfit::survfit2(stats::as.formula(
         paste0("inverseSurv ~ 1")),
         data = data),
       0.5)
   } else {
     quantiles <- stats::quantile(
-      survminer::surv_fit(stats::as.formula(
+      ggsurvfit::survfit2(stats::as.formula(
         paste0("inverseSurv ~ as.factor(", group, ")")),
         data = data),
       0.5)
@@ -66,12 +66,8 @@ get_median_FU <- function(data,
 #' \code{\link[survival]{survfit}}.
 #' The `KM` object should be of class "survfit" and should represent a
 #' single-arm survival analysis (e.g. \code{Surv(time, status) ~ 1}).
-#' @param add_time_0 Optional. Uses survival::survfit0 to add the point for
-#' a starting time (time 0) to a survfit object's elements.
-#' This is useful for plotting. Default is TRUE.
 #'
 #' @importFrom tibble tibble
-#' @importFrom survival survfit0
 #'
 #' @noRd
 #'
@@ -87,16 +83,13 @@ get_median_FU <- function(data,
 #' # Example usage with lung data
 #' fit <- survfit(Surv(time, status) ~ 1, data = lung)
 #'
-#' stepped_KM <- step_KM(fit, add_time_0 = TRUE)
+#' stepped_KM <- step_KM(fit)
 #'
 #' # Send to Excel
 #' write.csv(stepped_KM, "survival_data.csv")
 #' }
 #'
-step_KM <- function(KM, add_time_0 = TRUE) {
-  if (add_time_0) {
-    KM <- survival::survfit0(KM, start.time = 0)
-  }
+step_KM <- function(KM) {
 
   KM_sum <- summary(KM, times = KM$time)
 

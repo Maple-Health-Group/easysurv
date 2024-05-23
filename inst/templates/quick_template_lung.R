@@ -96,12 +96,7 @@ KM_check <- easysurv::get_KM(
   data = surv_data,
   time = "time",
   event = "event",
-  group = "group",
-
-  # Some of the optional arguments for ggsurvplot
-  xlab = "Months",
-  xscale = 1,       # display in months (original)
-  break.x.by = 3   # 3 month breaks
+  group = "group"
 )
 
 KM_check
