@@ -219,7 +219,7 @@ fit_models <- function(data,
 
     parameters <- get_surv_parameters(models)
 
-    summary <- list(fit_averages = get_fit_averages_summary(models),
+    summary <- list(fit_averages = suppressWarnings(get_fit_averages_summary(models)),
                     goodness_of_fit = get_goodness_of_fit(models))
 
   }
@@ -246,7 +246,7 @@ fit_models <- function(data,
 
       parameters[[tx]] <- get_surv_parameters(models[[tx]])
 
-      summary[[tx]] <- list(fit_averages = get_fit_averages_summary(models[[tx]]),
+      summary[[tx]] <- list(fit_averages = suppressWarnings(get_fit_averages_summary(models[[tx]])),
                             goodness_of_fit = get_goodness_of_fit(models[[tx]]))
 
     }
