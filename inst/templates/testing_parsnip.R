@@ -13,8 +13,7 @@ surv_data <- flexsurv::bc |>
 # For testing purposes, a data set that will fail.
 surv_data2 <- surv_data[c(5:6, 269:270), ]
 
-dists <- c("gengamma", "weibull", "exponential")
-dists <- c("gengamma", "weibull", "exp", "lognorm", "llog", "gamma", "gompertz")
+dists <- c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull")
 
 dists_survival_engine <- names(survival::survreg.distributions)[1:8] # predicting from t dist not available yet (throws error)
 names(flexsurv::flexsurv.dists)
@@ -125,12 +124,13 @@ get_survival_parameters <- function(models) {
 
     distribution <- switch(engine,
       "flexsurv" = models[[i]]$fit$dlist$name,
+      "flexsurvcure" = models[[i]]$fit$dlist$name,
       "flexsurvspline" = names(models[i]),
       "survival" = models[[i]]$fit$dist,
       stop("Unknown engine type")
     )
 
-    if (engine == "flexsurv" | engine == "flexsurvspline") {
+    if (engine == "flexsurv" | engine == "flexsurvcure" | engine == "flexsurvspline") {
       # Get parameters from res.t
       get_parameters <- models[[i]]$fit$res.t |>
         as.data.frame() |>
@@ -211,7 +211,7 @@ get_fit_averages2 <- function(mod,
 
   engine <- mod$spec$engine
 
-  if (engine == "flexsurv" | engine == "flexsurvspline") {
+  if (engine == "flexsurv" | engine == "flexsurvcure" | engine == "flexsurvspline") {
     # Checking if the distribution is a spline model.
     distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
       mod$fit$k,
@@ -407,7 +407,7 @@ new_fits <- function(data,
                      event,
                      group = NULL,
                      group_as_covariate = FALSE,
-                     dists = c("exp", "gamma", "gengamma", "gompertz", "llog", "lognorm", "weibull"),
+                     dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
                      eval_time = NULL,
                      engine = "flexsurv",
                      k = c(1, 2, 3),
@@ -806,6 +806,22 @@ output_separate_diff_engine <- new_fits(
   group_as_covariate = FALSE,
   include_ci = FALSE
 )
+
+source("inst/templates/flexsurvcure_attempt.R")
+make_survival_reg_flexsurvcure()
+
+# using the flexsurvcure engine
+output_cure <- new_fits(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  dists = dists,
+  engine = "flexsurvcure",
+  group = "group",
+  group_as_covariate = FALSE,
+  include_ci = FALSE
+)
+
 
 #
 # get_survival_parameters(output_joint$models)
