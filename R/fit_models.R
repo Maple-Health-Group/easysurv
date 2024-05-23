@@ -31,6 +31,7 @@ fit_models <- function(data,
   summary <- list()
 
   # Create NULL objects ----
+  # KM is here for now in case we want to add it to fit plots...
   KM <- NULL
   KM_plot <- NULL
   cure_fractions <- NULL

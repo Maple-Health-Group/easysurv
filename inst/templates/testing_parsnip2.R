@@ -20,6 +20,7 @@ names(flexsurv::flexsurv.dists)
 
 # testing functions defined during build
 my_KM <- get_KM(data = surv_data, time = "time", event = "event", group = "group")
+my_PH_test <- test_PH(data = surv_data, time = "time", event = "event", group = "group")
 
 # separate fits
 output_separate <- fit_models(
@@ -87,4 +88,3 @@ output_cure <- fit_models(
   group_as_covariate = FALSE,
   include_ci = FALSE
 )
-

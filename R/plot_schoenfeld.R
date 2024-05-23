@@ -30,8 +30,7 @@
 #' @param sline,sline.se a logical - should the smooth line be added to
 #' highlight the local average for residuals.
 #'
-#' @param font.family Font for the plot. Default is Roboto Condensed.
-#' @param plot.theme ggplot2 theme for the plot. Default is theme_easysurv()
+#' @param plot.theme ggplot2 theme for the plot. Default is theme_bw()
 #' @param title,subtitle,caption main title, subtitle and caption.
 #'
 #' @return Returns an object of class \code{ggplot}.
@@ -65,8 +64,7 @@ plot_schoenfeld <- function(
     sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
     point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
     title = NULL, subtitle = NULL, caption = NULL,
-    font.family = "Roboto Condensed",
-    plot.theme = theme_easysurv()) {
+    plot.theme = theme_bw()) {
 
   formula_rhs <- deparse(rlang::f_rhs(formula))
 
@@ -137,14 +135,7 @@ plot_schoenfeld <- function(
     subtitle = subtitle, caption = caption
   )
 
-  gplot <- gplot + plot.theme +
-    theme(text          = element_text(family = font.family),
-          plot.title    = element_text(family = font.family),
-          plot.subtitle = element_text(family = font.family),
-          axis.title.x  = element_text(family = font.family),
-          axis.title.y  = element_text(family = font.family),
-          axis.text.x   = element_text(family = font.family),
-          axis.text.y   = element_text(family = font.family))
+  gplot <- gplot + plot.theme
 
   gplot <- gplot + ggplot2::facet_wrap(~covariate, scales = "free")
   gplot

@@ -28,8 +28,7 @@ plot_schoenfeld(
   title = NULL,
   subtitle = NULL,
   caption = NULL,
-  font.family = "Roboto Condensed",
-  plot.theme = theme_easysurv()
+  plot.theme = theme_bw()
 )
 }
 \arguments{
@@ -60,9 +59,7 @@ visibility to be used for points.}
 
 \item{title, subtitle, caption}{main title, subtitle and caption.}
 
-\item{font.family}{Font for the plot. Default is Roboto Condensed.}
-
-\item{plot.theme}{ggplot2 theme for the plot. Default is theme_easysurv()}
+\item{plot.theme}{ggplot2 theme for the plot. Default is theme_bw()}
 }
 \value{
 Returns an object of class \code{ggplot}.
