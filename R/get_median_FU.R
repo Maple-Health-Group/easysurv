@@ -10,7 +10,7 @@
 #' columns for \code{time}, \code{event} and \code{strata}.
 #' @param time The name of the time variable in data
 #' @param event The name of the event variable in data
-#' @param strata The name of the strata variable in data
+#' @param group The name of the group variable in data
 #'
 #' @importFrom survival survfit
 #' @importFrom survival Surv
@@ -42,7 +42,7 @@
 get_median_FU <- function(data,
                           time,
                           event,
-                          strata) {
+                          group = NULL) {
 
   # Define the Surv object
   theSurv <- survival::Surv(time = data[[time]], event = data[[event]])
@@ -52,12 +52,18 @@ get_median_FU <- function(data,
   inverseSurv[, 2] <- 1 - inverseSurv[, 2]
 
   # Find median quantile
-  quantiles <- stats::quantile(
-    survival::survfit(stats::as.formula(paste0("inverseSurv ~ as.factor(", strata, ")")), data = data), 0.5
-  )
+  if (is.null(group)) {
+    quantiles <- stats::quantile(
+      survminer::surv_fit(stats::as.formula(paste0("inverseSurv ~ 1")), data = data), 0.5
+    )
+  } else {
+    quantiles <- stats::quantile(
+      survminer::surv_fit(stats::as.formula(paste0("inverseSurv ~ as.factor(", group, ")")), data = data), 0.5
+    )
+  }
 
   # Do not keep CI.
-  # as.data.frame is used in case of single strata.
+  # as.data.frame is used in case of single group
   out <- as.data.frame(quantiles$quantile)
   colnames(out) <- "Median follow-up"
 

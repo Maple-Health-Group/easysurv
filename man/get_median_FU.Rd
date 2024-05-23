@@ -4,7 +4,7 @@
 \alias{get_median_FU}
 \title{Calculate the median follow-up time (or median time to censoring).}
 \usage{
-get_median_FU(data, time, event, strata)
+get_median_FU(data, time, event, group = NULL)
 }
 \arguments{
 \item{data}{A tibble or data frame containing the survival data with
@@ -14,7 +14,7 @@ columns for \code{time}, \code{event} and \code{strata}.}
 
 \item{event}{The name of the event variable in data}
 
-\item{strata}{The name of the strata variable in data}
+\item{group}{The name of the group variable in data}
 }
 \description{
 Reverses the censoring/event variable to derive median follow-up time.

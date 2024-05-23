@@ -5,6 +5,7 @@
 
 #' @importFrom stats as.formula
 #' @importFrom survminer ggsurvplot surv_fit
+#' @importFrom tidyr nest
 #'
 #' @export
 #'

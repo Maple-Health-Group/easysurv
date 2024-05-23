@@ -18,7 +18,10 @@ dists <- c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull")
 dists_survival_engine <- names(survival::survreg.distributions)[1:8] # predicting from t dist not available yet (throws error)
 names(flexsurv::flexsurv.dists)
 
+
 # testing functions defined during build
+my_KM <- get_KM(data = surv_data, time = "time", event = "event", group = "group")
+
 # separate fits
 output_separate <- fit_models(
   data = surv_data,
