@@ -1,14 +1,45 @@
+#' Generate Kaplan-Meier estimates
+#'
+#' Calculates Kaplan-Meier estimates for survival data and returns summary
+#' statistics, plots, and additional outputs.
+#'
+#' @param data A data frame containing the survival data.
+#' @param time The name of the column in \code{data} containing the
+#' time-to-event information.
+#' @param event The name of the column in \code{data} indicating whether the
+#' event of interest occurred.
+#' @param group (Optional) The name of the column in \code{data} defining the
+#' grouping variable. Default is \code{NULL}.
+#' @param add_time_0 (Optional) Logical indicating whether to add time 0
+#' to the Kaplan-Meier estimates. Default is \code{FALSE}.
+#' @param ... (Optional) Parameters to pass to ggsurvplot.
+#'
+#' @return A list containing Kaplan-Meier estimates, summary statistics, plots,
+#' and additional outputs.
+#'
+#' @export
+#'
 #' @importFrom survival Surv
 #' @importFrom stats as.formula
 #' @importFrom survminer surv_fit
 #' @importFrom tidyr nest
-#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#'KM_results <- get_KM(
+#'  data = easysurv::easy_bc,
+#'  time = "recyrs",
+#'  event = "censrec",
+#'  group = "group")
+#'
+#' }
 get_KM <- function(data,
                    time,
                    event,
                    group = NULL,
-                   ggtheme = theme_bw(),
-                   add_time_0 = FALSE) {
+                   add_time_0 = FALSE,
+                   ...) {
 
   # Validate argument inputs ----
   if (!is.data.frame(data)) {
@@ -102,11 +133,7 @@ get_KM <- function(data,
     KM_per_group <- NULL
   }
 
-  # To be replaced by plot_KM function
-  KM_plot <- survminer::ggsurvplot(
-    KM,
-    ggtheme = ggtheme
-  )
+  KM_plot <- plot_KM(KM, ...)
 
   KM_summary = summarise_KM(KM)
 

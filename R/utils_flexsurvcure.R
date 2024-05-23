@@ -1,8 +1,7 @@
-###########
-# This file WAS CREATED for the new easysurv release.
-###########
+# Non-exported helper functions.
 
-# does not appear to be needed, but kept for now.
+#' @note renaming time does not appear to be needed, but kept functions for now.
+#' @noRd
 flexsurvcure_rename_time <- function(pred){
   if (".pred" %in% names(pred)) {
     pred |>
@@ -17,6 +16,7 @@ flexsurvcure_rename_time <- function(pred){
   }
 }
 
+#' @noRd
 flexsurvcure_post <- function(pred, object) {
   # if (utils::packageVersion("flexsurv") < "2.3") {
   #   pred <- flexsurv_rename_time(pred)
@@ -36,6 +36,7 @@ flexsurvcure_post <- function(pred, object) {
   pred
 }
 
+#' @noRd
 make_survival_reg_flexsurvcure <- function() {
   parsnip::set_model_engine(
     "survival_reg",

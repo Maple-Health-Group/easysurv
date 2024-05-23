@@ -1,9 +1,39 @@
+#' Test Proportional Hazards Assumption
+#'
+#' Assesses the proportional hazards assumption for survival data using a
+#' Cox proportional hazards model and related tests.
+#'
+#' @param data A data frame containing the survival data.
+#' @param time The name of the column in \code{data} containing the
+#' time-to-event information.
+#' @param event The name of the column in \code{data} indicating whether the
+#' event of interest occurred.
+#' @param group The name of the column in \code{data} defining the grouping
+#' variable.
+#' @param plot.theme (Optional) The theme for the ggplot2 plots. Default is
+#' \code{theme_bw()}.
+#' @param risk.table.theme (Optional) The theme for the risk table plot. Default
+#' is \code{theme_bw()}.
+#'
+#' @return A list containing plots and test results related to the assessment
+#' of the proportional hazards assumption.
+#'
+#' @export
 #'
 #' @importFrom stats as.formula
 #' @importFrom survival cox.zph coxph survdiff Surv
 #' @importFrom survminer ggsurvplot surv_fit
 #'
-#' @export
+#' @examples
+#' \dontrun{
+#'
+#'PH_results <- get_PH(
+#'  data = easysurv::easy_bc,
+#'  time = "recyrs",
+#'  event = "censrec",
+#'  group = "group")
+#'
+#' }
 test_PH <- function(data,
                     time,
                     event,

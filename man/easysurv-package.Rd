@@ -2,9 +2,9 @@
 % Please edit documentation in R/easysurv-package.R
 \docType{package}
 \name{easysurv-package}
-\alias{easysurv-package}
 \alias{easysurv}
-\title{easysurv: Estimate and inspect parametric survival models}
+\alias{easysurv-package}
+\title{easysurv: Estimate and Inspect Parametric Survival Models}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
@@ -28,4 +28,4 @@ Authors:
 }
 
 }
-\keyword{package}
+\keyword{internal}
