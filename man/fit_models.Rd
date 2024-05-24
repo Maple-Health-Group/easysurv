@@ -10,6 +10,7 @@ fit_models(
   event,
   group = NULL,
   group_as_covariate = FALSE,
+  other_covariates = NULL,
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
   eval_time = NULL,
   engine = "flexsurv",
@@ -32,6 +33,9 @@ grouping variable.}
 
 \item{group_as_covariate}{(Optional) Logical indicating whether the grouping
 variable should be treated as a covariate.}
+
+\item{other_covariates}{(Optional) A character vector specifying the names of
+other covariates to be included in the model (not the group variable).}
 
 \item{dists}{(Optional) A character vector specifying the distribution(s) to
 be fitted.

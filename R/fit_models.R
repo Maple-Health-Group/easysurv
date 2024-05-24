@@ -12,6 +12,8 @@
 #' grouping variable.
 #' @param group_as_covariate (Optional) Logical indicating whether the grouping
 #' variable should be treated as a covariate.
+#' @param other_covariates (Optional) A character vector specifying the names of
+#' other covariates to be included in the model (not the group variable).
 #' @param dists (Optional) A character vector specifying the distribution(s) to
 #' be fitted.
 #'
@@ -65,6 +67,7 @@ fit_models <- function(data,
                        event,
                        group = NULL,
                        group_as_covariate = FALSE,
+                       other_covariates = NULL,
                        dists = c("exp",
                                  "gamma",
                                  "gengamma",
@@ -90,7 +93,11 @@ fit_models <- function(data,
   # KM is here for now in case we want to add it to fit plots...
   KM <- NULL
   KM_plot <- NULL
+
   cure_fractions <- NULL
+  my_new_data <- NULL
+  fit_covariate_list <- NULL
+  profiles <- NULL
 
   # Validate argument inputs ----
 
@@ -141,7 +148,6 @@ fit_models <- function(data,
   # Set approach
   if (is.null(group)) {
     approach <- "no_groups"
-    fit_covariate <- 1
     KM_covariate <- 1
   } else {
     group_list <- levels(droplevels(as.factor(data[[group]])))
@@ -149,13 +155,18 @@ fit_models <- function(data,
 
     if (group_as_covariate) {
       approach <- "joint_fits"
-      fit_covariate <- group
     } else {
       approach <- "separate_fits"
-      fit_covariate <- 1
     }
   }
 
+  if (group_as_covariate) {
+    fit_covariate_list <- c(group, other_covariates)
+  } else {
+    fit_covariate_list <- other_covariates
+  }
+
+  fit_covariate <- if (!is.null(fit_covariate_list)) paste(fit_covariate_list, collapse = " + ") else 1
 
   ## Check engine ----
   match.arg(engine,
@@ -166,9 +177,6 @@ fit_models <- function(data,
 
   # Check that dists has legal values for engine
   # ...
-
-
-
 
   # Create formula ----
 
@@ -274,44 +282,104 @@ fit_models <- function(data,
   }
 
   if (approach == "no_groups") {
+
+    if (is.null(fit_covariate_list)) {
+      used_data <- data |> dplyr::slice(1)
+    } else {
+      used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
+      profiles <- list(profiles = used_data)
+    }
+
     predictions <- tidy_predict_surv(
       models = models,
-      new_data = data,
+      new_data = used_data,
       eval_time = eval_time,
-      interval = interval
+      interval = interval,
+      special_profiles = !is.null(profiles)
     )
 
-    plots <- plot_fits(predictions$table_pred_surv)
+    if (any(sapply(predictions$table_pred_surv, is.list))) {
+      # there are multiple profiles
+      plots <- list(lapply(predictions$table_pred_surv, plot_fits))
+    } else {
+      plots <- list(fit_plots = plot_fits(predictions$table_pred_surv))
+    }
+
+    plots <- c(profiles, plots)
+
   }
 
   if (approach == "joint_fits") {
+
+    used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
+    profiles <- list(profiles = used_data)
+
     for (tx in seq_along(group_list)) {
+
+      # filtering the profiles so that predictions are group-specific
+      filtered_used_data <- used_data |> dplyr::filter(group == group_list[tx])
+
       predictions[[tx]] <- tidy_predict_surv(
         models = models,
-        new_data = data.frame(group = group_list[tx]),
+        new_data = filtered_used_data,
         eval_time = eval_time,
-        interval = interval
+        interval = interval,
+        special_profiles = !is.null(profiles)
       )
 
-      plots[[tx]] <- plot_fits(predictions[[tx]]$table_pred_surv)
+      if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
+        # there are multiple profiles
+        plots[[tx]] <- list(fit_plots = lapply(predictions[[tx]]$table_pred_surv, plot_fits))
+      } else {
+        plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
+      }
+
     }
 
-    names(predictions) <- names(plots) <- group_list
+   names(predictions) <-
+    names(plots) <-
+     group_list
+
+   plots <- c(profiles, plots)
+
   }
 
   if (approach == "separate_fits") {
+
+    if (is.null(fit_covariate_list)) {
+      used_data <- data |> dplyr::slice(1)
+    } else {
+      used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
+      profiles <- list(profiles = used_data)
+    }
+
     for (tx in seq_along(group_list)) {
+
+      # Not filtering because the predictions should be agnostic to the grouping
+      # in the underlying data.
+
       predictions[[tx]] <- tidy_predict_surv(
         models = models[[tx]],
-        new_data = data.frame(group = group_list[tx]),
+        new_data = used_data,
         eval_time = eval_time,
-        interval = interval
+        interval = interval,
+        special_profiles = !is.null(profiles)
       )
 
-      plots[[tx]] <- plot_fits(predictions[[tx]]$table_pred_surv)
+      if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
+        # there are multiple profiles
+        plots[[tx]] <- list(fit_plots = lapply(predictions[[tx]]$table_pred_surv, plot_fits))
+      } else {
+        plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
+
+      }
+
     }
 
     names(predictions) <- names(plots) <- names(models)
+
+    plots <- c(profiles, plots)
+
   }
 
   # Create summary ----

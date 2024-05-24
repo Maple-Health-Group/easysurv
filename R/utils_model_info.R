@@ -1,5 +1,43 @@
 # Non-exported helper functions.
 
+#' @importFrom dplyr everything select mutate row_number
+#' @noRd
+create_newdata <- function(data) {
+
+  # Create visible binding for R CMD check.
+  profile <- NULL
+
+  # Identify factor and numeric columns
+  factor_columns <- names(data)[sapply(data, is.factor)]
+  numeric_columns <- names(data)[sapply(data, is.numeric)]
+
+  # Calculate means for numeric columns
+  numeric_means <- colMeans(data[, numeric_columns, drop = FALSE], na.rm = TRUE)
+
+  # If there are factor columns, create all combinations of factor levels
+  if (length(factor_columns) > 0) {
+    factor_levels_combinations <- expand.grid(lapply(data[, factor_columns, drop = FALSE], levels))
+
+    # Add mean values for numeric columns to each row
+    for (col in numeric_columns) {
+      factor_levels_combinations[[col]] <- numeric_means[col]
+    }
+
+    # Ensure the order of columns matches the original data
+    newdata <- factor_levels_combinations[colnames(data)]
+  } else {
+    # If there are no factor columns, create a data frame with mean values for numeric columns
+    newdata <- as.data.frame(matrix(numeric_means, ncol = length(numeric_columns)))
+    colnames(newdata) <- numeric_columns
+  }
+
+  newdata <- newdata |>
+    dplyr::mutate(profile = paste0("profile", dplyr::row_number())) |>
+    dplyr::select(profile, dplyr::everything())
+
+  return(newdata)
+}
+
 #' @importFrom stats pnorm
 #' @noRd
 get_cure_fractions <- function(mod) {
@@ -345,8 +383,8 @@ get_surv_parameters <- function(models) {
 tidy_predict_surv <- function(models,
                               new_data,
                               eval_time,
-                              interval = "none") {
-
+                              interval = "none",
+                              special_profiles = FALSE) {
   # Start with NULLs to make dropping them easy with c()
   list_pred_surv <-
     list_pred_hazard <-
@@ -354,18 +392,6 @@ tidy_predict_surv <- function(models,
     table_pred_surv_lower <-
     table_pred_surv_upper <-
     table_pred_hazard <- NULL
-
-  # make the predictions (survival)
-  list_pred_surv <- lapply(models,
-                           stats::predict,
-                           new_data = new_data,
-                           type = "survival",
-                           eval_time = eval_time,
-                           interval = interval
-  ) |>
-    purrr::map(~ .x |>
-                 dplyr::slice(1) |>
-                 tidyr::unnest(col = .pred))
 
   # inner function to extract predictions into a table
   extract_predictions <- function(pred_list, col_name) {
@@ -379,34 +405,102 @@ tidy_predict_surv <- function(models,
     ) |> tibble::as_tibble()
   }
 
-  # Extract to summary tables
-  table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
-  if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
-    table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
-    table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
+  profiles <- nrow(new_data)
+
+  if (profiles == 1) {
+    # make the predictions (survival)
+    list_pred_surv <- lapply(models,
+      stats::predict,
+      new_data = new_data,
+      type = "survival",
+      eval_time = eval_time,
+      interval = interval
+    ) |>
+      purrr::map(~ .x |>
+        tidyr::unnest(col = .pred))
+
+    # Extract to summary tables
+    table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
+    if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+      table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
+      table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
+    }
+
+    # make the predictions (hazard)
+    list_pred_hazard <- lapply(models,
+      stats::predict,
+      new_data = new_data,
+      type = "hazard",
+      eval_time = eval_time,
+      interval = interval
+    ) |>
+      purrr::map(~ .x |>
+        tidyr::unnest(col = .pred))
+
+    table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
   }
 
 
-  # make the predictions (hazard)
-  list_pred_hazard <- lapply(models,
-                             stats::predict,
-                             new_data = new_data,
-                             type = "hazard",
-                             eval_time = eval_time,
-                             interval = interval
-  ) |>
-    purrr::map(~ .x |>
-                 dplyr::slice(1) |>
-                 tidyr::unnest(col = .pred))
+  if (profiles > 1) {
+    for (i in seq_len(profiles)) {
+      # make the predictions (survival)
+      list_pred_surv[[i]] <- lapply(models,
+        stats::predict,
+        new_data = dplyr::slice(new_data, i),
+        type = "survival",
+        eval_time = eval_time,
+        interval = interval
+      ) |>
+        purrr::map(~ .x |>
+          tidyr::unnest(col = .pred))
 
-  table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
+      # Extract to summary tables
+      table_pred_surv[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_survival")
+      if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+        table_pred_surv_lower[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_lower")
+        table_pred_surv_upper[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_upper")
+      }
+
+
+      # make the predictions (hazard)
+      list_pred_hazard[[i]] <- lapply(models,
+        stats::predict,
+        new_data = dplyr::slice(new_data, i),
+        type = "hazard",
+        eval_time = eval_time,
+        interval = interval
+      ) |>
+        purrr::map(~ .x |>
+          tidyr::unnest(col = .pred))
+
+      table_pred_hazard[[i]] <- extract_predictions(list_pred_hazard[[i]], ".pred_hazard")
+    }
+
+     names(list_pred_surv) <-
+       names(list_pred_hazard) <-
+       names(table_pred_surv) <-
+       names(table_pred_hazard) <-
+       new_data$profile
+       #paste0("profile", seq_len(profiles))
+
+     if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+
+       names(table_pred_surv_lower) <-
+         names(table_pred_surv_upper) <-
+         new_data$profile
+         #paste0("profile", seq_len(profiles))
+     }
+
+  }
 
   out <- c(
+    if (special_profiles) list(profiles = new_data),
     list(list_pred_surv = list_pred_surv),
-    list(list_pred_hazard = list_pred_hazard),
     list(table_pred_surv = table_pred_surv),
     list(table_pred_surv_lower = table_pred_surv_lower),
-    list(table_pred_surv_upper = table_pred_surv_upper)
+    list(table_pred_surv_upper = table_pred_surv_upper),
+    list(list_pred_hazard = list_pred_hazard),
+    list(table_pred_hazard = table_pred_hazard)
   )
 
   return(out)

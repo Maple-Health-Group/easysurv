@@ -63,8 +63,7 @@ surv_data <- surv_data |>
     group = sex
   ) |>
   dplyr::mutate_at("group", as.factor) |>
-  dplyr::as_tibble() |>
-  dplyr::select(time, event, group) # Optional: Just keep variables of interest
+  dplyr::as_tibble() # Convert to tibble for easier viewing
 
 
 # Data Labelling and Assessment ------------------------------------------------
@@ -96,8 +95,7 @@ KM_check <- easysurv::get_KM(
   data = surv_data,
   time = "time",
   event = "event",
-  group = "group",
-  legend_position = "right"
+  group = "group"
 )
 
 KM_check
@@ -149,6 +147,7 @@ if (do_separate) {
     event = "event",
     group = "group",
     group_as_covariate = FALSE,
+    other_covariates = c("ph.ecog", "age"),
     eval_time = times
   )
 
