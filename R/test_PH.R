@@ -97,12 +97,19 @@ test_PH <- function(data,
     data = data
   )
 
+  # schoenfeld_plot <-
+  #   plot_schoenfeld(
+  #     fit_coxph = the_coxph,
+  #     formula = PH_formula,
+  #     data = data,
+  #     plot.theme = plot_theme)
+
+  schoenfeld_residuals <- get_schoenfeld(cox.zph_PH_test)
+
   schoenfeld_plot <-
     plot_schoenfeld(
-      fit_coxph = the_coxph,
-      formula = PH_formula,
-      data = data,
-      plot.theme = plot_theme)
+      residuals = schoenfeld_residuals,
+      plot_theme = plot_theme)
 
   out <- list(
     cloglog_plot = cloglog_plot,

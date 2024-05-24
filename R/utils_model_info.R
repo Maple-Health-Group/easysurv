@@ -340,13 +340,14 @@ get_surv_parameters <- function(models) {
 #' @importFrom dplyr slice
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr unnest
+#' @importFrom stats predict
 #' @noRd
 tidy_predict_surv <- function(models,
                               new_data,
                               eval_time,
                               interval = "none") {
-  # Start with NULLs to make dropping them easy with c()
 
+  # Start with NULLs to make dropping them easy with c()
   list_pred_surv <-
     list_pred_hazard <-
     table_pred_surv <-
@@ -356,7 +357,7 @@ tidy_predict_surv <- function(models,
 
   # make the predictions (survival)
   list_pred_surv <- lapply(models,
-                           predict,
+                           stats::predict,
                            new_data = new_data,
                            type = "survival",
                            eval_time = eval_time,
@@ -388,7 +389,7 @@ tidy_predict_surv <- function(models,
 
   # make the predictions (hazard)
   list_pred_hazard <- lapply(models,
-                             predict,
+                             stats::predict,
                              new_data = new_data,
                              type = "hazard",
                              eval_time = eval_time,

@@ -76,8 +76,8 @@ attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
 levels(surv_data$group) <- group_labels <- c("Male", "Female")
 
 # See the levels of the groups
-surv_data |> count(group)
-surv_data |> count(group, event)
+surv_data |> dplyr::count(group)
+surv_data |> dplyr::count(group, event)
 surv_data
 
 
@@ -96,7 +96,8 @@ KM_check <- easysurv::get_KM(
   data = surv_data,
   time = "time",
   event = "event",
-  group = "group"
+  group = "group",
+  legend_position = "right"
 )
 
 KM_check

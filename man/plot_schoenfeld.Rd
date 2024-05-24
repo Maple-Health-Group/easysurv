@@ -2,13 +2,10 @@
 % Please edit documentation in R/plots.R
 \name{plot_schoenfeld}
 \alias{plot_schoenfeld}
-\title{Modified version of \code{\link[survminer]{ggcoxdiagnostics}} to replace
-\code{gather_} and set \code{geom_smooth} formulae}
+\title{Plot Schoenfeld Residuals}
 \usage{
 plot_schoenfeld(
-  fit_coxph,
-  data,
-  formula,
+  residuals,
   hline = TRUE,
   sline = TRUE,
   sline.se = TRUE,
@@ -25,56 +22,60 @@ plot_schoenfeld(
   point.size = 1,
   point.shape = 19,
   point.alpha = 1,
-  title = NULL,
-  subtitle = NULL,
-  caption = NULL,
-  plot.theme = theme_bw()
+  plot_theme = ggplot2::theme_bw()
 )
 }
 \arguments{
-\item{fit_coxph}{An object of class \code{\link[survival]{coxph.object}} -
-created with \code{\link[survival]{coxph}} function.}
+\item{residuals}{A data frame containing the Schoenfeld residuals, typically
+with columns \code{time}, \code{residual}, \code{transform}, and \code{variable}.}
 
-\item{data}{Data for fit_coxph}
+\item{hline}{Logical. If \code{TRUE}, a horizontal line is added to the plot.
+Default is \code{TRUE}.}
 
-\item{formula}{Formula for fit_coxph}
+\item{sline}{Logical. If \code{TRUE}, a smooth line is added to the plot.
+Default is \code{TRUE}.}
 
-\item{hline}{a logical - should the horizontal line be added to highlight
-the \code{Y=0} level.}
+\item{sline.se}{Logical. If \code{TRUE}, confidence intervals are displayed around
+the smooth line. Default is \code{TRUE}.}
 
-\item{sline, sline.se}{a logical - should the smooth line be added to
-highlight the local average for residuals.}
+\item{hline.col}{Color of the horizontal line. Default is \code{"red"}.}
 
-\item{hline.col, hline.size, hline.lty, hline.alpha, hline.yintercept}{color,
-size, linetype, visibility and Y-axis coordinate to be used for
-\code{\link[ggplot2]{geom_hline}}.
-Used only when \code{hline = TRUE}.}
+\item{hline.size}{Line width of the horizontal line. Default is \code{1}.}
 
-\item{sline.col, sline.size, sline.lty, sline.alpha}{color, size,
-linetype and visibility to be used for \code{\link[ggplot2]{geom_smooth}}.
-Used only when \code{sline = TRUE}.}
+\item{hline.alpha}{Transparency of the horizontal line. Default is \code{1}.}
 
-\item{point.col, point.size, point.shape, point.alpha}{color, size, shape and
-visibility to be used for points.}
+\item{hline.yintercept}{Y-intercept for the horizontal line. Default is \code{0}.}
 
-\item{title, subtitle, caption}{main title, subtitle and caption.}
+\item{hline.lty}{Line type for the horizontal line. Default is \code{"dashed"}.}
 
-\item{plot.theme}{ggplot2 theme for the plot. Default is theme_bw()}
+\item{sline.col}{Color of the smooth line. Default is \code{"blue"}.}
+
+\item{sline.size}{Line width of the smooth line. Default is \code{1}.}
+
+\item{sline.alpha}{Transparency of the smooth line. Default is \code{0.3}.}
+
+\item{sline.lty}{Line type for the smooth line. Default is \code{"dashed"}.}
+
+\item{point.col}{Color of the points representing residuals. Default is
+\code{"black"}.}
+
+\item{point.size}{Size of the points representing residuals. Default is \code{1}.}
+
+\item{point.shape}{Shape of the points representing residuals. Default is
+\code{19}.}
+
+\item{point.alpha}{Transparency of the points representing residuals. Default
+is \code{1}.}
+
+\item{plot_theme}{A ggplot2 theme for the plot. Default is
+\code{ggplot2::theme_bw()}.}
 }
 \value{
-Returns an object of class \code{ggplot}.
+A ggplot object representing the plot of Schoenfeld residuals.
 }
 \description{
-Displays diagnostics graphs presenting goodness of Cox
-Proportional Hazards Model fit, that
-can be calculated with \code{\link[survival]{coxph}} function.
-This function is largely identical to \code{ggcoxdiagnostics}
-from the \code{survminer} package with some minor alterations in order to
-accommodate \code{easysurv} functionality.
-}
-\examples{
-\dontrun{
-#to add
-}
-
+This function creates a visual representation of Schoenfeld residuals from a
+Cox proportional hazards model.
+It allows for customization of the plot, including the addition of horizontal
+and smoothed lines, and styling of points and plot elements.
 }

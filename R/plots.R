@@ -10,6 +10,7 @@
 #'
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
+#' @importFrom scales pseudo_log_trans
 plot_fits <- function(data) {
 
   # Create visible binding for R CMD check.
@@ -112,8 +113,8 @@ plot_KM <- function(fit,
 #' "bottom".
 #' @param plot_theme ggplot2 theme for the plot. Default is
 #' \code{ggplot2::theme_bw()}.
-#' @param xlab Label for the x-axis. Default is "Time".
-#' @param ylab Label for the y-axis. Default is "Log Minus Log Survival".
+#' @param xlab Label for the x-axis. Default is "Time (log-scaled)".
+#' @param ylab Label for the y-axis. Default is "log(-log(S(t)))".
 #' @return A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
@@ -126,8 +127,8 @@ plot_cloglog <- function(fit,
                     median_line = FALSE,
                     legend_position = "bottom",
                     plot_theme = ggplot2::theme_bw(),
-                    xlab = "Time",
-                    ylab = "Log Minus Log Survival") {
+                    xlab = "Time (log-scaled)",
+                    ylab = "log(-log(S(t)))") {
 
   out <- ggsurvfit::ggsurvfit(fit,
                               type = "cloglog",
@@ -136,8 +137,11 @@ plot_cloglog <- function(fit,
     xlab(xlab) +
     ylab(ylab) +
     theme(legend.position = legend_position) +
-    scale_x_continuous(transform = "log",
+    scale_x_continuous(transform = scales::pseudo_log_trans(sigma = 0.01),
                        labels = function(x) round(as.numeric(x), digits=2))
+
+  # Used scales::pseudo_log_trans(sigma = 0.01) to avoid "log" and the
+  # infinite values in log-transformed axis.
 
   if (risk_table) {
     out <- out + ggsurvfit::add_risktable(
@@ -154,147 +158,159 @@ plot_cloglog <- function(fit,
   return(out)
 }
 
-#' Modified version of \code{\link[survminer]{ggcoxdiagnostics}} to replace
-#' \code{gather_} and set \code{geom_smooth} formulae
+# # test
+# library(survival)
+# test_fit <- survival::coxph(Surv(time, status) ~ surg, data = ggsurvfit::df_colon) |> ggsurvfit::survfit2()
+# test_fit <- survival::coxph(Surv(time, status) ~ surg, data = ggsurvfit::df_colon)
+#
+# residuals(test_fit, type = "schoenfeld")
+#
+# stats::resid(test_fit, type = "schoenfeld")
+#
+#
+# plot_schoenfeld2 <- function(fit_coxph,
+#                              hline = TRUE,
+#                              sline = TRUE, sline.se = TRUE,
+#                              hline.col = "red", hline.size = 1, hline.alpha = 1, hline.yintercept = 0,
+#                              hline.lty = "dashed",
+#                              sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
+#                              point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
+#                              title = NULL, subtitle = NULL, caption = NULL,
+#                              plot.theme = theme_bw()) {
+#
+#   res <- as.data.frame(stats::resid(fit_coxph, type = "schoenfeld"))
+#
+# }
+#
+# plot_schoenfeld2(test_fit)
+
+
+
+#
+# get_scaledsch(test_fit2)
+#
+#
+# test_fit <- survival::cox.zph(survival::coxph(Surv(time, status) ~ sex, data = lung))
+#
+# test_fit2 <- survival::coxph(Surv(time, status) ~ sex, data = lung)
+#
+# test_out <- plot_sch3(test_fit2)
+# test_out
+#
+# testing <- plot(test_fit)
+# ggplot(test_fit)
+#
+# get_sch <- function(fit) {
+#
+#   # call zph functions that calculates scaled schoenfeld residuals (given
+#   # transformation of time)
+#   unscaled_sch <- do.call(residuals, args = list(type = "schoenfeld"))
+#
+#   as_tibble(unscaled_sch)
+#   ## extract scaled schoenfeld residuals, return in tidy format
+#   # as_tibble(zph$y) %>%
+#   #   cbind(
+#   #     time      = zph$x,
+#   #     transform = zph$transform) %>%
+#   #   tidyr::gather("variable","residual", -.data$time, -.data$transform)
+#
+# }
+#
+# get_sch(test_fit)
+#
+# test_fit <- survival::coxph(Surv(time, status) ~ sex, data = lung)
+#
+# test_func <- function(fit) {
+#
+#   as.data.frame(do.call(stats::residuals, args = list(object = fit, type = "schoenfeld")))
+#
+# }
+
+
+
+
+#' Plot Schoenfeld Residuals
 #'
-#' @description Displays diagnostics graphs presenting goodness of Cox
-#' Proportional Hazards Model fit, that
-#' can be calculated with \code{\link[survival]{coxph}} function.
-#' This function is largely identical to \code{ggcoxdiagnostics}
-#' from the \code{survminer} package with some minor alterations in order to
-#' accommodate \code{easysurv} functionality.
+#' This function creates a visual representation of Schoenfeld residuals from a
+#' Cox proportional hazards model.
+#' It allows for customization of the plot, including the addition of horizontal
+#' and smoothed lines, and styling of points and plot elements.
 #'
-#' @param fit_coxph An object of class \code{\link[survival]{coxph.object}} -
-#' created with \code{\link[survival]{coxph}} function.
-#' @param data Data for fit_coxph
-#' @param formula Formula for fit_coxph
-#' @param point.col,point.size,point.shape,point.alpha color, size, shape and
-#' visibility to be used for points.
-#' @param hline.col,hline.size,hline.lty,hline.alpha,hline.yintercept color,
-#' size, linetype, visibility and Y-axis coordinate to be used for
-#' \code{\link[ggplot2]{geom_hline}}.
-#'        Used only when \code{hline = TRUE}.
-#' @param sline.col,sline.size,sline.lty,sline.alpha color, size,
-#' linetype and visibility to be used for \code{\link[ggplot2]{geom_smooth}}.
-#'        Used only when \code{sline = TRUE}.
-#' @param hline a logical - should the horizontal line be added to highlight
-#' the \code{Y=0} level.
-#' @param sline,sline.se a logical - should the smooth line be added to
-#' highlight the local average for residuals.
+#' @param residuals A data frame containing the Schoenfeld residuals, typically
+#' with columns `time`, `residual`, `transform`, and `variable`.
+#' @param hline Logical. If `TRUE`, a horizontal line is added to the plot.
+#' Default is `TRUE`.
+#' @param sline Logical. If `TRUE`, a smooth line is added to the plot.
+#' Default is `TRUE`.
+#' @param sline.se Logical. If `TRUE`, confidence intervals are displayed around
+#'  the smooth line. Default is `TRUE`.
+#' @param hline.col Color of the horizontal line. Default is `"red"`.
+#' @param hline.size Line width of the horizontal line. Default is `1`.
+#' @param hline.alpha Transparency of the horizontal line. Default is `1`.
+#' @param hline.yintercept Y-intercept for the horizontal line. Default is `0`.
+#' @param hline.lty Line type for the horizontal line. Default is `"dashed"`.
+#' @param sline.col Color of the smooth line. Default is `"blue"`.
+#' @param sline.size Line width of the smooth line. Default is `1`.
+#' @param sline.alpha Transparency of the smooth line. Default is `0.3`.
+#' @param sline.lty Line type for the smooth line. Default is `"dashed"`.
+#' @param point.col Color of the points representing residuals. Default is
+#' `"black"`.
+#' @param point.size Size of the points representing residuals. Default is `1`.
+#' @param point.shape Shape of the points representing residuals. Default is
+#' `19`.
+#' @param point.alpha Transparency of the points representing residuals. Default
+#' is `1`.
+#' @param plot_theme A ggplot2 theme for the plot. Default is
+#' `ggplot2::theme_bw()`.
 #'
-#' @param plot.theme ggplot2 theme for the plot. Default is theme_bw()
-#' @param title,subtitle,caption main title, subtitle and caption.
-#'
-#' @return Returns an object of class \code{ggplot}.
-#'
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 facet_wrap
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_smooth
-#' @importFrom ggplot2 geom_point
-#' @importFrom rlang f_rhs
-#' @importFrom stats predict
-#' @importFrom stats residuals
-#' @importFrom stringr fixed
-#' @importFrom stringr str_replace_all
-#' @importFrom survival coxph
-#'
-#' @examples
-#' \dontrun{
-#' #to add
-#' }
+#' @return A ggplot object representing the plot of Schoenfeld residuals.
 #'
 #' @export
-plot_schoenfeld <- function(
-    fit_coxph,
-    data,
-    formula,
-    hline = TRUE,
-    sline = TRUE, sline.se = TRUE,
-    hline.col = "red", hline.size = 1, hline.alpha = 1, hline.yintercept = 0,
-    hline.lty = "dashed",
-    sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
-    point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
-    title = NULL, subtitle = NULL, caption = NULL,
-    plot.theme = theme_bw()) {
+#'
+#' @importFrom ggplot2 geom_point geom_hline geom_smooth
+#' @importFrom ggplot2 facet_wrap xlab ylab theme_bw
+#'
+#'
+plot_schoenfeld <- function(residuals,
+                            hline = TRUE,
+                            sline = TRUE, sline.se = TRUE,
+                            hline.col = "red", hline.size = 1, hline.alpha = 1, hline.yintercept = 0,
+                            hline.lty = "dashed",
+                            sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
+                            point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
+                            plot_theme = ggplot2::theme_bw()) {
 
-  formula_rhs <- deparse(rlang::f_rhs(formula))
+  # Create visible binding for R CMD check.
+  time <- residual <- NULL
 
-  res <- as.data.frame(stats::resid(fit_coxph, type = "schoenfeld"))
+  trans.string <- ifelse(unique(residuals$transform) == "identity", "t",
+                         paste0(unique(residuals$transform), "(t)"))
 
-  # The reason both fit_coxph & [data + formula] are requested is that
-  # we wanted to assign nicer labels to the facets. But the function was
-  # struggling to evaluate residuals unless called in same context.
-
-  .facet <- FALSE
-
-  xlabel <- "The index number of observations"
-  ylabel <- "Residuals (type = schoenfeld)"
-
-  xval <- seq_len(nrow(res))
-  xlabel <- "Observation Id"
-
-  col_names <- names(stats::coef(fit_coxph))
-  colnames(res) <- col_names
-  res$xval <- xval
-
-  # # Original based on gather.
-  # data2plot <- tidyr::gather(res,
-  #                            key = "covariate", value = "res",
-  #                            col_names
-  # )
-  #
-  # # Newer based on pivot_longer (since gather was deprecated)
-  # data2plot <- tidyr::pivot_longer(res,
-  #                            names_to = "covariate", values_to = "res",
-  #                            col_names
-  # )
-
-  # Newest to remove dependency on tidyr.
-  data2plot <- data.frame(
-    covariate = rep(col_names, each = nrow(res)),
-    res = unname(res[1]),
-    xval = res$xval,
-    row.names = NULL
-  )
-
-  data2plot$covariate <-
-    stringr::str_replace_all(data2plot$covariate,
-                             stringr::fixed(formula_rhs),
-                             "")
-
-  gplot <- ggplot2::ggplot(ggplot2::aes(xval, res), data = data2plot) +
-    ggplot2::geom_point(
-      col = point.col, shape = point.shape,
-      size = point.size, alpha = point.alpha
-    )
+  gg.zph <- ggplot2::ggplot(residuals, ggplot2::aes(x = time, y = residual)) +
+    ggplot2::geom_point() +
+    ggplot2::facet_wrap(~variable, nrow = 2, scales = "free_y") +
+    ggplot2::xlab(trans.string) +
+    ggplot2::ylab(expression(beta(t)))
 
   if (hline) {
-    gplot <- gplot + ggplot2::geom_hline(
+    gg.zph <- gg.zph + ggplot2::geom_hline(
       yintercept = hline.yintercept, col = hline.col,
-      size = hline.size, lty = hline.lty, alpha = hline.alpha
+      linewidth = hline.size, lty = hline.lty, alpha = hline.alpha
     )
   }
 
   if (sline) {
-    gplot <- gplot + ggplot2::geom_smooth(
+    gg.zph <- gg.zph + ggplot2::geom_smooth(
       col = sline.col, se = sline.se, method = "loess",
-      size = sline.size, lty = sline.lty, alpha = sline.alpha,
+      linewidth = sline.size, lty = sline.lty, alpha = sline.alpha,
       formula = y ~ x
     )
   }
 
-  gplot <- gplot + ggplot2::labs(
-    x = xlabel, y = ylabel, title = title,
-    subtitle = subtitle, caption = caption
-  )
+  gg.zph <- gg.zph + plot_theme
 
-  gplot <- gplot + plot.theme
-
-  gplot <- gplot + ggplot2::facet_wrap(~covariate, scales = "free")
-  gplot
+  return(gg.zph)
 }
-
 
 #' Plot smoothed hazards of survival data
 #'

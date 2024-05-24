@@ -10,8 +10,8 @@ plot_cloglog(
   median_line = FALSE,
   legend_position = "bottom",
   plot_theme = ggplot2::theme_bw(),
-  xlab = "Time",
-  ylab = "Log Minus Log Survival"
+  xlab = "Time (log-scaled)",
+  ylab = "log(-log(S(t)))"
 )
 }
 \arguments{
@@ -30,9 +30,9 @@ representing the median survival time. Default is \code{TRUE}.}
 \item{plot_theme}{ggplot2 theme for the plot. Default is
 \code{ggplot2::theme_bw()}.}
 
-\item{xlab}{Label for the x-axis. Default is "Time".}
+\item{xlab}{Label for the x-axis. Default is "Time (log-scaled)".}
 
-\item{ylab}{Label for the y-axis. Default is "Log Minus Log Survival".}
+\item{ylab}{Label for the y-axis. Default is "log(-log(S(t)))".}
 }
 \value{
 A ggplot object representing the Kaplan-Meier survival curve plot.
