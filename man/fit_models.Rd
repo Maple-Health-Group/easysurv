@@ -8,9 +8,8 @@ fit_models(
   data,
   time,
   event,
-  group = NULL,
-  group_as_covariate = FALSE,
-  other_covariates = NULL,
+  predict_by = NULL,
+  covariates = NULL,
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
   eval_time = NULL,
   engine = "flexsurv",
@@ -28,14 +27,11 @@ time-to-event information.}
 \item{event}{The name of the column in \code{data} indicating whether the
 event of interest occurred.}
 
-\item{group}{(Optional) The name of the column in \code{data} defining the
-grouping variable.}
+\item{predict_by}{(Optional) The name of the column in \code{data} defining the
+prediction variable.}
 
-\item{group_as_covariate}{(Optional) Logical indicating whether the grouping
-variable should be treated as a covariate.}
-
-\item{other_covariates}{(Optional) A character vector specifying the names of
-other covariates to be included in the model (not the group variable).}
+\item{covariates}{(Optional) A character vector specifying the names of
+covariates to be included in the model.}
 
 \item{dists}{(Optional) A character vector specifying the distribution(s) to
 be fitted.
@@ -83,8 +79,8 @@ output_separate <- fit_models(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
-  group = "group",
-  group_as_covariate = FALSE)
+  predict_by = "group",
+  covariates = c("age", "treatment"))
 
 }
 }

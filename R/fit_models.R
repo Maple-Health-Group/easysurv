@@ -8,12 +8,10 @@
 #' time-to-event information.
 #' @param event The name of the column in \code{data} indicating whether the
 #' event of interest occurred.
-#' @param group (Optional) The name of the column in \code{data} defining the
-#' grouping variable.
-#' @param group_as_covariate (Optional) Logical indicating whether the grouping
-#' variable should be treated as a covariate.
-#' @param other_covariates (Optional) A character vector specifying the names of
-#' other covariates to be included in the model (not the group variable).
+#' @param predict_by (Optional) The name of the column in \code{data} defining the
+#' prediction variable.
+#' @param covariates (Optional) A character vector specifying the names of
+#' covariates to be included in the model.
 #' @param dists (Optional) A character vector specifying the distribution(s) to
 #' be fitted.
 #'
@@ -58,16 +56,15 @@
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
-#'   group = "group",
-#'   group_as_covariate = FALSE)
+#'   predict_by = "group",
+#'   covariates = c("age", "treatment"))
 #'
 #' }
 fit_models <- function(data,
                        time,
                        event,
-                       group = NULL,
-                       group_as_covariate = FALSE,
-                       other_covariates = NULL,
+                       predict_by = NULL,
+                       covariates = NULL,
                        dists = c("exp",
                                  "gamma",
                                  "gengamma",
@@ -84,19 +81,14 @@ fit_models <- function(data,
   # Create key objects ----
   distributions <- list()
   models <- list()
+  goodness_of_fit <- list()
+  fit_averages <- list()
   parameters <- list()
   predictions <- list()
   plots <- list()
-  summary <- list()
 
   # Create NULL objects ----
-  # KM is here for now in case we want to add it to fit plots...
-  KM <- NULL
-  KM_plot <- NULL
-
   cure_fractions <- NULL
-  my_new_data <- NULL
-  fit_covariate_list <- NULL
   profiles <- NULL
 
   # Validate argument inputs ----
@@ -113,8 +105,8 @@ fit_models <- function(data,
   }
 
   # Are the required columns present?
-  # note if group is NULL, it is dropped.
-  required_cols <- c(time, event, group)
+  # note if predict_by is NULL, it is dropped.
+  required_cols <- c(time, event, predict_by)
 
   if (!all(required_cols %in% names(data))) {
     stop(
@@ -146,27 +138,14 @@ fit_models <- function(data,
   ## Check covariate approach ----
 
   # Set approach
-  if (is.null(group)) {
-    approach <- "no_groups"
-    KM_covariate <- 1
+  if (is.null(predict_by)) {
+    approach <- "predict_by_none"
   } else {
-    group_list <- levels(droplevels(as.factor(data[[group]])))
-    KM_covariate <- group
-
-    if (group_as_covariate) {
-      approach <- "joint_fits"
-    } else {
-      approach <- "separate_fits"
-    }
+    predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
+    approach <- if (predict_by %in% covariates) "predict_by_covariate" else "predict_by_non_covariate"
   }
 
-  if (group_as_covariate) {
-    fit_covariate_list <- c(group, other_covariates)
-  } else {
-    fit_covariate_list <- other_covariates
-  }
-
-  fit_covariate <- if (!is.null(fit_covariate_list)) paste(fit_covariate_list, collapse = " + ") else 1
+  covariates_string <- if (!is.null(covariates)) paste(covariates, collapse = " + ") else 1
 
   ## Check engine ----
   match.arg(engine,
@@ -186,35 +165,13 @@ fit_models <- function(data,
     ", event = ",
     event,
     ") ~",
-    fit_covariate
+    covariates_string
   ))
-
-  KM_formula <- stats::as.formula(paste0(
-    "survival::Surv(time = ",
-    time,
-    ", event = ",
-    event,
-    ") ~",
-    KM_covariate
-  ))
-
-  # Create KMs
-  # do.call allows for the formula to be passed how we want it.
-  KM <- do.call(survival::survfit,
-    args = list(
-      formula = KM_formula,
-      conf.int = 0.95,
-      data = data,
-      type = "kaplan-meier"
-    )
-  )
-
-  KM_plot <- plot_KM(KM)
 
 
   # Fit models ----
 
-  if (approach == "no_groups" | approach == "joint_fits") {
+  if (approach == "predict_by_none" | approach == "predict_by_covariate") {
     if (engine == "flexsurvspline") {
 
       out <- process_spline_combinations(k, scale, fit_formula, data)
@@ -228,18 +185,18 @@ fit_models <- function(data,
     distributions <- out$distributions
     if (engine == "flexsurvcure") cure_fractions <- out$cure_fractions
 
-    parameters <- get_surv_parameters(models)
 
-    summary <- list(fit_averages = suppressWarnings(get_fit_averages_summary(models)),
-                    goodness_of_fit = get_goodness_of_fit(models))
+    goodness_of_fit <- get_goodness_of_fit(models)
+    fit_averages <- suppressWarnings(get_fit_averages_summary(models))
+    parameters <- get_surv_parameters(models)
 
   }
 
-  if (approach == "separate_fits") {
-    group_list <- levels(droplevels(as.factor(data[[group]])))
-    nested <- data |> tidyr::nest(.by = group)
+  if (approach == "predict_by_non_covariate") {
+    predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
+    nested <- data |> tidyr::nest(.by = predict_by)
 
-    for (tx in seq_along(group_list)) {
+    for (tx in seq_along(predict_list)) {
       data_subset <- nested[["data"]][[tx]]
 
       if (engine == "flexsurvspline") {
@@ -255,20 +212,20 @@ fit_models <- function(data,
       distributions[[tx]] <- out$distributions
       if (engine == "flexsurvcure") cure_fractions[[tx]] <- out$cure_fractions
 
+      goodness_of_fit[[tx]] <- get_goodness_of_fit(models[[tx]])
+      fit_averages[[tx]] <- suppressWarnings(get_fit_averages_summary(models[[tx]]))
       parameters[[tx]] <- get_surv_parameters(models[[tx]])
-
-      summary[[tx]] <- list(fit_averages = suppressWarnings(get_fit_averages_summary(models[[tx]])),
-                            goodness_of_fit = get_goodness_of_fit(models[[tx]]))
 
     }
 
     names(models) <-
       names(distributions) <-
+      names(goodness_of_fit) <-
+      names(fit_averages) <-
       names(parameters) <-
-      names(summary) <-
-      group_list
+      predict_list
 
-    if (engine == "flexsurvcure") names(cure_fractions) <- group_list
+    if (engine == "flexsurvcure") names(cure_fractions) <- predict_list
 
   }
 
@@ -281,18 +238,18 @@ fit_models <- function(data,
     interval <- "none"
   }
 
-  if (approach == "no_groups") {
+  if (approach == "predict_by_none") {
 
-    if (is.null(fit_covariate_list)) {
-      used_data <- data |> dplyr::slice(1)
+    if (is.null(covariates)) {
+      used_profile <- data |> dplyr::slice(1)
     } else {
-      used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
-      profiles <- list(profiles = used_data)
+      used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
+      profiles <- list(profiles = used_profile)
     }
 
     predictions <- tidy_predict_surv(
       models = models,
-      new_data = used_data,
+      new_data = used_profile,
       eval_time = eval_time,
       interval = interval,
       special_profiles = !is.null(profiles)
@@ -309,19 +266,19 @@ fit_models <- function(data,
 
   }
 
-  if (approach == "joint_fits") {
+  if (approach == "predict_by_covariate") {
 
-    used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
-    profiles <- list(profiles = used_data)
+    used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
+    profiles <- list(profiles = used_profile)
 
-    for (tx in seq_along(group_list)) {
+    for (tx in seq_along(predict_list)) {
 
       # filtering the profiles so that predictions are group-specific
-      filtered_used_data <- used_data |> dplyr::filter(group == group_list[tx])
+      filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(predict_by) == predict_list[tx])
 
       predictions[[tx]] <- tidy_predict_surv(
         models = models,
-        new_data = filtered_used_data,
+        new_data = filtered_profile,
         eval_time = eval_time,
         interval = interval,
         special_profiles = !is.null(profiles)
@@ -336,31 +293,31 @@ fit_models <- function(data,
 
     }
 
-   names(predictions) <-
-    names(plots) <-
-     group_list
+    names(predictions) <-
+      names(plots) <-
+      predict_list
 
-   plots <- c(profiles, plots)
+    plots <- c(profiles, plots)
 
   }
 
-  if (approach == "separate_fits") {
+  if (approach == "predict_by_non_covariate") {
 
-    if (is.null(fit_covariate_list)) {
-      used_data <- data |> dplyr::slice(1)
+    if (is.null(covariates)) {
+      used_profile <- data |> dplyr::slice(1)
     } else {
-      used_data <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_covariate_list)))
-      profiles <- list(profiles = used_data)
+      used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
+      profiles <- list(profiles = used_profile)
     }
 
-    for (tx in seq_along(group_list)) {
+    for (tx in seq_along(predict_list)) {
 
       # Not filtering because the predictions should be agnostic to the grouping
       # in the underlying data.
 
       predictions[[tx]] <- tidy_predict_surv(
         models = models[[tx]],
-        new_data = used_data,
+        new_data = used_profile,
         eval_time = eval_time,
         interval = interval,
         special_profiles = !is.null(profiles)
@@ -382,24 +339,18 @@ fit_models <- function(data,
 
   }
 
-  # Create summary ----
-
-
-
-
   # Return ----
   out <- list(
     approach = approach,
     engine = engine,
     distributions = distributions,
     models = models,
+    goodness_of_fit = goodness_of_fit,
+    fit_averages = fit_averages,
     cure_fractions = cure_fractions,
     parameters = parameters,
     predictions = predictions,
-    plots = plots,
-    summary = summary,
-    KM = KM,
-    KM_plot = KM_plot
+    plots = plots
   )
 
   # remove NULL

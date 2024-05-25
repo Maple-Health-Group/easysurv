@@ -145,9 +145,7 @@ if (do_separate) {
     data = surv_data,
     time = "time",
     event = "event",
-    group = "group",
-    group_as_covariate = FALSE,
-    other_covariates = c("ph.ecog", "age"),
+    predict_by = "group",
     eval_time = times
   )
 
@@ -161,8 +159,8 @@ if (do_joint) {
     data = surv_data,
     time = "time",
     event = "event",
-    group = "group",
-    group_as_covariate = TRUE,
+    predict_by = "group",
+    covariates = "group",
     eval_time = times
   )
 
@@ -176,13 +174,13 @@ if (do_splines) {
     data = surv_data,
     time = "time",
     event = "event",
-    group = "group",
-    group_as_covariate = FALSE,
+    predict_by = "group",
     engine = "flexsurvspline",
     k = c(1,2,3),
     scale = "hazard",
     eval_time = times
   )
+
 }
 
 
@@ -194,11 +192,11 @@ if (do_cure) {
     data = surv_data,
     time = "time",
     event = "event",
-    group = "group",
-    group_as_covariate = FALSE,
+    predict_by = "group",
     engine = "flexsurvcure",
     eval_time = times
   )
+
 }
 
 ## See Outputs ------------------------------------------------------------------
