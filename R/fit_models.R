@@ -139,10 +139,11 @@ fit_models <- function(data,
 
   # Set approach
   if (is.null(predict_by)) {
+    predict_list <- NULL
     approach <- "predict_by_none"
   } else {
     predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
-    approach <- if (predict_by %in% covariates) "predict_by_covariate" else "predict_by_non_covariate"
+    approach <- if (predict_by %in% covariates) "predict_by_covariate" else "predict_by_other"
   }
 
   covariates_string <- if (!is.null(covariates)) paste(covariates, collapse = " + ") else 1
@@ -171,75 +172,56 @@ fit_models <- function(data,
 
   # Fit models ----
 
-  if (approach == "predict_by_none" | approach == "predict_by_covariate") {
-    if (engine == "flexsurvspline") {
-
-      out <- process_spline_combinations(k, scale, fit_formula, data)
-
-    } else {
-
-      out <- process_distributions(dists, fit_formula, data, engine)
-    }
-
-    models <- out$models
-    distributions <- out$distributions
-    if (engine == "flexsurvcure") cure_fractions <- out$cure_fractions
-
-
-    goodness_of_fit <- get_goodness_of_fit(models)
-    fit_averages <- suppressWarnings(get_fit_averages_summary(models))
-    parameters <- get_surv_parameters(models)
-
-  }
-
-  if (approach == "predict_by_non_covariate") {
-    predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
+  if (approach %in% c("predict_by_none", "predict_by_covariate")) {
+    data_sets <- list(data)
+    fit_labels <- "All"
+  } else {
     nested <- data |> tidyr::nest(.by = predict_by)
+    data_sets <- nested[["data"]]
+    fit_labels <- predict_list
+  }
 
-    for (tx in seq_along(predict_list)) {
-      data_subset <- nested[["data"]][[tx]]
-
-      if (engine == "flexsurvspline") {
-
-        out <- process_spline_combinations(k, scale, fit_formula, data_subset)
-
-      } else {
-
-        out <- process_distributions(dists, fit_formula, data_subset, engine)
-      }
-
-      models[[tx]] <- out$models
-      distributions[[tx]] <- out$distributions
-      if (engine == "flexsurvcure") cure_fractions[[tx]] <- out$cure_fractions
-
-      goodness_of_fit[[tx]] <- get_goodness_of_fit(models[[tx]])
-      fit_averages[[tx]] <- suppressWarnings(get_fit_averages_summary(models[[tx]]))
-      parameters[[tx]] <- get_surv_parameters(models[[tx]])
-
+  for (i in seq_along(data_sets)) {
+    data_subset <- data_sets[[i]]
+    if (engine == "flexsurvspline") {
+      out <- process_spline_combinations(k, scale, fit_formula, data_subset)
+    } else {
+      out <- process_distributions(dists, fit_formula, data_subset, engine)
     }
 
-    names(models) <-
-      names(distributions) <-
-      names(goodness_of_fit) <-
-      names(fit_averages) <-
-      names(parameters) <-
-      predict_list
-
-    if (engine == "flexsurvcure") names(cure_fractions) <- predict_list
-
+    models[[i]] <- out$models
+    distributions[[i]] <- out$distributions
+    if (engine == "flexsurvcure") cure_fractions[[i]] <- out$cure_fractions
+    goodness_of_fit[[i]] <- get_goodness_of_fit(models[[i]])
+    fit_averages[[i]] <- suppressWarnings(get_fit_averages_summary(models[[i]]))
+    parameters[[i]] <- get_surv_parameters(models[[i]])
   }
+
+  names(models) <-
+    names(distributions) <-
+    names(parameters) <-
+    names(goodness_of_fit) <-
+    names(fit_averages) <-
+    fit_labels
+  if (engine == "flexsurvcure") names(cure_fractions) <- predict_list
 
 
   # Predict and plot ----
 
-  if (include_ci) {
-    interval <- "confidence"
-  } else {
-    interval <- "none"
-  }
+  # Define a helper function to generate predictions and plots
+  generate_predictions_and_plots <- function(models,
+                                             eval_time,
+                                             interval,
+                                             covariates,
+                                             predict_by,
+                                             predict_list,
+                                             fit_labels,
+                                             data,
+                                             approach) {
+    predictions <- list()
+    plots <- list()
 
-  if (approach == "predict_by_none") {
-
+    # Create the profile data based on covariates
     if (is.null(covariates)) {
       used_profile <- data |> dplyr::slice(1)
     } else {
@@ -247,37 +229,21 @@ fit_models <- function(data,
       profiles <- list(profiles = used_profile)
     }
 
-    predictions <- tidy_predict_surv(
-      models = models,
-      new_data = used_profile,
-      eval_time = eval_time,
-      interval = interval,
-      special_profiles = !is.null(profiles)
-    )
+    # Set the loop labels based on the approach
+    loop_labels <- if (approach == "predict_by_none") fit_labels else predict_list
 
-    if (any(sapply(predictions$table_pred_surv, is.list))) {
-      # there are multiple profiles
-      plots <- list(lapply(predictions$table_pred_surv, plot_fits))
-    } else {
-      plots <- list(fit_plots = plot_fits(predictions$table_pred_surv))
-    }
+    for (tx in seq_along(loop_labels)) {
 
-    plots <- c(profiles, plots)
+      model_index <- if (approach == "predict_by_none" | approach == "predict_by_covariate") 1 else tx
 
-  }
-
-  if (approach == "predict_by_covariate") {
-
-    used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
-    profiles <- list(profiles = used_profile)
-
-    for (tx in seq_along(predict_list)) {
-
-      # filtering the profiles so that predictions are group-specific
-      filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(predict_by) == predict_list[tx])
+      if (approach == "predict_by_covariate") {
+        filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(predict_by) == predict_list[tx])
+      } else {
+        filtered_profile <- used_profile
+      }
 
       predictions[[tx]] <- tidy_predict_surv(
-        models = models,
+        models = models[[model_index]],
         new_data = filtered_profile,
         eval_time = eval_time,
         interval = interval,
@@ -290,59 +256,42 @@ fit_models <- function(data,
       } else {
         plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
       }
-
     }
 
-    names(predictions) <-
-      names(plots) <-
-      predict_list
+    # Set names for predictions and plots
+    names(predictions) <- names(plots) <- loop_labels
 
+    # Combine profiles with plots
     plots <- c(profiles, plots)
 
+    return(list(predictions = predictions, plots = plots))
   }
 
-  if (approach == "predict_by_non_covariate") {
-
-    if (is.null(covariates)) {
-      used_profile <- data |> dplyr::slice(1)
-    } else {
-      used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
-      profiles <- list(profiles = used_profile)
-    }
-
-    for (tx in seq_along(predict_list)) {
-
-      # Not filtering because the predictions should be agnostic to the grouping
-      # in the underlying data.
-
-      predictions[[tx]] <- tidy_predict_surv(
-        models = models[[tx]],
-        new_data = used_profile,
-        eval_time = eval_time,
-        interval = interval,
-        special_profiles = !is.null(profiles)
-      )
-
-      if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
-        # there are multiple profiles
-        plots[[tx]] <- list(fit_plots = lapply(predictions[[tx]]$table_pred_surv, plot_fits))
-      } else {
-        plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
-
-      }
-
-    }
-
-    names(predictions) <- names(plots) <- names(models)
-
-    plots <- c(profiles, plots)
-
+  if (include_ci) {
+    interval <- "confidence"
+  } else {
+    interval <- "none"
   }
+
+  predictions_and_plots <- generate_predictions_and_plots(models = models,
+                                                          eval_time = eval_time,
+                                                          interval = interval,
+                                                          covariates = covariates,
+                                                          predict_by = predict_by,
+                                                          predict_list = predict_list,
+                                                          fit_labels = fit_labels,
+                                                          data = data,
+                                                          approach = approach)
+  predictions <- predictions_and_plots$predictions
+  plots <- predictions_and_plots$plots
 
   # Return ----
   out <- list(
-    approach = approach,
     engine = engine,
+    approach = approach,
+    formula = deparse(fit_formula),
+    covariates = covariates,
+    predict_by = predict_by,
     distributions = distributions,
     models = models,
     goodness_of_fit = goodness_of_fit,
@@ -357,8 +306,53 @@ fit_models <- function(data,
   out <- out |> purrr::discard(is.null)
 
   # Assign a class
-  class_name <- paste0("easy_", engine)
-  class(out) <- c(class(out), class_name)
+  #class_name <- paste0("easy_", engine)
+  class_fit_models <- "easy_fit_models"
+  class_approach <- switch(
+    approach,
+    predict_by_none = "pred_none",
+    predict_by_covariate = "pred_covariate",
+    predict_by_other = "pred_other"
+  )
+  class(out) <- c(class(out), class_fit_models, class_approach)
 
   return(out)
+}
+
+#' Print methods for \code{fit_models}
+#' @param x An object of class \code{fit_models}
+#' @param ... Additional arguments
+#' @export
+#' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
+print.easy_fit_models <- function(x, ...) {
+
+  cli::cli_h1("Fit Models Summary")
+  cli::cli_text("{.strong Engine:} {.field {x$engine}}.")
+  cli::cli_text("{.strong Approach:} {.field {x$approach}}.")
+
+
+  cli::cli_ul()
+  if (inherits(x, "pred_none")) {
+    cli::cli_li("The {.field predict_by} argument was not specified.")
+    cli::cli_li("Therefore, models were fit on the full dataset.")
+  }
+
+  if (inherits(x, "pred_covariate")) {
+    cli::cli_li("The {.field predict_by} argument was set to {.val {x$predict_by}},
+                which was also a covariate.")
+    cli::cli_li("Therefore, models were fit on the full dataset.")
+    cli::cli_li("This is sometimes referred to as {.val joint fits}.")
+  }
+
+  if (inherits(x, "pred_other")) {
+    cli::cli_li("The {.field predict_by} argument was set to {.val {x$predict_by}},
+                which was not a covariate.")
+    cli::cli_li("Therefore, models were fit for each level of {.val {x$predict_by}}.")
+    cli::cli_li("This is sometimes referred to as {.val separate fits}.")
+  }
+  cli::cli_end()
+
+  cli::cli_alert_info("TODO: Keep adding more information here.")
+
+  invisible(x)
 }

@@ -5,6 +5,7 @@
 #' @noRd
 pfit <- purrr::possibly(.f = parsnip::fit)
 
+#' @importFrom cli cli_alert_warning
 #' @importFrom parsnip survival_reg set_engine
 #' @importFrom purrr map discard keep pmap pmap_chr set_names
 #' @importFrom tidyr expand_grid
@@ -32,12 +33,17 @@ process_spline_combinations <- function(k, scale, fit_formula, data) {
     dists_failed = models |> purrr::keep(is.null) |> names()
   )
 
+  if (length(distributions$dists_failed) > 0) {
+    cli::cli_alert_warning("{.strong Failed splines:} {.val {distributions$dists_failed}}.")
+  }
+
   models <- models |> purrr::discard(is.null)
 
   return(list(models = models, distributions = distributions))
 }
 
 
+#' @importFrom cli cli_alert_warning
 #' @importFrom parsnip survival_reg set_engine
 #' @importFrom purrr map discard keep pmap pmap_chr set_names
 #' @noRd
@@ -58,6 +64,10 @@ process_distributions <- function(dists, fit_formula, data, engine) {
     dists_success = models |> purrr::discard(is.null) |> names(),
     dists_failed = models |> purrr::keep(is.null) |> names()
   )
+
+  if (length(distributions$dists_failed) > 0) {
+    cli::cli_alert_warning("{.strong Failed distributions:} {.val {distributions$dists_failed}}.")
+  }
 
   models <- models |> purrr::discard(is.null)
 

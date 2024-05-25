@@ -139,6 +139,9 @@ times <- seq(
 
 ### Separate fits --------------------------------------------------------------
 
+# make a surv_data2 with just 5 rows for testing
+surv_data2 <- surv_data[1:5,]
+
 if (do_separate) {
 
   fit_check_separate <- easysurv::fit_models(
