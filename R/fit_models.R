@@ -26,9 +26,6 @@
 #' "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.
 #'
 #'
-#' @param eval_time (Optional) A vector of evaluation time points for generating
-#' predictions. Default is \code{NULL}, which if left as NULL, generates a
-#' sequence from 0 to 2.5 times the maximum observed time.
 #' @param engine (Optional) The survival analysis engine to be used.
 #' Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
 #' Default is "flexsurv".
@@ -37,8 +34,6 @@
 #' @param scale (Optional) A character vector specifying the scale parameter(s)
 #' for spline-based models. Options are "hazard", "odds", and "normal".
 #' Default is \code{"hazard"}.
-#' @param include_ci (Optional) Logical indicating whether to include confidence
-#'  intervals in the predictions. Default is \code{FALSE}.
 #'
 #' @return A list containing various outputs including model distributions,
 #' parameters, predictions, plots, and summary statistics.
@@ -72,11 +67,9 @@ fit_models <- function(data,
                                  "llogis",
                                  "lnorm",
                                  "weibull"),
-                       eval_time = NULL,
                        engine = "flexsurv",
                        k = c(1, 2, 3),
-                       scale = c("hazard"),
-                       include_ci = FALSE) {
+                       scale = c("hazard")) {
 
   # Create key objects ----
   distributions <- list()
@@ -126,14 +119,8 @@ fit_models <- function(data,
   ## Check event ----
   # ...
 
-  ## Check eval_time ----
-  # If eval_time is missing, create a sequence from 0 to 2.5 times the maximum time
-  if (is.null(eval_time)) {
-    max_time <- max(data[[time]], na.rm = TRUE)
-    eval_time <- seq(0,
-                     ceiling(max_time * 2.5),
-                     length.out = 100)
-  }
+
+
 
   ## Check covariate approach ----
 
@@ -205,101 +192,26 @@ fit_models <- function(data,
     fit_labels
   if (engine == "flexsurvcure") names(cure_fractions) <- predict_list
 
-
-  # Predict and plot ----
-
-  # Define a helper function to generate predictions and plots
-  generate_predictions_and_plots <- function(models,
-                                             eval_time,
-                                             interval,
-                                             covariates,
-                                             predict_by,
-                                             predict_list,
-                                             fit_labels,
-                                             data,
-                                             approach) {
-    predictions <- list()
-    plots <- list()
-
-    # Create the profile data based on covariates
-    if (is.null(covariates)) {
-      used_profile <- data |> dplyr::slice(1)
-    } else {
-      used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(covariates)))
-      profiles <- list(profiles = used_profile)
-    }
-
-    # Set the loop labels based on the approach
-    loop_labels <- if (approach == "predict_by_none") fit_labels else predict_list
-
-    for (tx in seq_along(loop_labels)) {
-
-      model_index <- if (approach == "predict_by_none" | approach == "predict_by_covariate") 1 else tx
-
-      if (approach == "predict_by_covariate") {
-        filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(predict_by) == predict_list[tx])
-      } else {
-        filtered_profile <- used_profile
-      }
-
-      predictions[[tx]] <- tidy_predict_surv(
-        models = models[[model_index]],
-        new_data = filtered_profile,
-        eval_time = eval_time,
-        interval = interval,
-        special_profiles = !is.null(profiles)
-      )
-
-      if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
-        # there are multiple profiles
-        plots[[tx]] <- list(fit_plots = lapply(predictions[[tx]]$table_pred_surv, plot_fits))
-      } else {
-        plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
-      }
-    }
-
-    # Set names for predictions and plots
-    names(predictions) <- names(plots) <- loop_labels
-
-    # Combine profiles with plots
-    plots <- c(profiles, plots)
-
-    return(list(predictions = predictions, plots = plots))
-  }
-
-  if (include_ci) {
-    interval <- "confidence"
-  } else {
-    interval <- "none"
-  }
-
-  predictions_and_plots <- generate_predictions_and_plots(models = models,
-                                                          eval_time = eval_time,
-                                                          interval = interval,
-                                                          covariates = covariates,
-                                                          predict_by = predict_by,
-                                                          predict_list = predict_list,
-                                                          fit_labels = fit_labels,
-                                                          data = data,
-                                                          approach = approach)
-  predictions <- predictions_and_plots$predictions
-  plots <- predictions_and_plots$plots
-
-  # Return ----
-  out <- list(
+  info <- list(
     engine = engine,
     approach = approach,
     formula = deparse(fit_formula),
+    time = time,
+    event = event,
     covariates = covariates,
     predict_by = predict_by,
-    distributions = distributions,
+    predict_list = predict_list,
+    distributions = distributions
+  )
+
+  # Return ----
+  out <- list(
+    info = info,
     models = models,
     goodness_of_fit = goodness_of_fit,
     fit_averages = fit_averages,
     cure_fractions = cure_fractions,
-    parameters = parameters,
-    predictions = predictions,
-    plots = plots
+    parameters = parameters
   )
 
   # remove NULL
@@ -307,7 +219,7 @@ fit_models <- function(data,
 
   # Assign a class
   #class_name <- paste0("easy_", engine)
-  class_fit_models <- "easy_fit_models"
+  class_fit_models <- "fit_models"
   class_approach <- switch(
     approach,
     predict_by_none = "pred_none",
@@ -317,6 +229,7 @@ fit_models <- function(data,
   class(out) <- c(class(out), class_fit_models, class_approach)
 
   return(out)
+
 }
 
 #' Print methods for \code{fit_models}
@@ -324,11 +237,11 @@ fit_models <- function(data,
 #' @param ... Additional arguments
 #' @export
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
-print.easy_fit_models <- function(x, ...) {
+print.fit_models <- function(x, ...) {
 
   cli::cli_h1("Fit Models Summary")
-  cli::cli_text("{.strong Engine:} {.field {x$engine}}.")
-  cli::cli_text("{.strong Approach:} {.field {x$approach}}.")
+  cli::cli_text("{.strong Engine:} {.field {x$info$engine}}.")
+  cli::cli_text("{.strong Approach:} {.field {x$info$approach}}.")
 
 
   cli::cli_ul()
@@ -338,16 +251,16 @@ print.easy_fit_models <- function(x, ...) {
   }
 
   if (inherits(x, "pred_covariate")) {
-    cli::cli_li("The {.field predict_by} argument was set to {.val {x$predict_by}},
+    cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
                 which was also a covariate.")
     cli::cli_li("Therefore, models were fit on the full dataset.")
     cli::cli_li("This is sometimes referred to as {.val joint fits}.")
   }
 
   if (inherits(x, "pred_other")) {
-    cli::cli_li("The {.field predict_by} argument was set to {.val {x$predict_by}},
+    cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
                 which was not a covariate.")
-    cli::cli_li("Therefore, models were fit for each level of {.val {x$predict_by}}.")
+    cli::cli_li("Therefore, models were fit for each level of {.val {x$info$predict_by}}.")
     cli::cli_li("This is sometimes referred to as {.val separate fits}.")
   }
   cli::cli_end()

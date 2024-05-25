@@ -144,28 +144,39 @@ surv_data2 <- surv_data[1:5,]
 
 if (do_separate) {
 
-  fit_check_separate <- easysurv::fit_models(
+  models_separate <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
-    predict_by = "group",
-    eval_time = times
+    predict_by = "group"
   )
 
+  pred_separate <- predict_and_plot(fit_models = models_separate,
+                              eval_time = times,
+                              data = surv_data)
+
+  models_separate
+  pred_separate
 }
 
 ### Joint fits -----------------------------------------------------------------
 
 if (do_joint) {
 
-  fit_check_joint <- easysurv::fit_models(
+  models_joint <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
     predict_by = "group",
-    covariates = "group",
-    eval_time = times
+    covariates = "group"
   )
+
+  pred_joint <- predict_and_plot(fit_models = models_joint,
+                              eval_time = times,
+                              data = surv_data)
+
+  models_joint
+  pred_joint
 
 }
 
@@ -173,17 +184,22 @@ if (do_joint) {
 
 if (do_splines) {
 
-  fit_check_splines <- easysurv::fit_models(
+  models_splines <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
     predict_by = "group",
     engine = "flexsurvspline",
     k = c(1,2,3),
-    scale = "hazard",
-    eval_time = times
+    scale = "hazard"
   )
 
+  pred_splines <- predict_and_plot(fit_models = models_splines,
+                              eval_time = times,
+                              data = surv_data)
+
+  models_splines
+  pred_splines
 }
 
 
@@ -191,23 +207,29 @@ if (do_splines) {
 
 if (do_cure) {
 
-  fit_check_cure <- easysurv::fit_models(
+  models_cure <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
     predict_by = "group",
-    engine = "flexsurvcure",
-    eval_time = times
+    engine = "flexsurvcure"
   )
+
+  pred_cure <- predict_and_plot(fit_models = models_cure,
+                              eval_time = times,
+                              data = surv_data)
+
+  models_cure
+  pred_cure
 
 }
 
 ## See Outputs ------------------------------------------------------------------
 
-if (do_separate) View(fit_check_separate)
-if (do_joint) View(fit_check_joint)
-if (do_splines) View(fit_check_splines)
-if (do_cure) View(fit_check_cure)
+# if (do_separate) View(fit_check_separate)
+# if (do_joint) View(fit_check_joint)
+# if (do_splines) View(fit_check_splines)
+# if (do_cure) View(fit_check_cure)
 
 
 ## Excel Exports ----------------------------------------------------------------
@@ -231,33 +253,33 @@ if (do_cure) View(fit_check_cure)
 
 
 
-
-
-
-# Create a new workbook object
-wb <- openxlsx::createWorkbook()
-
-# The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
-# Note that plots will be reproduced at a different DPI setting for Excel.
-# This may make them appear strange in R temporarily.
-
-quick_to_XL(wb = wb, quick_object = KM_check)
-quick_to_XL(wb = wb, quick_object = PH_check)
-
-if (do_separate) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
-if (do_joint) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_joint)
-if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
-if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)
-
-# Give the workbook a name ending in .xlsx
-output_name <- paste0(
-  "easysurv output - ",
-  format(Sys.time(), "%Y-%m-%d %H.%M"),
-  ".xlsx"
-)
-
-# Save the workbook - you can choose a directory before this if desired.
-openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
-
-# Open the workbook and assess contents.
-openxlsx::openXL(output_name)
+#
+#
+#
+# # Create a new workbook object
+# wb <- openxlsx::createWorkbook()
+#
+# # The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
+# # Note that plots will be reproduced at a different DPI setting for Excel.
+# # This may make them appear strange in R temporarily.
+#
+# quick_to_XL(wb = wb, quick_object = KM_check)
+# quick_to_XL(wb = wb, quick_object = PH_check)
+#
+# if (do_separate) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
+# if (do_joint) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_joint)
+# if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
+# if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)
+#
+# # Give the workbook a name ending in .xlsx
+# output_name <- paste0(
+#   "easysurv output - ",
+#   format(Sys.time(), "%Y-%m-%d %H.%M"),
+#   ".xlsx"
+# )
+#
+# # Save the workbook - you can choose a directory before this if desired.
+# openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
+#
+# # Open the workbook and assess contents.
+# openxlsx::openXL(output_name)

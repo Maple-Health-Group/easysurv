@@ -11,11 +11,9 @@ fit_models(
   predict_by = NULL,
   covariates = NULL,
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-  eval_time = NULL,
   engine = "flexsurv",
   k = c(1, 2, 3),
-  scale = c("hazard"),
-  include_ci = FALSE
+  scale = c("hazard")
 )
 }
 \arguments{
@@ -46,10 +44,6 @@ For the survival engine, options are "exponential", "extreme", "gaussian",
 Default is \code{c("exp", "gamma", "gengamma", "gompertz",
 "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.}
 
-\item{eval_time}{(Optional) A vector of evaluation time points for generating
-predictions. Default is \code{NULL}, which if left as NULL, generates a
-sequence from 0 to 2.5 times the maximum observed time.}
-
 \item{engine}{(Optional) The survival analysis engine to be used.
 Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
 Default is "flexsurv".}
@@ -60,9 +54,6 @@ spline-based models. Default is \code{c(1, 2, 3)} to test different numbers.}
 \item{scale}{(Optional) A character vector specifying the scale parameter(s)
 for spline-based models. Options are "hazard", "odds", and "normal".
 Default is \code{"hazard"}.}
-
-\item{include_ci}{(Optional) Logical indicating whether to include confidence
-intervals in the predictions. Default is \code{FALSE}.}
 }
 \value{
 A list containing various outputs including model distributions,
