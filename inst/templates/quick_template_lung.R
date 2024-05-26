@@ -150,13 +150,12 @@ if (do_separate) {
     event = "event",
     predict_by = "group"
   )
+  models_separate
 
   pred_separate <- predict_and_plot(fit_models = models_separate,
                               eval_time = times,
                               data = surv_data)
 
-  models_separate
-  pred_separate
 }
 
 ### Joint fits -----------------------------------------------------------------

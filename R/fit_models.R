@@ -39,9 +39,11 @@
 #' parameters, predictions, plots, and summary statistics.
 #' @export
 #'
-#' @importFrom survival survfit
+#' @importFrom dplyr select
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
+#' @importFrom survival survfit
+#' @importFrom tibble rownames_to_column
 #' @importFrom tidyr nest
 #'
 #' @examples
@@ -145,7 +147,7 @@ fit_models <- function(data,
   # Check that dists has legal values for engine
   # ...
 
-  # Create formula ----
+  # Create formulae ----
 
   fit_formula <- stats::as.formula(paste0(
     "survival::Surv(time = ",
@@ -155,6 +157,30 @@ fit_models <- function(data,
     ") ~",
     covariates_string
   ))
+
+  km_formula <- stats::as.formula(paste0(
+    "survival::Surv(time = ",
+    time,
+    ", event = ",
+    event,
+    ") ~",
+    if (is.null(predict_by)) "1" else predict_by
+  ))
+
+  # Fit KM ----
+  KM_fit <- do.call(survival::survfit,
+                     args = list(
+                       formula = km_formula,
+                       conf.int = 0.95,
+                       data = data,
+                       type = "kaplan-meier"
+                     )
+  )
+
+  # TODO: Suspect this will only work for flexsurv engines.
+  KM_summary <- as.data.frame(summary(KM_fit)$table) |>
+    tibble::rownames_to_column(var = "group") |>
+    dplyr::select(-"n.max", -"n.start")
 
 
   # Fit models ----
@@ -190,7 +216,7 @@ fit_models <- function(data,
     names(goodness_of_fit) <-
     names(fit_averages) <-
     fit_labels
-  if (engine == "flexsurvcure") names(cure_fractions) <- predict_list
+  if (engine == "flexsurvcure") names(cure_fractions) <- fit_labels
 
   info <- list(
     engine = engine,
@@ -201,7 +227,8 @@ fit_models <- function(data,
     covariates = covariates,
     predict_by = predict_by,
     predict_list = predict_list,
-    distributions = distributions
+    distributions = distributions,
+    KM_summary = KM_summary
   )
 
   # Return ----
@@ -236,13 +263,23 @@ fit_models <- function(data,
 #' @param x An object of class \code{fit_models}
 #' @param ... Additional arguments
 #' @export
-#' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
+#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
+#' @importFrom cli cli_ul cli_li cli_div cli_end
+#' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
+#' @importFrom cli cat_line qty
+#' @importFrom dplyr select filter pull
+#' @importFrom tidyr pivot_wider
 print.fit_models <- function(x, ...) {
 
-  cli::cli_h1("Fit Models Summary")
-  cli::cli_text("{.strong Engine:} {.field {x$info$engine}}.")
-  cli::cli_text("{.strong Approach:} {.field {x$info$approach}}.")
+  # Create visible binding for R CMD check.
+  distribution <- strata <- dist <- AIC_rank <- NULL
 
+  cli::cli_h1("Fit Models Summary")
+
+  cli::cli_text("{.strong Engine:} {.field {x$info$engine}}.")
+
+  # Approach
+  cli::cli_text("{.strong Approach:} {.field {x$info$approach}}.")
 
   cli::cli_ul()
   if (inherits(x, "pred_none")) {
@@ -265,7 +302,108 @@ print.fit_models <- function(x, ...) {
   }
   cli::cli_end()
 
-  cli::cli_alert_info("TODO: Keep adding more information here.")
+  # Distributions
+  cli::cat_line()
+  cli::cli_text("{.strong Distributions attempted:} {.val {x$info$distributions[[1]]$dists_attempted}}.")
+
+  cli::cli_h2("Median survival estimates")
+
+  if (length(x$info$distributions) == 1) {
+
+    # There's only one set of distributions to look at.
+    if (length(x$info$distributions[[1]]$dists_failed) > 0) {
+      cli::cli_alert_warning("Some distributions failed to converge.")
+      cli::cli_text("Failed distributions: {.val {x$info$distributions[[1]]$dists_failed}}")
+    }
+
+    if (inherits(x, "pred_covariate")) {
+
+      median.est <- x$fit_averages[[1]] |>
+        dplyr::select(distribution, strata, median.est) |>
+        tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
+        dplyr::select(-distribution)
+
+    } else {
+
+      median.est <- x$fit_averages[[1]]$median.est
+
+    }
+
+    # Goodness of fits and fit averages
+    combined_data <- x$goodness_of_fit[[1]] |>
+      select(dist, AIC_rank) |>
+      cbind(median.est)
+
+    # say what dist had the AIC_rank == 1
+    best_dist <- combined_data |>
+      dplyr::filter(AIC_rank == 1) |>
+      dplyr::pull(dist) |>
+      unique()
+
+    data_median <- x$info$KM_summary$median
+
+    print(combined_data)
+    cli::cat_line()
+
+    divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+    cli::cli_alert_info("For comparison, the KM median survival {cli::qty(length(x$info$predict_list))}time{?s} {?was/were} {.val {data_median}}.")
+    cli::cli_end(divid)
+
+    cli::cli_alert_info("The distribution with the best (lowest) AIC was {.val {best_dist}}.")
+
+  } else {
+    # There are multiple distribution sets to look at.
+    for (i in seq_along(x$info$predict_list)) {
+      cli::cli_h3("Group: {.val {x$info$predict_list[i]}}")
+
+      if (length(x$info$distributions[[i]]$dists_failed) > 0) {
+        cli::cli_alert_warning("Failed distributions for {.val {names(x$info$distributions)[i]}}: {.val {x$info$distributions[[i]]$dists_failed}}")
+      }
+
+      if (inherits(x, "pred_covariate")) {
+
+        median.est <- x$fit_averages[[1]] |>
+          dplyr::select(distribution, strata, median.est) |>
+          tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
+          dplyr::select(-distribution)
+
+      } else {
+
+        median.est <- x$fit_averages[[i]]$median.est
+
+      }
+
+      # Goodness of fits and fit averages
+      combined_data <- x$goodness_of_fit[[i]] |>
+        select(dist, AIC_rank) |>
+        cbind(median.est)
+
+      # say what dist had the AIC_rank == 1
+      best_dist <- combined_data |>
+        dplyr::filter(AIC_rank == 1) |>
+        dplyr::pull(dist) |>
+        unique()
+
+      data_median <- x$info$KM_summary$median[i]
+      print(combined_data)
+      cli::cat_line()
+      divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+      cli::cli_alert_info("For comparison, the KM median survival time was {.val {data_median}}.")
+      cli::cli_end(divid)
+      cli::cli_alert_info("The distribution with the best (lowest) AIC was {.val {best_dist}}.")
+    }
+  }
+
+  if (x$info$engine == "flexsurvcure") {
+    cli::cli_h2("Cure Fractions")
+    for (i in seq_along(x$info$distributions)) {
+      cli::cli_h3("Group: {.val {names(x$info$distributions)[i]}}")
+      print(x$cure_fractions[[i]])
+    }
+  }
+
+  cli::cli_rule()
+  cli::cli_alert("For more information, run {.code View()} on the fit_models output.")
 
   invisible(x)
 }

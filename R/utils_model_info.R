@@ -284,7 +284,8 @@ get_goodness_of_fit <- function(mod) {
     "BIC_rank" = BIC_ranks
   )
 
-  out[order(out$dist), ]
+  return(out)
+
 }
 
 #' @importFrom dplyr bind_rows relocate

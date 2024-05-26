@@ -46,6 +46,8 @@ process_spline_combinations <- function(k, scale, fit_formula, data) {
 #' @importFrom cli cli_alert_warning
 #' @importFrom parsnip survival_reg set_engine
 #' @importFrom purrr map discard keep pmap pmap_chr set_names
+#' @importFrom tibble as_tibble
+#' @importFrom tidyr pivot_longer
 #' @noRd
 process_distributions <- function(dists, fit_formula, data, engine) {
   models <- purrr::map(
@@ -72,7 +74,9 @@ process_distributions <- function(dists, fit_formula, data, engine) {
   models <- models |> purrr::discard(is.null)
 
   if (engine == "flexsurvcure") {
-    cure_fractions <- purrr::map(models, get_cure_fractions)
+    cure_fractions <- purrr::map(models, get_cure_fractions) |>
+      tibble::as_tibble() |>
+      tidyr::pivot_longer(cols = everything(), names_to = "dist", values_to = "cure_fraction")
     return(list(models = models, distributions = distributions, cure_fractions = cure_fractions))
   }
 
