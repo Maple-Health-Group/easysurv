@@ -8,7 +8,7 @@
 #' @importFrom openxlsx addWorksheet
 #'
 #' @return Worksheet added (if required) to the wb object.
-#'
+#' @noRd
 #' @examples
 #' \dontrun{
 #' # To add
