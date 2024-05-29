@@ -18,7 +18,7 @@
 write_to_xl <- function(wb, object) {
 
   class_names <- c("easy_KM",
-                   "easy_PH",
+                   "test_PH",
                    "fit_models",
                    "pred_plot"
                    )
@@ -107,7 +107,7 @@ write_to_xl <- function(wb, object) {
 
 
   # PH Plots ----
-  if (class_name == "easy_PH") {
+  if (class_name == "test_PH") {
 
     sheet_name <- "PH Plots"
     add_sheet(wb, sheet_name)

@@ -301,14 +301,14 @@ print.fit_models <- function(x, ...) {
 
   if (inherits(x, "pred_covariate")) {
     cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
-                which was also a covariate.")
+                which was also a {.field covariate}.")
     cli::cli_li("Therefore, models were fit on the full dataset.")
     cli::cli_li("This is sometimes referred to as {.val joint fits}.")
   }
 
   if (inherits(x, "pred_other")) {
     cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
-                which was not a covariate.")
+                which was not a {.field covariate}.")
     cli::cli_li("Therefore, models were fit for each level of {.val {x$info$predict_by}}.")
     cli::cli_li("This is sometimes referred to as {.val separate fits}.")
   }

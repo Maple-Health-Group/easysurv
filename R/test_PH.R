@@ -118,8 +118,113 @@ test_PH <- function(data,
   )
 
   # Assign a class
-  class(out) <- c(class(out), "easy_PH")
+  class(out) <- c(class(out), "test_PH")
 
   return(out)
 
+}
+
+
+#' Print methods for \code{test_PH}
+#' @param x An object of class \code{test_PH}
+#' @param ... Additional arguments
+#' @export
+#' @noRd
+#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
+#' @importFrom cli cli_ul cli_li cli_div cli_end
+#' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
+#' @importFrom cli cat_line qty
+print.test_PH <- function(x, ...) {
+
+  cli::cli_h1("Proportional Hazards Assumption Testing")
+
+  cli::cli_h2("Cox Proportional Hazards Model")
+
+  cli::cli_text("The coefficients from {.fn survival::coxph} are:")
+  cli::cat_line()
+
+  coeff_table <- as.data.frame(x$coxph_model$coefficients)
+
+  print(coeff_table)
+  cli::cat_line()
+
+  divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+  cli::cli_text("The exp(coef) column shows the hazard {cli::qty(nrow(coeff_table))}ratio{?s} {?was/were} {.val {coeff_table$`exp(coef)`}}.")
+  cli::cli_end(divid)
+
+  cli::cli_h2("Test Survival Curve Differences")
+
+  cli::cli_alert_info(c("{.fn survival::survdiff} uses a log-rank test to test ",
+                        "for differences in survival curves between groups."))
+  cli::cli_alert_info("The null hypothesis is that the survival curves are the same.")
+  cli::cat_line()
+
+  divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+  if (x$survdiff$pvalue > 0.05) {
+    cli::cli_alert_warning(c("The test suggests that survival differences ",
+                             "between groups are {.strong NOT} statistically significant."))
+
+    cli::cli_alert_warning("p-value: {.val {x$survdiff$pvalue}}.")
+
+  } else {
+    cli::cli_alert_success(c("The test suggests that survival differences ",
+                             "between groups {.strong ARE} statistically significant."))
+
+    cli::cli_alert_success("p-value: {.val {x$survdiff$pvalue}}.")
+
+  }
+  cli::cli_end(divid)
+
+  cli::cli_h2("Test the Proportional Hazards Assumption of a Cox Regression")
+
+  cli::cli_alert_info(c("{.fn survival::cox.zph} tests the proportional hazards assumption."))
+  cli::cli_alert_info("The null hypothesis is that the hazards are proportional.")
+  cli::cat_line()
+
+  p_vals <- as.data.frame(x$cox.zph_PH_test$table)[3]
+  global_p_val <- my_vals[nrow(my_vals),]
+
+  divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+  if (global_p_val > 0.05) {
+    cli::cli_alert_success(c("The global test suggests that the PH assumption {.strong MAY BE} valid."))
+    cli::cli_alert_success("p-value: {.val {global_p_val}}.")
+  } else {
+    cli::cli_alert_warning(c("The global test suggests that the PH assumption {.strong MAY NOT BE} valid."))
+    cli::cli_alert_warning("p-value: {.val {global_p_val}}.")
+  }
+  cli::cli_end(divid)
+
+  cli::cat_line()
+  print(as.data.frame(PH_check[["cox.zph_PH_test"]][["table"]])[3])
+
+  cli::cli_h2("Plots")
+
+  print(x$cloglog_plot)
+  print(x$schoenfeld_plot)
+  cli::cli_text("The log cumulative hazard and Schoenfeld residuals plots have been printed.")
+
+  cli::cli_h3("Log cumulative hazard plot")
+  cli::cli_text(c("{.strong Parallel Lines:} If the lines are roughly ",
+                        "parallel, this suggests that the proportional hazards ",
+                        "assumption holds."))
+  cli::cli_text(c("Parallel lines indicate that the ",
+                "hazard ratios between groups are consistent over time."))
+
+  cli::cli_text(c("{.strong Non-Parallel Lines:} If the lines are not ",
+                        "parallel and diverge or converge, ",
+                        "the PH assumption may be violated. "))
+  cli::cli_text(c("Non-parallel lines indicate that the hazard ratios ",
+                "between groups change over time."))
+
+
+  cli::cli_h3("Schoenfeld residual plot")
+  cli::cli_text(c("A {.strong flat smoothed line} close to zero supports the PH assumption."))
+  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend suggests the PH assumption is violated."))
+
+  cli::cli_rule()
+  cli::cli_alert_info(c("PH tests may not always agree, so ",
+                        "it is important to consider the results of all tests and plots."))
+  cli::cli_alert_info(c("The full object can be inspected by running {.code View()} on the test_PH output."))
+
+  invisible(x)
 }
