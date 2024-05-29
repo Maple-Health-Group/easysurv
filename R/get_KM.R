@@ -20,6 +20,7 @@
 #'
 #' @export
 #'
+#' @importFrom cli cli_abort
 #' @importFrom survival Surv survfit
 #' @importFrom stats as.formula
 #' @importFrom tidyr nest
@@ -43,13 +44,9 @@ get_KM <- function(data,
 
   # Validate argument inputs ----
   if (!is.data.frame(data)) {
-    stop(
-      paste0(
-        "quick_KM found that ",
-        "`data` does not have class `data.frame`."
-      ),
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "The {.var data} argument must have class {.cls data.frame}.",
+      "x" = "You've provided an object of class: {.cls {class(data)}}"))
   }
 
   # Are the required columns present?
@@ -57,12 +54,11 @@ get_KM <- function(data,
   required_cols <- c(time, event, group)
 
   if (!all(required_cols %in% names(data))) {
-    stop(
+    cli::cli_abort(
       paste0(
         "The following columns are missing from `data`: ",
         paste0(required_cols[!required_cols %in% names(data)], collapse = ", ")
-      ),
-      call. = FALSE
+      )
     )
   }
 

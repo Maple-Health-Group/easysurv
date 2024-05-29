@@ -38,32 +38,30 @@ test_PH <- function(data,
                     ) {
 
   if (!is.data.frame(data)) {
-    stop(
-      "`data` does not have class `data.frame`.",
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "The {.var data} argument must have class {.cls data.frame}.",
+      "x" = "You've provided an object of class: {.cls {class(data)}}"))
   }
 
   required_cols <- c(time, event, group)
   if (!all(required_cols %in% colnames(data))) {
-    stop(
+
+    cli::cli_abort(
       paste0(
         "test_PH did not find the following columns in `data`: ",
         paste(setdiff(required_cols, colnames(data)),
               collapse = ", "
-        ), "."
-      ),
-      call. = FALSE
+        )
+      )
     )
   }
 
   group_list <- levels(droplevels(as.factor(data[[group]])))
 
-  if (length(group_list) == 1) {
-    stop(
-      "data must contain multiple groups if looking to assess
-      proportional hazards."
-    )
+  if (length(group_list) <= 1) {
+    cli::cli_abort(c(
+      "The {.field group} variable must contain multiple groups if looking to assess proportional hazards.",
+      "x" = "You've provided a group with the levels: {.var {group_list}}."))
   }
 
   PH_formula <- stats::as.formula(paste0(

@@ -39,6 +39,7 @@
 #' parameters, predictions, plots, and summary statistics.
 #' @export
 #'
+#' @importFrom cli cli_abort
 #' @importFrom dplyr select
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
@@ -92,12 +93,9 @@ fit_models <- function(data,
   ## Check data ----
   # Is it a data frame?
   if (!is.data.frame(data)) {
-    stop(
-      paste0(
-        "`data` does not have class `data.frame`."
-      ),
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "The {.var data} argument must have class {.cls data.frame}.",
+      "x" = "You've provided an object of class: {.cls {class(data)}}"))
   }
 
   # Are the required columns present?
@@ -105,12 +103,11 @@ fit_models <- function(data,
   required_cols <- c(time, event, predict_by)
 
   if (!all(required_cols %in% names(data))) {
-    stop(
+    cli::cli_abort(
       paste0(
         "The following columns are missing from `data`: ",
         paste0(required_cols[!required_cols %in% names(data)], collapse = ", ")
-      ),
-      call. = FALSE
+      )
     )
   }
 

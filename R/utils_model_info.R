@@ -62,6 +62,7 @@ get_cure_fractions <- function(mod) {
 
 }
 
+#' @importFrom cli cli_abort
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr rename_with
 #' @noRd
@@ -70,7 +71,8 @@ get_fit_averages <- function(mod,
                              get_rmst = TRUE,
                              get_mean = FALSE) {
   if (!get_median & !get_rmst & !get_mean) {
-    stop("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function")
+    cli::cli_abort(c("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function",
+                     "x" = "You've provided {.field get_median} = {.var FALSE}, {.field get_rmst} = {.var FALSE}, and {.field get_mean} = {.var FALSE}."))
   }
 
   out <- list()
