@@ -79,10 +79,7 @@ predict_and_plot <- function(fit_models,
   # Set names for predictions and plots
   names(predictions) <- names(plots) <- loop_labels
 
-  # Combine profiles with plots
-  plots <- c(profiles, plots)
-
-  out <- list(predictions = predictions, plots = plots)
+  out <- list(profiles = profiles$profiles, predictions = predictions, plots = plots)
 
   class(out) <- c(class(out), "pred_plot")
 

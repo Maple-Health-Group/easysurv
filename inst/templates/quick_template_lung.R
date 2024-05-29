@@ -66,6 +66,14 @@ surv_data <- surv_data |>
   dplyr::as_tibble() # Convert to tibble for easier viewing
 
 
+factor_levels <- c("Level1", "Level2", "Level3")
+
+# Add random factor column
+set.seed(123)  # Setting seed for reproducibility
+surv_data$RandomFactor <- factor(sample(factor_levels, nrow(surv_data), replace = TRUE))
+
+
+
 # Data Labelling and Assessment ------------------------------------------------
 
 # Overwrite any labels impacted by re-coding
@@ -122,8 +130,8 @@ PH_check
 
 do_separate <- TRUE # TRUE: run standard parametric model fits (separate)
 do_joint <- TRUE # TRUE: run standard parametric model fits (joint)
-do_splines <- TRUE # TRUE: run spline model fits
-do_cure <- TRUE # TRUE: run mixture cure model fits
+do_splines <- FALSE # TRUE: run spline model fits
+do_cure <- FALSE # TRUE: run mixture cure model fits
 
 # Times over which to generate/plot extrapolations
 times <- seq(
@@ -178,6 +186,27 @@ if (do_joint) {
   pred_joint
 
 }
+
+
+
+
+
+
+
+models_cov <- easysurv::fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group",
+  covariates = c("group", "age", "RandomFactor")
+)
+
+pred_cov <- predict_and_plot(fit_models = models_cov,
+                               eval_time = times,
+                               data = surv_data)
+
+
+
 
 ### Spline fits ----------------------------------------------------------------
 
@@ -234,11 +263,24 @@ if (do_cure) {
 ## Excel Exports ----------------------------------------------------------------
 
 
+wb <- openxlsx::createWorkbook()
+write_to_xl(wb, KM_check)
+write_to_xl(wb, PH_check)
+#write_to_xl(wb, models_separate)
+#write_to_xl(wb, pred_separate)
 
+write_to_xl(wb, models_joint)
+write_to_xl(wb, pred_joint)
+
+openxlsx::saveWorkbook(wb, file = "test.xlsx", overwrite = TRUE)
+openxlsx::openXL("test.xlsx")
 
 
 # Note to self: Set it up as an example that sends different items to different workbooks.
 # Like: KM to one, PH to another, and fit_models object to its own wb.
+# write_to_xl
+
+
 
 # Toggle the comment on the next line to see more about quick_to_XL
 # ?quick_to_XL

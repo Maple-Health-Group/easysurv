@@ -100,7 +100,16 @@ get_KM <- function(data,
           )
   )
 
-  KM_for_Excel <- list(all = step_KM(KM))
+  KM_all <- do.call(survival::survfit,
+                args = list(
+                  formula = KM_formula_separate,
+                  conf.int = 0.95,
+                  data = data,
+                  type = "kaplan-meier"
+                )
+  )
+
+  KM_for_Excel <- list(all = step_KM(KM_all))
 
   if (!is.null(group)) {
 
