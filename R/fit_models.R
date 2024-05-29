@@ -45,6 +45,7 @@
 #' @importFrom survival survfit
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr nest
+#' @importFrom rlang arg_match
 #'
 #' @examples
 #' \dontrun{
@@ -138,14 +139,29 @@ fit_models <- function(data,
   covariates_string <- if (!is.null(covariates)) paste(covariates, collapse = " + ") else 1
 
   ## Check engine ----
-  match.arg(engine,
+  rlang::arg_match(engine,
             c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
-            several.ok = FALSE)
+            multiple = FALSE)
 
   ## Check dists ----
+  if (engine == "flexsurv") {
+    rlang::arg_match(dists,
+                     values = c("exp", "exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
+                                "gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH"),
+                     multiple = TRUE)
 
-  # Check that dists has legal values for engine
-  # ...
+  } else if (engine == "flexsurvcure") {
+    rlang::arg_match(dists,
+                     values = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+                     multiple = TRUE)
+
+  } else if (engine == "survival") {
+    rlang::arg_match(dists,
+                     values = c("exponential", "extreme", "gaussian", "loggaussian", "logistic",
+                                "lognormal", "rayleigh", "weibull"),
+                     multiple = TRUE)
+  }
+
 
   # Create formulae ----
 
@@ -177,7 +193,6 @@ fit_models <- function(data,
                      )
   )
 
-  # TODO: Suspect this will only work for flexsurv engines.
   KM_summary <- as.data.frame(summary(KM_fit)$table) |>
     tibble::rownames_to_column(var = "group") |>
     dplyr::select(-"n.max", -"n.start")

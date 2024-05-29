@@ -74,6 +74,7 @@ get_fit_averages <- function(mod,
   }
 
   out <- list()
+  median.est <- list()
 
   engine <- mod$spec$engine
 
@@ -207,10 +208,22 @@ get_fit_averages <- function(mod,
     distribution <- mod$fit$dist
 
     # Check for groups
+    # this only works for factors.
+    # if there are multiple factors, this will need to be updated.
+    # but suspect that "flexsurv" style engines will be preferred.
     if (!is.null(mod$fit$xlevels)) {
-      n_xlevels <- length(mod$fit$xlevels)
 
-      for (i in seq_along(n_xlevels)) {
+      # this is for factor variables
+      n_xlevels <- length(mod$fit$xlevels[[1]])
+
+      # assume for now that we only have one factor variable.
+      term_labels <- attr(mod$fit$terms, "term.labels")
+      # Get rid of ones that say "as.factor"
+      filtered_terms <- term_labels[!grepl("as\\.factor\\(", term_labels)]
+      # Get rid of the one for the main factor
+      filtered_terms <- setdiff(filtered_terms, mod$fit$xlevels)
+
+      for (i in seq_len(n_xlevels)) {
         out[[i]] <- data.frame(distribution = distribution)
 
         # Create a single row data frame for prediction data
@@ -218,28 +231,43 @@ get_fit_averages <- function(mod,
         # Rename the column to match that in the original data
         colnames(new_data) <- names(mod$fit$xlevels)
 
-        # Get the median
-        median[[i]] <- predict(mod$fit,
+        if (!identical(filtered_terms, character(0))) {
+
+          new_data <- c(new_data, mod$fit$means[filtered_terms])
+
+        }
+
+        # Get the median (IGNORE "new_data" warnings if appear, it does
+        # in fact need to remain as "newdata".)
+        median.est[[i]] <- data.frame(strata = mod$fit$xlevels[[1]][i],
+                                      median.est = predict(mod$fit,
                                newdata = new_data,
                                type = "quantile",
-                               p = c(0.5)
+                               p = c(0.5),
+                               )
         )
 
-        out[[i]] <- cbind(out[[i]], median[[i]])
+        out[[i]] <- cbind(out[[i]], median.est[[i]])
       }
 
       out <- data.table::rbindlist(out)
     } else {
       out <- data.frame(distribution = distribution)
 
+      new_data <- data.frame(testing = 123)
+
+      if (!identical(filtered_terms, character(0))) {
+        new_data <- c(new_data, mod$fit$means[filtered_terms])
+      }
+
       # Get the median (newdata does not matter)
-      median <- predict(mod$fit,
-                        newdata = data.frame(testing = 123),
+      median.est <- predict(mod$fit,
+                        newdata = new_data,
                         type = "quantile",
                         p = c(0.5)
       )
 
-      out <- cbind(out, median)
+      out <- cbind(out, median.est)
     }
   }
 
@@ -331,7 +359,7 @@ get_surv_parameters <- function(models) {
     } else if (engine == "survival") {
       # With the survival package, it's a bit tricky.
       # Get number of parameters using degrees of freedom
-      par_length <- length(models[[i]]$fit$df)
+      #par_length <- models[[i]]$fit$df
 
       # Get initial parameters from coefficients
       get_parameters <- models[[i]]$fit$coefficients |>
@@ -347,6 +375,11 @@ get_surv_parameters <- function(models) {
         colnames(get_additional_parameters) <- c("parameter", "est")
 
         get_parameters <- rbind(get_parameters, get_additional_parameters)
+
+        if (get_parameters[length(get_parameters[,1]),2] == 0) {
+          # Drop the last row if it's zero (e.g. for exponential log(scale))
+          get_parameters <- get_parameters[-length(get_parameters[,1]),]
+        }
       }
 
       # Get vcov matrix
