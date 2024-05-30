@@ -12,11 +12,14 @@ function, representing the Schoenfeld residuals of a Cox proportional
 hazards model.}
 }
 \value{
-A tibble with the Schoenfeld residuals in long format, containing the columns:
+A tibble with the Schoenfeld residuals in long format, containing the
+columns:
 \item{time}{The time variable from the Cox model.}
 \item{transform}{The transformation applied to the time variable.}
-\item{variable}{The variable names from the Cox model for which residuals are calculated.}
-\item{residual}{The Schoenfeld residuals for each variable at each time point.}
+\item{variable}{The variable names from the Cox model for which residuals
+are calculated.}
+\item{residual}{The Schoenfeld residuals for each variable at each time
+point.}
 }
 \description{
 This function extracts Schoenfeld residuals from a fitted \code{cox.zph} object

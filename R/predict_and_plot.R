@@ -13,20 +13,23 @@
 #' @importFrom dplyr all_of filter select slice
 #' @importFrom cli cli_abort
 predict_and_plot <- function(fit_models,
-                             eval_time,
+                             eval_time = NULL,
                              data,
                              interval = "none") {
   ## Check fit_models ----
   if (!inherits(fit_models, "fit_models")) {
     cli::cli_abort(c(
-      "The {.var fit_models} argument must be an object returned from {.fn fit_models}.",
+      paste0(
+        "The {.var fit_models} argument must be an object returned from ",
+        "{.fn fit_models}."
+      ),
       "x" = "You've provided an object of class: {.cls {class(fit_models)}}"
     ))
   }
 
   ## Check eval_time ----
 
-  # If eval_time is missing, create a sequence from 0 to 5 times the maximum time
+  # If eval_time is missing, create a sequence from 0 to 5* the maximum time
   if (is.null(eval_time)) {
     max_time <- max(data[[fit_models$info$time]], na.rm = TRUE)
     eval_time <- seq(0,
@@ -44,18 +47,32 @@ predict_and_plot <- function(fit_models,
   if (is.null(fit_models$info$covariates)) {
     used_profile <- data |> dplyr::slice(1)
   } else {
-    used_profile <- create_newdata(data |> dplyr::select(dplyr::all_of(fit_models$info$covariates)))
+    used_profile <- create_newdata(
+      data |>
+        dplyr::select(dplyr::all_of(fit_models$info$covariates))
+    )
     profiles <- list(profiles = used_profile)
   }
 
   # Set the loop labels based on the approach
-  loop_labels <- if (inherits(fit_models, "pred_none")) "All" else fit_models$info$predict_list
+  loop_labels <- if (inherits(fit_models, "pred_none")) {
+    "All"
+  } else {
+    fit_models$info$predict_list
+  }
 
   for (tx in seq_along(loop_labels)) {
-    model_index <- if (inherits(fit_models, "pred_none") || inherits(fit_models, "pred_covariate")) 1 else tx
+    model_index <- if (inherits(fit_models, "pred_none") ||
+      inherits(fit_models, "pred_covariate")) {
+      1
+    } else {
+      tx
+    }
 
     if (inherits(fit_models, "pred_covariate")) {
-      filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(fit_models$info$predict_by) == fit_models$info$predict_list[tx])
+      filtered_profile <- used_profile |>
+        dplyr::filter(!!as.symbol(fit_models$info$predict_by) ==
+          fit_models$info$predict_list[tx])
     } else {
       filtered_profile <- used_profile
     }
@@ -70,16 +87,25 @@ predict_and_plot <- function(fit_models,
 
     if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
       # there are multiple profiles
-      plots[[tx]] <- list(fit_plots = lapply(predictions[[tx]]$table_pred_surv, plot_fits))
+      plots[[tx]] <- list(
+        fit_plots = lapply(
+          predictions[[tx]]$table_pred_surv,
+          plot_fits
+        )
+      )
     } else {
-      plots[[tx]] <- list(fit_plots = plot_fits(predictions[[tx]]$table_pred_surv))
+      plots[[tx]] <- list(
+        fit_plots = plot_fits(predictions[[tx]]$table_pred_surv)
+      )
     }
   }
 
   # Set names for predictions and plots
   names(predictions) <- names(plots) <- loop_labels
 
-  out <- list(profiles = profiles$profiles, predictions = predictions, plots = plots)
+  out <- list(
+    profiles = profiles$profiles, predictions = predictions, plots = plots
+  )
 
   class(out) <- c(class(out), "pred_plot")
 

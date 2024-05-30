@@ -23,14 +23,14 @@
 #' @examples
 #' \dontrun{
 #'
-#' PH_results <- get_PH(
+#' ph_results <- get_ph(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   group = "group"
 #' )
 #' }
-test_PH <- function(data,
+test_ph <- function(data,
                     time,
                     event,
                     group,
@@ -46,7 +46,7 @@ test_PH <- function(data,
   if (!all(required_cols %in% colnames(data))) {
     cli::cli_abort(
       paste0(
-        "test_PH did not find the following columns in `data`: ",
+        "test_ph did not find the following columns in `data`: ",
         paste(setdiff(required_cols, colnames(data)),
           collapse = ", "
         )
@@ -58,51 +58,45 @@ test_PH <- function(data,
 
   if (length(group_list) <= 1) {
     cli::cli_abort(c(
-      "The {.field group} variable must contain multiple groups if looking to assess proportional hazards.",
+      paste0("The {.field group} variable must contain multiple groups if ",
+             "looking to assess proportional hazards."),
       "x" = "You've provided a group with the levels: {.var {group_list}}."
     ))
   }
 
-  PH_formula <- stats::as.formula(paste0(
+  ph_formula <- stats::as.formula(paste0(
     "survival::Surv(time = ", time,
     ", event = ", event,
     ") ~ ", group
   ))
 
-  KM_all <- do.call(survival::survfit,
+  km_all <- do.call(survival::survfit,
     args = list(
-      formula = PH_formula,
+      formula = ph_formula,
       conf.int = 0.95,
       data = data,
       type = "kaplan-meier"
     )
   )
 
-  cloglog_plot <- plot_cloglog(KM_all,
+  cloglog_plot <- plot_cloglog(km_all,
     plot_theme = plot_theme
   )
 
   the_coxph <- survival::coxph(
-    formula = PH_formula,
+    formula = ph_formula,
     data = data
   )
 
   coxph_model <- summary(the_coxph)
-  cox.zph_PH_test <- survival::cox.zph(the_coxph)
+  coxph_test <- survival::cox.zph(the_coxph)
 
   survdiff <- survival::survdiff(
-    formula = PH_formula,
+    formula = ph_formula,
     data = data
   )
 
-  # schoenfeld_plot <-
-  #   plot_schoenfeld(
-  #     fit_coxph = the_coxph,
-  #     formula = PH_formula,
-  #     data = data,
-  #     plot.theme = plot_theme)
-
-  schoenfeld_residuals <- get_schoenfeld(cox.zph_PH_test)
+  schoenfeld_residuals <- get_schoenfeld(coxph_test)
 
   schoenfeld_plot <-
     plot_schoenfeld(
@@ -114,19 +108,19 @@ test_PH <- function(data,
     cloglog_plot = cloglog_plot,
     coxph_model = coxph_model,
     survdiff = survdiff,
-    cox.zph_PH_test = cox.zph_PH_test,
+    coxph_test = coxph_test,
     schoenfeld_plot = schoenfeld_plot
   )
 
   # Assign a class
-  class(out) <- c(class(out), "test_PH")
+  class(out) <- c(class(out), "test_ph")
 
   out
 }
 
 
-#' Print methods for \code{test_PH}
-#' @param x An object of class \code{test_PH}
+#' Print methods for \code{test_ph}
+#' @param x An object of class \code{test_ph}
 #' @param ... Additional arguments
 #' @export
 #' @noRd
@@ -134,7 +128,7 @@ test_PH <- function(data,
 #' @importFrom cli cli_ul cli_li cli_div cli_end
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
-print.test_PH <- function(x, ...) {
+print.test_ph <- function(x, ...) {
   cli::cli_h1("Proportional Hazards Assumption Testing")
 
   cli::cli_h2("Cox Proportional Hazards Model")
@@ -148,7 +142,11 @@ print.test_PH <- function(x, ...) {
   cli::cat_line()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
-  cli::cli_text("The exp(coef) column shows the hazard {cli::qty(nrow(coeff_table))}ratio{?s} {?was/were} {.val {coeff_table$`exp(coef)`}}.")
+  cli::cli_text(c(
+    "The exp(coef) column shows the hazard ",
+    "{cli::qty(nrow(coeff_table))}ratio{?s} {?was/were} ",
+    "{.val {coeff_table$`exp(coef)`}}."
+  ))
   cli::cli_end(divid)
 
   cli::cli_h2("Test Survival Curve Differences")
@@ -157,7 +155,8 @@ print.test_PH <- function(x, ...) {
     "{.fn survival::survdiff} uses a log-rank test to test ",
     "for differences in survival curves between groups."
   ))
-  cli::cli_alert_info("The null hypothesis is that the survival curves are the same.")
+  cli::cli_alert_info(c("The null hypothesis is that the survival curves are ",
+                        "the same."))
   cli::cat_line()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
@@ -180,35 +179,42 @@ print.test_PH <- function(x, ...) {
 
   cli::cli_h2("Test the Proportional Hazards Assumption of a Cox Regression")
 
-  cli::cli_alert_info(c("{.fn survival::cox.zph} tests the proportional hazards assumption."))
-  cli::cli_alert_info("The null hypothesis is that the hazards are proportional.")
+  cli::cli_alert_info(c("{.fn survival::cox.zph} tests the proportional ",
+                        "hazards assumption."))
+  cli::cli_alert_info(c("The null hypothesis is that the hazards are ",
+                        "proportional."))
   cli::cat_line()
 
-  p_vals <- as.data.frame(x$cox.zph_PH_test$table)[3]
+  p_vals <- as.data.frame(x$coxph_test$table)[3]
   global_p_val <- p_vals[nrow(p_vals), ]
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (global_p_val > 0.05) {
-    cli::cli_alert_success(c("The global test suggests that the PH assumption {.strong MAY BE} valid."))
+    cli::cli_alert_success(c("The global test suggests that the PH assumption ",
+                             "{.strong MAY BE} valid."))
     cli::cli_alert_success("p-value: {.val {global_p_val}}.")
   } else {
-    cli::cli_alert_warning(c("The global test suggests that the PH assumption {.strong MAY NOT BE} valid."))
+    cli::cli_alert_warning(c("The global test suggests that the PH assumption ",
+                             "{.strong MAY NOT BE} valid."))
     cli::cli_alert_warning("p-value: {.val {global_p_val}}.")
   }
   cli::cli_end(divid)
 
   cli::cat_line()
-  print(as.data.frame(PH_check[["cox.zph_PH_test"]][["table"]])[3])
+  print(p_vals)
 
   cli::cli_h2("Plots")
 
   print(x$schoenfeld_plot)
   print(x$cloglog_plot)
-  cli::cli_text("The Schoenfeld residuals and log cumulative hazard plots have been printed.")
+  cli::cli_text(c("The Schoenfeld residuals and log cumulative hazard plots ",
+                  "have been printed."))
 
   cli::cli_h3("Schoenfeld residual plot")
-  cli::cli_text(c("A {.strong flat smoothed line} close to zero supports the PH assumption."))
-  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend suggests the PH assumption is violated."))
+  cli::cli_text(c("A {.strong flat smoothed line} close to zero ",
+                  "supports the PH assumption."))
+  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend ",
+                  "suggests the PH assumption is violated."))
 
   cli::cli_h3("Log cumulative hazard plot")
   cli::cli_text(c(
@@ -236,7 +242,8 @@ print.test_PH <- function(x, ...) {
     "PH tests may not always agree, so ",
     "it is important to consider the results of all tests and plots."
   ))
-  cli::cli_alert_info(c("The full object can be inspected by running {.code View()} on the test_PH output."))
+  cli::cli_alert_info(c("The full object can be inspected by running ",
+                        "{.code View()} on the test_ph output."))
 
   invisible(x)
 }

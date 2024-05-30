@@ -4,7 +4,7 @@
 \alias{predict_and_plot}
 \title{Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.}
 \usage{
-predict_and_plot(fit_models, eval_time, data, interval = "none")
+predict_and_plot(fit_models, eval_time = NULL, data, interval = "none")
 }
 \arguments{
 \item{fit_models}{An object returned from fit_models.}

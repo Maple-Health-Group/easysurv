@@ -1,9 +1,10 @@
 # first test file for the summarise_KM() function.
 test_that("output is correct", {
-  fit <- survival::survfit(survival::Surv(time, status) ~ as.factor(sex), data = survival::lung)
+  fit <- survival::survfit(survival::Surv(time, status) ~ as.factor(sex),
+                           data = survival::lung)
   expect_equal(
     {
-      summarise_KM(fit)
+      summarise_km(fit)
     },
     readRDS(test_path("fixtures", "KM_summary.rds"))
   )

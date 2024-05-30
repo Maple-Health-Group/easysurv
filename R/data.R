@@ -2,6 +2,7 @@
 # This file has NOT been updated for the new easysurv release.
 ###########
 
+#nolint start
 #' Example clinical trial data from `ggsurvfit`
 #'
 #' Background
@@ -37,6 +38,7 @@
 #' ADTTE time to event data model here
 #' \url{https://www.cdisc.org/standards/foundational/adam/adam-basic-data-structure-bds-time-event-tte-analyses-v1-0}.
 #'
+#'
 #' @format The data set contains the following variables:
 #'
 #' \describe{
@@ -63,7 +65,7 @@
 #'
 #' @source \url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
 "easy_adtte"
-
+#nolint end
 
 #' Formatted Copy of `survival::lung`
 #'

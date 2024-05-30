@@ -33,7 +33,7 @@ plot_fits <- function(data) {
 
   # more can be done here to improve this.
 
-  # may want an optional KM argument.
+  # may want an optional km argument.
 
   p
 }
@@ -63,7 +63,7 @@ plot_fits <- function(data) {
 #' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
-plot_KM <- function(fit,
+plot_km <- function(fit,
                     risk_table = TRUE,
                     median_line = TRUE,
                     legend_position = "bottom",
@@ -173,23 +173,23 @@ plot_cloglog <- function(fit,
 #'   Default is `TRUE`.
 #' @param sline Logical. If `TRUE`, a smooth line is added to the plot.
 #'   Default is `TRUE`.
-#' @param sline.se Logical. If `TRUE`, confidence intervals are displayed around
+#' @param sline_se Logical. If `TRUE`, confidence intervals are displayed around
 #'   the smooth line. Default is `TRUE`.
-#' @param hline.col Color of the horizontal line. Default is `"red"`.
-#' @param hline.size Line width of the horizontal line. Default is `1`.
-#' @param hline.alpha Transparency of the horizontal line. Default is `1`.
-#' @param hline.yintercept Y-intercept for the horizontal line. Default is `0`.
-#' @param hline.lty Line type for the horizontal line. Default is `"dashed"`.
-#' @param sline.col Color of the smooth line. Default is `"blue"`.
-#' @param sline.size Line width of the smooth line. Default is `1`.
-#' @param sline.alpha Transparency of the smooth line. Default is `0.3`.
-#' @param sline.lty Line type for the smooth line. Default is `"dashed"`.
-#' @param point.col Color of the points representing residuals. Default is
+#' @param hline_col Color of the horizontal line. Default is `"red"`.
+#' @param hline_size Line width of the horizontal line. Default is `1`.
+#' @param hline_alpha Transparency of the horizontal line. Default is `1`.
+#' @param hline_yintercept Y-intercept for the horizontal line. Default is `0`.
+#' @param hline_lty Line type for the horizontal line. Default is `"dashed"`.
+#' @param sline_col Color of the smooth line. Default is `"blue"`.
+#' @param sline_size Line width of the smooth line. Default is `1`.
+#' @param sline_alpha Transparency of the smooth line. Default is `0.3`.
+#' @param sline_lty Line type for the smooth line. Default is `"dashed"`.
+#' @param point_col Color of the points representing residuals. Default is
 #'   `"black"`.
-#' @param point.size Size of the points representing residuals. Default is `1`.
-#' @param point.shape Shape of the points representing residuals. Default is
+#' @param point_size Size of the points representing residuals. Default is `1`.
+#' @param point_shape Shape of the points representing residuals. Default is
 #'   `19`.
-#' @param point.alpha Transparency of the points representing residuals. Default
+#' @param point_alpha Transparency of the points representing residuals. Default
 #'   is `1`.
 #' @param plot_theme A ggplot2 theme for the plot. Default is
 #' `ggplot2::theme_bw()`.
@@ -204,11 +204,21 @@ plot_cloglog <- function(fit,
 #'
 plot_schoenfeld <- function(residuals,
                             hline = TRUE,
-                            sline = TRUE, sline.se = TRUE,
-                            hline.col = "red", hline.size = 1, hline.alpha = 1, hline.yintercept = 0,
-                            hline.lty = "dashed",
-                            sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
-                            point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
+                            sline = TRUE,
+                            sline_se = TRUE,
+                            hline_col = "red",
+                            hline_size = 1,
+                            hline_alpha = 1,
+                            hline_yintercept = 0,
+                            hline_lty = "dashed",
+                            sline_col = "blue",
+                            sline_size = 1,
+                            sline_alpha = 0.3,
+                            sline_lty = "dashed",
+                            point_col = "black",
+                            point_size = 1,
+                            point_shape = 19,
+                            point_alpha = 1,
                             plot_theme = ggplot2::theme_bw()) {
   # Create visible binding for R CMD check.
   time <- residual <- NULL
@@ -225,15 +235,15 @@ plot_schoenfeld <- function(residuals,
 
   if (hline) {
     gg.zph <- gg.zph + ggplot2::geom_hline(
-      yintercept = hline.yintercept, col = hline.col,
-      linewidth = hline.size, lty = hline.lty, alpha = hline.alpha
+      yintercept = hline_yintercept, col = hline_col,
+      linewidth = hline_size, lty = hline_lty, alpha = hline_alpha
     )
   }
 
   if (sline) {
     gg.zph <- gg.zph + ggplot2::geom_smooth(
-      col = sline.col, se = sline.se, method = "loess",
-      linewidth = sline.size, lty = sline.lty, alpha = sline.alpha,
+      col = sline_col, se = sline_se, method = "loess",
+      linewidth = sline_size, lty = sline_lty, alpha = sline_alpha,
       formula = y ~ x
     )
   }

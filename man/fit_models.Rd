@@ -34,11 +34,16 @@ covariates to be included in the model.}
 \item{dists}{(Optional) A character vector specifying the distribution(s) to
 be fitted.
 
-For flexsurv-based engines, options are "exp", "gamma", "genf",
+For flexsurv, options are "exp", "exponential", "gamma", "genf",
 "genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
-"lognormal", "weibull", and "weibullPH".
+"lognormal", "weibull", "weibullPH"
 
-For the survival engine, options are "exponential", "extreme", "gaussian",
+For flexsurvcure, options are "exp", "gamma", "gengamma", "gompertz",
+"llogis", "lnorm", "weibull".
+
+For flexsurvspline, dists are ignored in favour of k and scale.
+
+For survival, options are "exponential", "extreme", "gaussian",
 "loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
 
 Default is \code{c("exp", "gamma", "gengamma", "gompertz",

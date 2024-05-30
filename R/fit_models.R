@@ -15,16 +15,20 @@
 #' @param dists (Optional) A character vector specifying the distribution(s) to
 #'   be fitted.
 #'
-#'   For flexsurv-based engines, options are "exp", "gamma", "genf",
+#'   For flexsurv, options are "exp", "exponential", "gamma", "genf",
 #'   "genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
-#'   "lognormal", "weibull", and "weibullPH".
+#'   "lognormal", "weibull", "weibullPH"
 #'
-#'   For the survival engine, options are "exponential", "extreme", "gaussian",
+#'   For flexsurvcure, options are "exp", "gamma", "gengamma", "gompertz",
+#'   "llogis", "lnorm", "weibull".
+#'
+#'   For flexsurvspline, dists are ignored in favour of k and scale.
+#'
+#'   For survival, options are "exponential", "extreme", "gaussian",
 #'   "loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
 #'
 #'   Default is \code{c("exp", "gamma", "gengamma", "gompertz",
 #'   "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.
-#'
 #'
 #' @param engine (Optional) The survival analysis engine to be used.
 #'   Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
@@ -83,12 +87,9 @@ fit_models <- function(data,
   goodness_of_fit <- list()
   fit_averages <- list()
   parameters <- list()
-  predictions <- list()
-  plots <- list()
 
   # Create NULL objects ----
   cure_fractions <- NULL
-  profiles <- NULL
 
   # Validate argument inputs ----
 
@@ -133,10 +134,18 @@ fit_models <- function(data,
     approach <- "predict_by_none"
   } else {
     predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
-    approach <- if (predict_by %in% covariates) "predict_by_covariate" else "predict_by_other"
+    approach <- if (predict_by %in% covariates) {
+      "predict_by_covariate"
+    } else {
+      "predict_by_other"
+    }
   }
 
-  covariates_string <- if (!is.null(covariates)) paste(covariates, collapse = " + ") else 1
+  covariates_string <- if (!is.null(covariates)) {
+    paste(covariates, collapse = " + ")
+  } else {
+    1
+  }
 
   ## Check engine ----
   rlang::arg_match(engine,
@@ -148,14 +157,18 @@ fit_models <- function(data,
   if (engine == "flexsurv") {
     rlang::arg_match(dists,
       values = c(
-        "exp", "exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
-        "gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH"
+        "exp", "exponential", "gamma", "genf", "genf.orig", "gengamma",
+        "gengamma.orig", "gompertz", "llogis", "lnorm", "lognormal", "weibull",
+        "weibullPH"
       ),
       multiple = TRUE
     )
   } else if (engine == "flexsurvcure") {
     rlang::arg_match(dists,
-      values = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+      values = c(
+        "exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm",
+        "weibull"
+      ),
       multiple = TRUE
     )
   } else if (engine == "survival") {
@@ -190,7 +203,7 @@ fit_models <- function(data,
   ))
 
   # Fit KM ----
-  KM_fit <- do.call(survival::survfit,
+  km_fit <- do.call(survival::survfit,
     args = list(
       formula = km_formula,
       conf.int = 0.95,
@@ -199,7 +212,7 @@ fit_models <- function(data,
     )
   )
 
-  KM_summary <- as.data.frame(summary(KM_fit)$table) |>
+  km_summary <- as.data.frame(summary(km_fit)$table) |>
     tibble::rownames_to_column(var = "group") |>
     dplyr::select(-"n.max", -"n.start")
 
@@ -249,7 +262,7 @@ fit_models <- function(data,
     predict_by = predict_by,
     predict_list = predict_list,
     distributions = distributions,
-    KM_summary = KM_summary
+    km_summary = km_summary
   )
 
   # Return ----
@@ -266,7 +279,6 @@ fit_models <- function(data,
   out <- out |> purrr::discard(is.null)
 
   # Assign a class
-  # class_name <- paste0("easy_", engine)
   class_fit_models <- "fit_models"
   class_approach <- switch(approach,
     predict_by_none = "pred_none",
@@ -306,23 +318,35 @@ print.fit_models <- function(x, ...) {
   }
 
   if (inherits(x, "pred_covariate")) {
-    cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
-                which was also a {.field covariate}.")
+    cli::cli_li(paste0(
+      "The {.field predict_by} argument was set to ",
+      "{.val {x$info$predict_by}}, which was also a ",
+      "{.field covariate}."
+    ))
     cli::cli_li("Therefore, models were fit on the full dataset.")
     cli::cli_li("This is sometimes referred to as {.val joint fits}.")
   }
 
   if (inherits(x, "pred_other")) {
-    cli::cli_li("The {.field predict_by} argument was set to {.val {x$info$predict_by}},
-                which was not a {.field covariate}.")
-    cli::cli_li("Therefore, models were fit for each level of {.val {x$info$predict_by}}.")
+    cli::cli_li(paste0(
+      "The {.field predict_by} argument was set to ",
+      "{.val {x$info$predict_by}}, which was not a ",
+      "{.field covariate}."
+    ))
+    cli::cli_li(paste0(
+      "Therefore, models were fit for each level of ",
+      "{.val {x$info$predict_by}}."
+    ))
     cli::cli_li("This is sometimes referred to as {.val separate fits}.")
   }
   cli::cli_end()
 
   # Distributions
   cli::cat_line()
-  cli::cli_text("{.strong Distributions attempted:} {.val {x$info$distributions[[1]]$dists_attempted}}.")
+  cli::cli_text(c(
+    "{.strong Distributions attempted:} ",
+    "{.val {x$info$distributions[[1]]$dists_attempted}}."
+  ))
 
   cli::cli_h2("Median survival estimates")
 
@@ -330,7 +354,10 @@ print.fit_models <- function(x, ...) {
     # There's only one set of distributions to look at.
     if (length(x$info$distributions[[1]]$dists_failed) > 0) {
       cli::cli_alert_warning("Some distributions failed to converge.")
-      cli::cli_text("Failed distributions: {.val {x$info$distributions[[1]]$dists_failed}}")
+      cli::cli_text(c(
+        "Failed distributions: ",
+        "{.val {x$info$distributions[[1]]$dists_failed}}"
+      ))
     }
 
     if (inherits(x, "pred_covariate")) {
@@ -344,7 +371,7 @@ print.fit_models <- function(x, ...) {
 
     # Goodness of fits and fit averages
     combined_data <- x$goodness_of_fit[[1]] |>
-      select(dist, AIC_rank) |>
+      dplyr::select(dist, AIC_rank) |>
       cbind(median.est)
 
     # say what dist had the AIC_rank == 1
@@ -353,29 +380,43 @@ print.fit_models <- function(x, ...) {
       dplyr::pull(dist) |>
       unique()
 
-    data_median <- x$info$KM_summary$median
+    data_median <- x$info$km_summary$median
 
     print(combined_data)
     cli::cat_line()
 
     divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
-    cli::cli_alert_info("For comparison, the KM median survival {cli::qty(length(x$info$predict_list))}time{?s} {?was/were} {.val {data_median}}.")
+    cli::cli_alert_info(c(
+      "For comparison, the KM median survival ",
+      "{cli::qty(length(x$info$predict_list))}time{?s} ",
+      "{?was/were} {.val {data_median}}."
+    ))
     cli::cli_end(divid)
 
-    cli::cli_alert_info("The distribution with the best (lowest) AIC was {.val {best_dist}}.")
+    cli::cli_alert_info(c(
+      "The distribution with the best (lowest) AIC was ",
+      "{.val {best_dist}}."
+    ))
   } else {
     # There are multiple distribution sets to look at.
     for (i in seq_along(x$info$predict_list)) {
       cli::cli_h3("Group: {.val {x$info$predict_list[i]}}")
 
       if (length(x$info$distributions[[i]]$dists_failed) > 0) {
-        cli::cli_alert_warning("Failed distributions for {.val {names(x$info$distributions)[i]}}: {.val {x$info$distributions[[i]]$dists_failed}}")
+        cli::cli_alert_warning(c(
+          "Failed distributions for ",
+          "{.val {names(x$info$distributions)[i]}}: ",
+          "{.val {x$info$distributions[[i]]$dists_failed}}"
+        ))
       }
 
       if (inherits(x, "pred_covariate")) {
         median.est <- x$fit_averages[[1]] |>
           dplyr::select(distribution, strata, median.est) |>
-          tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
+          tidyr::pivot_wider(
+            names_from = "strata",
+            values_from = "median.est"
+          ) |>
           dplyr::select(-distribution)
       } else {
         median.est <- x$fit_averages[[i]]$median.est
@@ -383,7 +424,7 @@ print.fit_models <- function(x, ...) {
 
       # Goodness of fits and fit averages
       combined_data <- x$goodness_of_fit[[i]] |>
-        select(dist, AIC_rank) |>
+        dplyr::select(dist, AIC_rank) |>
         cbind(median.est)
 
       # say what dist had the AIC_rank == 1
@@ -392,13 +433,19 @@ print.fit_models <- function(x, ...) {
         dplyr::pull(dist) |>
         unique()
 
-      data_median <- x$info$KM_summary$median[i]
+      data_median <- x$info$km_summary$median[i]
       print(combined_data)
       cli::cat_line()
       divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
-      cli::cli_alert_info("For comparison, the KM median survival time was {.val {data_median}}.")
+      cli::cli_alert_info(c(
+        "For comparison, the KM median survival time was ",
+        "{.val {data_median}}."
+      ))
       cli::cli_end(divid)
-      cli::cli_alert_info("The distribution with the best (lowest) AIC was {.val {best_dist}}.")
+      cli::cli_alert_info(c(
+        "The distribution with the best (lowest) AIC was ",
+        "{.val {best_dist}}."
+      ))
     }
   }
 
@@ -411,7 +458,10 @@ print.fit_models <- function(x, ...) {
   }
 
   cli::cli_rule()
-  cli::cli_alert("For more information, run {.code View()} on the fit_models output.")
+  cli::cli_alert(c(
+    "For more information, run {.code View()} ",
+    "on the fit_models output."
+  ))
 
   invisible(x)
 }
@@ -451,7 +501,10 @@ process_spline_combinations <- function(k, scale, fit_formula, data) {
   )
 
   if (length(distributions$dists_failed) > 0) {
-    cli::cli_alert_warning("{.strong Failed splines:} {.val {distributions$dists_failed}}.")
+    cli::cli_alert_warning(c(
+      "{.strong Failed splines:} ",
+      "{.val {distributions$dists_failed}}."
+    ))
   }
 
   models <- models |> purrr::discard(is.null)
@@ -484,7 +537,10 @@ process_distributions <- function(dists, fit_formula, data, engine) {
   )
 
   if (length(distributions$dists_failed) > 0) {
-    cli::cli_alert_warning("{.strong Failed distributions:} {.val {distributions$dists_failed}}.")
+    cli::cli_alert_warning(c(
+      "{.strong Failed distributions:} ",
+      "{.val {distributions$dists_failed}}."
+    ))
   }
 
   models <- models |> purrr::discard(is.null)
@@ -492,8 +548,16 @@ process_distributions <- function(dists, fit_formula, data, engine) {
   if (engine == "flexsurvcure") {
     cure_fractions <- purrr::map(models, get_cure_fractions) |>
       tibble::as_tibble() |>
-      tidyr::pivot_longer(cols = everything(), names_to = "dist", values_to = "cure_fraction")
-    return(list(models = models, distributions = distributions, cure_fractions = cure_fractions))
+      tidyr::pivot_longer(
+        cols = everything(),
+        names_to = "dist",
+        values_to = "cure_fraction"
+      )
+    return(list(
+      models = models,
+      distributions = distributions,
+      cure_fractions = cure_fractions
+    ))
   }
 
   list(models = models, distributions = distributions)

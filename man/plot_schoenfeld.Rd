@@ -8,20 +8,20 @@ plot_schoenfeld(
   residuals,
   hline = TRUE,
   sline = TRUE,
-  sline.se = TRUE,
-  hline.col = "red",
-  hline.size = 1,
-  hline.alpha = 1,
-  hline.yintercept = 0,
-  hline.lty = "dashed",
-  sline.col = "blue",
-  sline.size = 1,
-  sline.alpha = 0.3,
-  sline.lty = "dashed",
-  point.col = "black",
-  point.size = 1,
-  point.shape = 19,
-  point.alpha = 1,
+  sline_se = TRUE,
+  hline_col = "red",
+  hline_size = 1,
+  hline_alpha = 1,
+  hline_yintercept = 0,
+  hline_lty = "dashed",
+  sline_col = "blue",
+  sline_size = 1,
+  sline_alpha = 0.3,
+  sline_lty = "dashed",
+  point_col = "black",
+  point_size = 1,
+  point_shape = 19,
+  point_alpha = 1,
   plot_theme = ggplot2::theme_bw()
 )
 }
@@ -35,36 +35,36 @@ Default is \code{TRUE}.}
 \item{sline}{Logical. If \code{TRUE}, a smooth line is added to the plot.
 Default is \code{TRUE}.}
 
-\item{sline.se}{Logical. If \code{TRUE}, confidence intervals are displayed around
+\item{sline_se}{Logical. If \code{TRUE}, confidence intervals are displayed around
 the smooth line. Default is \code{TRUE}.}
 
-\item{hline.col}{Color of the horizontal line. Default is \code{"red"}.}
+\item{hline_col}{Color of the horizontal line. Default is \code{"red"}.}
 
-\item{hline.size}{Line width of the horizontal line. Default is \code{1}.}
+\item{hline_size}{Line width of the horizontal line. Default is \code{1}.}
 
-\item{hline.alpha}{Transparency of the horizontal line. Default is \code{1}.}
+\item{hline_alpha}{Transparency of the horizontal line. Default is \code{1}.}
 
-\item{hline.yintercept}{Y-intercept for the horizontal line. Default is \code{0}.}
+\item{hline_yintercept}{Y-intercept for the horizontal line. Default is \code{0}.}
 
-\item{hline.lty}{Line type for the horizontal line. Default is \code{"dashed"}.}
+\item{hline_lty}{Line type for the horizontal line. Default is \code{"dashed"}.}
 
-\item{sline.col}{Color of the smooth line. Default is \code{"blue"}.}
+\item{sline_col}{Color of the smooth line. Default is \code{"blue"}.}
 
-\item{sline.size}{Line width of the smooth line. Default is \code{1}.}
+\item{sline_size}{Line width of the smooth line. Default is \code{1}.}
 
-\item{sline.alpha}{Transparency of the smooth line. Default is \code{0.3}.}
+\item{sline_alpha}{Transparency of the smooth line. Default is \code{0.3}.}
 
-\item{sline.lty}{Line type for the smooth line. Default is \code{"dashed"}.}
+\item{sline_lty}{Line type for the smooth line. Default is \code{"dashed"}.}
 
-\item{point.col}{Color of the points representing residuals. Default is
+\item{point_col}{Color of the points representing residuals. Default is
 \code{"black"}.}
 
-\item{point.size}{Size of the points representing residuals. Default is \code{1}.}
+\item{point_size}{Size of the points representing residuals. Default is \code{1}.}
 
-\item{point.shape}{Shape of the points representing residuals. Default is
+\item{point_shape}{Shape of the points representing residuals. Default is
 \code{19}.}
 
-\item{point.alpha}{Transparency of the points representing residuals. Default
+\item{point_alpha}{Transparency of the points representing residuals. Default
 is \code{1}.}
 
 \item{plot_theme}{A ggplot2 theme for the plot. Default is

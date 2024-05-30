@@ -15,7 +15,9 @@ create_newdata <- function(data) {
 
   # If there are factor columns, create all combinations of factor levels
   if (length(factor_columns) > 0) {
-    factor_levels_combinations <- expand.grid(lapply(data[, factor_columns, drop = FALSE], levels))
+    factor_levels_combinations <- expand.grid(
+      lapply(data[, factor_columns, drop = FALSE], levels)
+    )
 
     # Add mean values for numeric columns to each row
     for (col in numeric_columns) {
@@ -25,8 +27,11 @@ create_newdata <- function(data) {
     # Ensure the order of columns matches the original data
     newdata <- factor_levels_combinations[colnames(data)]
   } else {
-    # If there are no factor columns, create a data frame with mean values for numeric columns
-    newdata <- as.data.frame(matrix(numeric_means, ncol = length(numeric_columns)))
+    # If there are no factor columns, create a data frame with mean values
+    # for numeric columns
+    newdata <- as.data.frame(
+      matrix(numeric_means, ncol = length(numeric_columns))
+    )
     colnames(newdata) <- numeric_columns
   }
 
@@ -67,8 +72,17 @@ get_fit_averages <- function(mod,
                              get_rmst = TRUE,
                              get_mean = FALSE) {
   if (!get_median && !get_rmst && !get_mean) {
-    cli::cli_abort(c("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function",
-      "x" = "You've provided {.field get_median} = {.var FALSE}, {.field get_rmst} = {.var FALSE}, and {.field get_mean} = {.var FALSE}."
+    cli::cli_abort(c(
+      paste0(
+        "You need to include at least one average ",
+        "(median, rmst, or mean) in the ",
+        "get_fit_averages function"
+      ),
+      "x" = paste0(
+        "You've provided {.field get_median} = {.var FALSE}, ",
+        "{.field get_rmst} = {.var FALSE}, ",
+        "and {.field get_mean} = {.var FALSE}."
+      )
     ))
   }
 
@@ -97,7 +111,11 @@ get_fit_averages <- function(mod,
             distribution,
             "median survival time not calculable."
           ))
-          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+          return(list(as.data.frame(list(
+            "est" = "-",
+            "lcl" = "-",
+            "ucl" = "-"
+          ))))
         }
       )
     }
@@ -114,7 +132,11 @@ get_fit_averages <- function(mod,
             distribution,
             "restricted mean survival time not calculable."
           ))
-          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+          return(list(as.data.frame(list(
+            "est" = "-",
+            "lcl" = "-",
+            "ucl" = "-"
+          ))))
         }
       )
     }
@@ -132,7 +154,11 @@ get_fit_averages <- function(mod,
             "mean survival time not calculable",
             "(likely due to a plateau in survival predictions)"
           ))
-          return(list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-"))))
+          return(list(as.data.frame(list(
+            "est" = "-",
+            "lcl" = "-",
+            "ucl" = "-"
+          ))))
         }
       )
     }
@@ -167,7 +193,6 @@ get_fit_averages <- function(mod,
 
     # Combine into list per strata
     for (i in seq_along(myseq)) {
-      # out[[i]] <- distribution
       out[[i]] <- data.frame(distribution = distribution)
 
       if (!is.null(names(myseq)[i])) {
@@ -251,8 +276,10 @@ get_fit_averages <- function(mod,
     } else {
       out <- data.frame(distribution = distribution)
 
-      new_data <- data.frame(testing = 123)
+      # just so it has a variable.
+      new_data <- data.frame(testinggg = 123)
 
+      # add relevant covariates if needed
       if (!identical(filtered_terms, character(0))) {
         new_data <- c(new_data, mod$fit$means[filtered_terms])
       }
@@ -294,7 +321,8 @@ get_fit_averages_summary <- function(models,
 #' @importFrom tibble tibble
 #' @noRd
 get_goodness_of_fit <- function(mod) {
-  # Get AIC and BIC values using stats:: because engine=survival doesn't record these
+  # Get AIC and BIC values using stats:: because engine=survival
+  # doesn't record these
   AIC_values <- sapply(mod, function(x) stats::AIC(x$fit))
   BIC_values <- sapply(mod, function(x) stats::BIC(x$fit))
 
@@ -331,7 +359,7 @@ get_surv_parameters <- function(models) {
       stop("Unknown engine type")
     )
 
-    if (engine == "flexsurv" || engine == "flexsurvcure" || engine == "flexsurvspline") {
+    if (engine %in% c("flexsurv", "flexsurvcure", "flexsurvspline")) {
       # Get parameters from res.t
       get_parameters <- models[[i]]$fit$res.t |>
         as.data.frame() |>
@@ -350,12 +378,11 @@ get_surv_parameters <- function(models) {
       # Track location for covariate parameter
       combined_results$covariate_marker <- combined_results$parameter
       if (!is.null(models[[i]]$fit$covpars)) {
-        combined_results$covariate_marker[models[[i]]$fit$covpars] <- models[[i]]$fit$dlist$location
+        combined_results$covariate_marker[models[[i]]$fit$covpars] <-
+          models[[i]]$fit$dlist$location
       }
     } else if (engine == "survival") {
       # With the survival package, it's a bit tricky.
-      # Get number of parameters using degrees of freedom
-      # par_length <- models[[i]]$fit$df
 
       # Get initial parameters from coefficients
       get_parameters <- models[[i]]$fit$coefficients |>
@@ -364,7 +391,9 @@ get_surv_parameters <- function(models) {
       colnames(get_parameters) <- c("parameter", "est")
 
       # If there's an additional parameter not included in coefficients, add it
-      if (utils::tail(names(models[[i]]$fit$icoef), 1) != utils::tail(names(models[[i]]$fit$coefficients), 1)) {
+      icoef_tail <- utils::tail(names(models[[i]]$fit$icoef), 1)
+      coeff_tail <- utils::tail(names(models[[i]]$fit$coefficients), 1)
+      if (icoef_tail != coeff_tail) {
         get_additional_parameters <- utils::tail(models[[i]]$fit$icoef, 1) |>
           as.data.frame() |>
           tibble::rownames_to_column(var = "parameter")
@@ -452,8 +481,14 @@ tidy_predict_surv <- function(models,
     # Extract to summary tables
     table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
     if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
-      table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
-      table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
+      table_pred_surv_lower <- extract_predictions(
+        list_pred_surv,
+        ".pred_lower"
+      )
+      table_pred_surv_upper <- extract_predictions(
+        list_pred_surv,
+        ".pred_upper"
+      )
     }
 
     # make the predictions (hazard)
@@ -480,15 +515,21 @@ tidy_predict_surv <- function(models,
         type = "survival",
         eval_time = eval_time,
         interval = interval
-      ) |>
-        purrr::map(~ .x |>
-          tidyr::unnest(col = .pred))
+      ) |> purrr::map(~ .x |>
+        tidyr::unnest(col = .pred))
 
       # Extract to summary tables
-      table_pred_surv[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_survival")
+      table_pred_surv[[i]] <-
+        extract_predictions(list_pred_surv[[i]], ".pred_survival")
       if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
-        table_pred_surv_lower[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_lower")
-        table_pred_surv_upper[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_upper")
+        table_pred_surv_lower[[i]] <- extract_predictions(
+          list_pred_surv[[i]],
+          ".pred_lower"
+        )
+        table_pred_surv_upper[[i]] <- extract_predictions(
+          list_pred_surv[[i]],
+          ".pred_upper"
+        )
       }
 
 
@@ -499,11 +540,13 @@ tidy_predict_surv <- function(models,
         type = "hazard",
         eval_time = eval_time,
         interval = interval
-      ) |>
-        purrr::map(~ .x |>
-          tidyr::unnest(col = .pred))
+      ) |> purrr::map(~ .x |>
+        tidyr::unnest(col = .pred))
 
-      table_pred_hazard[[i]] <- extract_predictions(list_pred_hazard[[i]], ".pred_hazard")
+      table_pred_hazard[[i]] <- extract_predictions(
+        list_pred_hazard[[i]],
+        ".pred_hazard"
+      )
     }
 
     names(list_pred_surv) <-
@@ -511,13 +554,11 @@ tidy_predict_surv <- function(models,
       names(table_pred_surv) <-
       names(table_pred_hazard) <-
       new_data$profile
-    # paste0("profile", seq_len(profiles))
 
     if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
       names(table_pred_surv_lower) <-
         names(table_pred_surv_upper) <-
         new_data$profile
-      # paste0("profile", seq_len(profiles))
     }
   }
 

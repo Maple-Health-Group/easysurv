@@ -32,23 +32,15 @@ library(dplyr)
 
 # Data Import ------------------------------------------------------------------
 
+# Useful data import packages include: haven, readxl, and readr.
+# Here we are importing a package dataset for demonstration purposes.
 surv_data <- easy_lung
 
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)
 
-# Toggle the next comment to see entire data.
-# View(surv_data)
 
-# Here are some packages & their functions you might use to import your data:
-# - haven::read_sas() for SAS (.sas7bdat) files
-# - haven::read_dta() for Stata (.dta) files
-# - haven::read_sav() for SPSS (.sav) files
-# - readxl::read_excel() for Excel (.xls & .xlsx) files
-# - readr::read_csv() for .csv files
-
-
-# Data Filtering ---------------------------------------------------------------
+# Data Filtering and Assessment ------------------------------------------------
 
 # We recommend defining a "tibble" with the following variables:
 # - "time"       [Numeric] Time of event/censor
@@ -65,22 +57,8 @@ surv_data <- surv_data |>
   dplyr::mutate_at("group", as.factor) |>
   dplyr::as_tibble() # Convert to tibble for easier viewing
 
-
-factor_levels <- c("Level1", "Level2", "Level3")
-
-# Add random factor column
-set.seed(123)  # Setting seed for reproducibility
-surv_data$RandomFactor <- factor(sample(factor_levels, nrow(surv_data), replace = TRUE))
-
-
-
-# Data Labelling and Assessment ------------------------------------------------
-
 # Overwrite any labels impacted by re-coding
 attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
-
-# Assign group labels in a consistent order with the levels command
-levels(surv_data$group) <- group_labels <- c("Male", "Female")
 
 # See the levels of the groups
 surv_data |> dplyr::count(group)
@@ -96,31 +74,31 @@ surv_data
 # easysurv analysis -----------------------------------------------------------
 ## Kaplan Meier analysis -------------------------------------------------------
 
-# Toggle the comment on the next line to see more about get_KM
-# ?get_KM
+# Toggle the comment on the next line to see more about get_km
+# ?get_km
 
-KM_check <- easysurv::get_KM(
+km_check <- easysurv::get_km(
   data = surv_data,
   time = "time",
   event = "event",
   group = "group"
 )
 
-KM_check
+km_check
 
 ## Proportional Hazards Tests ------------------------------------------
 
-# Toggle the comment on the next line to see more about test_PH
-# ?test_PH
+# Toggle the comment on the next line to see more about test_ph
+# ?test_ph
 
-PH_check <- easysurv::test_PH(
+ph_check <- easysurv::test_ph(
   data = surv_data,
   time = "time",
   event = "event",
   group = "group"
 )
 
-PH_check
+ph_check
 
 
 ## Choose Model Fit Approaches ---------------------------------------------
@@ -133,13 +111,6 @@ do_joint <- TRUE # TRUE: run standard parametric model fits (joint)
 do_splines <- FALSE # TRUE: run spline model fits
 do_cure <- FALSE # TRUE: run mixture cure model fits
 
-# Times over which to generate/plot extrapolations
-times <- seq(
-  from = 0,
-  to = ceiling(max(surv_data$time) * 5),
-  length.out = 200
-)
-
 ## Model Fitting ---------------------------------------------------------------
 
 # Toggle line below to see the function help
@@ -148,10 +119,9 @@ times <- seq(
 ### Separate fits --------------------------------------------------------------
 
 # make a surv_data2 with just 5 rows for testing
-surv_data2 <- surv_data[1:5,]
+surv_data2 <- surv_data[1:5, ]
 
 if (do_separate) {
-
   models_separate <- easysurv::fit_models(
     data = surv_data,
     time = "time",
@@ -159,17 +129,11 @@ if (do_separate) {
     predict_by = "group"
   )
   models_separate
-
-  pred_separate <- predict_and_plot(fit_models = models_separate,
-                              eval_time = times,
-                              data = surv_data)
-
 }
 
 ### Joint fits -----------------------------------------------------------------
 
 if (do_joint) {
-
   models_joint <- easysurv::fit_models(
     data = surv_data,
     time = "time",
@@ -177,64 +141,28 @@ if (do_joint) {
     predict_by = "group",
     covariates = "group"
   )
-
-  pred_joint <- predict_and_plot(fit_models = models_joint,
-                              eval_time = times,
-                              data = surv_data)
-
   models_joint
-  pred_joint
-
 }
-
-
-
-
-
-
-
-models_cov <- easysurv::fit_models(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  predict_by = "group",
-  covariates = c("group", "age", "RandomFactor")
-)
-
-pred_cov <- predict_and_plot(fit_models = models_cov,
-                               eval_time = times,
-                               data = surv_data)
-
-
-
 
 ### Spline fits ----------------------------------------------------------------
 
 if (do_splines) {
-
   models_splines <- easysurv::fit_models(
     data = surv_data,
     time = "time",
     event = "event",
     predict_by = "group",
     engine = "flexsurvspline",
-    k = c(1,2,3),
+    k = c(1, 2, 3),
     scale = "hazard"
   )
-
-  pred_splines <- predict_and_plot(fit_models = models_splines,
-                              eval_time = times,
-                              data = surv_data)
-
   models_splines
-  pred_splines
 }
 
 
 ### Mixture cure fits ----------------------------------------------------------
 
 if (do_cure) {
-
   models_cure <- easysurv::fit_models(
     data = surv_data,
     time = "time",
@@ -242,32 +170,63 @@ if (do_cure) {
     predict_by = "group",
     engine = "flexsurvcure"
   )
-
-  pred_cure <- predict_and_plot(fit_models = models_cure,
-                              eval_time = times,
-                              data = surv_data)
-
   models_cure
-  pred_cure
-
 }
 
-## See Outputs ------------------------------------------------------------------
+## Predictions -----------------------------------------------------------------
 
-# if (do_separate) View(fit_check_separate)
-# if (do_joint) View(fit_check_joint)
-# if (do_splines) View(fit_check_splines)
-# if (do_cure) View(fit_check_cure)
+# Times over which to generate/plot extrapolations
+times <- seq(
+  from = 0,
+  to = ceiling(max(surv_data$time) * 5),
+  length.out = 200
+)
+
+if (do_separate) {
+  pred_separate <- predict_and_plot(
+    fit_models = models_separate,
+    eval_time = times,
+    data = surv_data
+  )
+  pred_separate
+}
+
+if (do_joint) {
+  pred_joint <- predict_and_plot(
+    fit_models = models_joint,
+    eval_time = times,
+    data = surv_data
+  )
+  pred_joint
+}
+
+if (do_splines) {
+  pred_splines <- predict_and_plot(
+    fit_models = models_splines,
+    eval_time = times,
+    data = surv_data
+  )
+  pred_splines
+}
+
+if (do_cure) {
+  pred_cure <- predict_and_plot(
+    fit_models = models_cure,
+    eval_time = times,
+    data = surv_data
+  )
+  pred_cure
+}
 
 
-## Excel Exports ----------------------------------------------------------------
+## Excel Exports ---------------------------------------------------------------
 
 
 wb <- openxlsx::createWorkbook()
-write_to_xl(wb, KM_check)
-write_to_xl(wb, PH_check)
-#write_to_xl(wb, models_separate)
-#write_to_xl(wb, pred_separate)
+write_to_xl(wb, km_check)
+write_to_xl(wb, ph_check)
+# write_to_xl(wb, models_separate)
+# write_to_xl(wb, pred_separate)
 
 write_to_xl(wb, models_joint)
 write_to_xl(wb, pred_joint)
@@ -276,27 +235,7 @@ openxlsx::saveWorkbook(wb, file = "test.xlsx", overwrite = TRUE)
 openxlsx::openXL("test.xlsx")
 
 
-# Note to self: Set it up as an example that sends different items to different workbooks.
-# Like: KM to one, PH to another, and fit_models object to its own wb.
-# write_to_xl
 
-
-
-# Toggle the comment on the next line to see more about quick_to_XL
-# ?quick_to_XL
-
-# probably call it easysurv_to_Excel or something like that.
-# easy_object instead of quick_object
-
-# base the exporting on easy_flexsurv style classes for fits.
-
-
-
-
-
-#
-#
-#
 # # Create a new workbook object
 # wb <- openxlsx::createWorkbook()
 #

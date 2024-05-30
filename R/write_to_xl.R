@@ -17,22 +17,25 @@
 #' }
 write_to_xl <- function(wb, object) {
   class_names <- c(
-    "easy_KM",
-    "test_PH",
+    "get_km",
+    "test_ph",
     "fit_models",
     "pred_plot"
   )
 
   if (!inherits(object, class_names)) {
     valid_functions <- c(
-      "get_KM",
-      "test_PH",
+      "get_km",
+      "test_ph",
       "fit_models",
       "predict_and_plot"
     )
 
     cli::cli_abort(c(
-      "The {.var object} argument must be an object returned from {.fn {valid_functions}}.",
+      paste0(
+        "The {.var object} argument must be an object returned from ",
+        "{.fn {valid_functions}}."
+      ),
       "x" = "You've provided an object of class: {.cls {class(object)}}"
     ))
   }
@@ -52,14 +55,14 @@ write_to_xl <- function(wb, object) {
   class_name <- class_names[[which(check_classes > 0 %in% class_names)]]
 
   # KM ----
-  if (class_name == "easy_KM") {
+  if (class_name == "get_km") {
     ## KM summary ----
     sheet_name <- "KM Summary"
     add_sheet(wb, sheet_name)
 
     openxlsx::writeData(
       wb = wb,
-      x = object[["KM_summary"]],
+      x = object[["km_summary"]],
       sheet = sheet_name,
       startCol = 2,
       startRow = 2
@@ -71,11 +74,11 @@ write_to_xl <- function(wb, object) {
     sheet_name <- "Stepped KMs"
     add_sheet(wb, sheet_name)
 
-    for (KM in seq_along(object$KM_for_Excel)) {
+    for (KM in seq_along(object$km_for_excel)) {
       # KM names
       openxlsx::writeData(
         wb = wb,
-        x = names(object[["KM_for_Excel"]])[[KM]],
+        x = names(object[["km_for_excel"]])[[KM]],
         sheet = sheet_name,
         startCol = 2 + (KM - 1) * 5,
         startRow = 2
@@ -84,7 +87,7 @@ write_to_xl <- function(wb, object) {
       # Actual KM
       openxlsx::writeData(
         wb = wb,
-        x = object[["KM_for_Excel"]][[KM]],
+        x = object[["km_for_excel"]][[KM]],
         sheet = sheet_name,
         startCol = 2 + (KM - 1) * 5,
         startRow = 3
@@ -95,7 +98,7 @@ write_to_xl <- function(wb, object) {
     add_sheet(wb, sheet_name)
 
     # The plot needs to be showing for insertPlot to work.
-    suppressWarnings(print(object$KM_plot))
+    suppressWarnings(print(object$km_plot))
     openxlsx::insertPlot(wb, sheet_name,
       width = 8,
       height = 6,
@@ -107,7 +110,7 @@ write_to_xl <- function(wb, object) {
 
 
   # PH Plots ----
-  if (class_name == "test_PH") {
+  if (class_name == "test_ph") {
     sheet_name <- "PH Plots"
     add_sheet(wb, sheet_name)
 
@@ -232,7 +235,8 @@ write_to_xl <- function(wb, object) {
             wb = wb,
             x = names(object$predictions[[tx]]$table_pred_surv[profile]),
             sheet = sheet_name,
-            startCol = 2 + (profile - 1) * (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
+            startCol = 2 + (profile - 1) *
+              (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
             startRow = 2
           )
 
@@ -241,7 +245,8 @@ write_to_xl <- function(wb, object) {
             wb = wb,
             x = object$predictions[[tx]]$table_pred_surv[[profile]],
             sheet = sheet_name,
-            startCol = 2 + (profile - 1) * (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
+            startCol = 2 + (profile - 1) *
+              (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
             startRow = 3
           )
         }
@@ -268,6 +273,32 @@ write_to_xl <- function(wb, object) {
     # TODO: Add plots to Excel.
   }
 
-
   invisible()
+}
+
+# Helper functions ----
+
+#' Add an Excel worksheet through `openxlsx` if it doesn't already exist
+#'
+#' Checks if the sheet with the specified name exists, and creates it if needed.
+#'
+#' @param wb A Workbook object containing a worksheet
+#' @param sheet_name The desired worksheet name
+#'
+#' @importFrom openxlsx addWorksheet
+#'
+#' @return Worksheet added (if required) to the wb object.
+#' @noRd
+#' @examples
+#' \dontrun{
+#' # To add
+#' }
+add_sheet <- function(wb, sheet_name) {
+  # Check if the sheet already exists
+  if (sheet_name %in% names(wb)) {
+    return() # Quit, since sheet already exists
+  }
+
+  # Create sheet if it does not exist
+  openxlsx::addWorksheet(wb, sheet_name)
 }

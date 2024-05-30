@@ -1,4 +1,4 @@
-surv_data <- easysurv::easy_lung[1:100,]
+surv_data <- easysurv::easy_lung[1:100, ]
 
 surv_data <- surv_data |>
   dplyr::mutate(
@@ -48,7 +48,7 @@ p
 sysfonts::font_add_google("Roboto Condensed")
 
 s <- hexSticker::sticker(p,
-                         package="easysurv",
+                         package = "easysurv",
                          p_size = 25,
                          s_x = 1,
                          s_y = 0.9,
@@ -56,7 +56,7 @@ s <- hexSticker::sticker(p,
                          s_height = 1.1,
                          p_color = "#93100E",
                          h_fill = "#F2F2F2",
-                         h_color = '#4E8098',
+                         h_color = "#4E8098",
                          h_size = 1.2,
                          p_family = "Roboto Condensed",
                          filename = "man/figures/logo.png",
