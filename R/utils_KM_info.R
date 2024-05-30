@@ -23,7 +23,6 @@ get_median_FU <- function(data,
                           time,
                           event,
                           group = NULL) {
-
   # Define the Surv object
   theSurv <- survival::Surv(time = data[[time]], event = data[[event]])
 
@@ -34,16 +33,24 @@ get_median_FU <- function(data,
   # Find median quantile
   if (is.null(group)) {
     quantiles <- stats::quantile(
-      ggsurvfit::survfit2(stats::as.formula(
-        paste0("inverseSurv ~ 1")),
-        data = data),
-      0.5)
+      ggsurvfit::survfit2(
+        stats::as.formula(
+          paste0("inverseSurv ~ 1")
+        ),
+        data = data
+      ),
+      0.5
+    )
   } else {
     quantiles <- stats::quantile(
-      ggsurvfit::survfit2(stats::as.formula(
-        paste0("inverseSurv ~ as.factor(", group, ")")),
-        data = data),
-      0.5)
+      ggsurvfit::survfit2(
+        stats::as.formula(
+          paste0("inverseSurv ~ as.factor(", group, ")")
+        ),
+        data = data
+      ),
+      0.5
+    )
   }
 
   # Do not keep CI.
@@ -52,7 +59,6 @@ get_median_FU <- function(data,
   colnames(out) <- "Median follow-up"
 
   return(out)
-
 }
 
 
@@ -90,14 +96,17 @@ get_median_FU <- function(data,
 #' }
 #'
 step_KM <- function(KM) {
-
   KM_sum <- summary(KM, times = KM$time)
 
   time <- rep(KM_sum$time, each = 2)[-1]
-  nrisk <- c(rep(KM_sum$n.risk[-length(KM_sum$n.risk)], each = 2),
-             min(KM_sum$n.risk))
-  survival <- c(rep(KM_sum$surv[-length(KM_sum$surv)], each = 2),
-                min(KM_sum$surv))
+  nrisk <- c(
+    rep(KM_sum$n.risk[-length(KM_sum$n.risk)], each = 2),
+    min(KM_sum$n.risk)
+  )
+  survival <- c(
+    rep(KM_sum$surv[-length(KM_sum$surv)], each = 2),
+    min(KM_sum$surv)
+  )
   count <- rep(length(KM_sum$time):1, each = 2)
 
   out <- tibble::tibble(
@@ -110,7 +119,6 @@ step_KM <- function(KM) {
   out <- out[order(out$time, -out$survival, -out$nrisk), ]
 
   return(out)
-
 }
 
 
@@ -150,7 +158,6 @@ summarise_KM <- function(fit, strata_labels = NULL) {
     if (!is.null(strata_labels)) {
       out$group <- strata_labels
     }
-
   } else {
     out <- as.data.frame(t(summary(fit)$table))
   }

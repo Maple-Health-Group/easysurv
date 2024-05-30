@@ -107,4 +107,3 @@
 #'
 #' @source `flexsurv::bc`
 "easy_bc"
-

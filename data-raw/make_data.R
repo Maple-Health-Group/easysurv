@@ -38,8 +38,9 @@ attr(easy_bc$recyrs, "label") <- "Time of censoring or death in years"
 # https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08
 
 adtte <-
-  readr::read_csv('data-raw/ggsurvfit-adtte.csv',
-                  show_col_types = FALSE) |>
+  readr::read_csv("data-raw/ggsurvfit-adtte.csv",
+    show_col_types = FALSE
+  ) |>
   tibble::as_tibble() |>
   dplyr::mutate(
     AVAL = AVAL / 365.25,
@@ -69,6 +70,7 @@ attr(adtte$DCTREAS, "label") <- "Discontinuation from study reason"
 easy_adtte <- adtte
 
 usethis::use_data(easy_adtte,
-                  easy_lung,
-                  easy_bc,
-                  overwrite = TRUE, internal = FALSE)
+  easy_lung,
+  easy_bc,
+  overwrite = TRUE, internal = FALSE
+)

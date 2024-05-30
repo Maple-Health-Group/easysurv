@@ -32,10 +32,10 @@ Cox proportional hazards model and related tests.
 \dontrun{
 
 PH_results <- get_PH(
- data = easysurv::easy_bc,
- time = "recyrs",
- event = "censrec",
- group = "group")
-
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  group = "group"
+)
 }
 }

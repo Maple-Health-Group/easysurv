@@ -36,10 +36,10 @@ statistics, plots, and additional outputs.
 \dontrun{
 
 KM_results <- get_KM(
- data = easysurv::easy_bc,
- time = "recyrs",
- event = "censrec",
- group = "group")
-
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  group = "group"
+)
 }
 }

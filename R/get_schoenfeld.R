@@ -20,29 +20,27 @@
 #'
 #' @examples
 #' \dontrun{
-#'library(survival)
-#'test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
-#'test_fit_zph <- survival::cox.zph(test_fit)
-#'get_schoenfeld(test_fit_zph)
-#'
+#' library(survival)
+#' test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
+#' test_fit_zph <- survival::cox.zph(test_fit)
+#' get_schoenfeld(test_fit_zph)
 #' }
 #'
-get_schoenfeld <- function(fit_zph){
-
+get_schoenfeld <- function(fit_zph) {
   # Create visible binding for R CMD check.
   time <- NULL
 
   out <- tibble::as_tibble(fit_zph$y) |>
     cbind(
       time      = fit_zph$x,
-      transform = fit_zph$transform) |>
+      transform = fit_zph$transform
+    ) |>
     tidyr::pivot_longer(c(-time, -transform),
-                        names_to = "variable",
-                        values_to = "residual"
+      names_to = "variable",
+      values_to = "residual"
     )
 
   return(out)
-
 }
 
 # test_fit <- survival::coxph(Surv(time, status) ~ surg + sex:extent, data = ggsurvfit::df_colon)

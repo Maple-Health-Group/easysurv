@@ -12,15 +12,14 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom scales pseudo_log_trans
 plot_fits <- function(data) {
-
   # Create visible binding for R CMD check.
   .eval_time <- Survival <- Model <- NULL
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(data,
-                                   cols = -".eval_time",
-                                   names_to = "Model",
-                                   values_to = "Survival"
+    cols = -".eval_time",
+    names_to = "Model",
+    values_to = "Survival"
   )
 
   p <- ggplot(data = long_data, aes(x = .eval_time, y = Survival))
@@ -65,16 +64,16 @@ plot_fits <- function(data) {
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 plot_KM <- function(fit,
-                     risk_table = TRUE,
-                     median_line = TRUE,
+                    risk_table = TRUE,
+                    median_line = TRUE,
                     legend_position = "bottom",
                     plot_theme = ggplot2::theme_bw(),
-                     xlab = "Time",
-                     ylab = "Survival Probability (%)") {
-
+                    xlab = "Time",
+                    ylab = "Survival Probability (%)") {
   out <- ggsurvfit::ggsurvfit(fit,
-                              type = "survival",
-                              theme = plot_theme) +
+    type = "survival",
+    theme = plot_theme
+  ) +
     ggsurvfit::add_censor_mark() +
     xlab(xlab) +
     ylab(ylab) +
@@ -82,9 +81,9 @@ plot_KM <- function(fit,
 
   if (risk_table) {
     out <- out + ggsurvfit::add_risktable(
-    risktable_stats = "n.risk",
-    stats_label = list(n.risk = "Number at risk"),
-    theme = ggsurvfit::theme_risktable_boxed()
+      risktable_stats = "n.risk",
+      stats_label = list(n.risk = "Number at risk"),
+      theme = ggsurvfit::theme_risktable_boxed()
     )
   }
 
@@ -123,22 +122,24 @@ plot_KM <- function(fit,
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 plot_cloglog <- function(fit,
-                    risk_table = FALSE,
-                    median_line = FALSE,
-                    legend_position = "bottom",
-                    plot_theme = ggplot2::theme_bw(),
-                    xlab = "Time (log-scaled)",
-                    ylab = "log(-log(S(t)))") {
-
+                         risk_table = FALSE,
+                         median_line = FALSE,
+                         legend_position = "bottom",
+                         plot_theme = ggplot2::theme_bw(),
+                         xlab = "Time (log-scaled)",
+                         ylab = "log(-log(S(t)))") {
   out <- ggsurvfit::ggsurvfit(fit,
-                              type = "cloglog",
-                              theme = plot_theme) +
+    type = "cloglog",
+    theme = plot_theme
+  ) +
     ggsurvfit::add_censor_mark() +
     xlab(xlab) +
     ylab(ylab) +
     theme(legend.position = legend_position) +
-    scale_x_continuous(transform = scales::pseudo_log_trans(sigma = 0.01),
-                       labels = function(x) round(as.numeric(x), digits=2))
+    scale_x_continuous(
+      transform = scales::pseudo_log_trans(sigma = 0.01),
+      labels = function(x) round(as.numeric(x), digits = 2)
+    )
 
   # Used scales::pseudo_log_trans(sigma = 0.01) to avoid "log" and the
   # infinite values in log-transformed axis.
@@ -279,12 +280,12 @@ plot_schoenfeld <- function(residuals,
                             sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
                             point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
                             plot_theme = ggplot2::theme_bw()) {
-
   # Create visible binding for R CMD check.
   time <- residual <- NULL
 
   trans.string <- ifelse(unique(residuals$transform) == "identity", "t",
-                         paste0(unique(residuals$transform), "(t)"))
+    paste0(unique(residuals$transform), "(t)")
+  )
 
   gg.zph <- ggplot2::ggplot(residuals, ggplot2::aes(x = time, y = residual)) +
     ggplot2::geom_point() +
@@ -400,22 +401,27 @@ plot_smoothed_hazards <- function(data,
                                   font.family = "Roboto Condensed",
                                   plot.theme = theme_bw(),
                                   use_plotly = FALSE) {
-
   # Appeasing R CMD check
   dist <- est <- lcl <- ucl <- NULL
 
   # Define the survival formula for bshazard
   my_formula <- stats::as.formula(
-    paste0("survival::Surv(time = ", time, ", event = ", event, ") ~ 1"))
+    paste0("survival::Surv(time = ", time, ", event = ", event, ") ~ 1")
+  )
 
   # Calculate smoothed estimate of hazards based on B-splines (bshazard)
-  observed_hazards <- with(bshazard::bshazard(my_formula,
-                                              data = data,
-                                              verbose = FALSE),
-                           data.frame(time, hazard, lower.ci, upper.ci)) |>
-    dplyr::rename(est = .data$hazard,
-                  lcl = .data$lower.ci,
-                  ucl = .data$upper.ci)
+  observed_hazards <- with(
+    bshazard::bshazard(my_formula,
+      data = data,
+      verbose = FALSE
+    ),
+    data.frame(time, hazard, lower.ci, upper.ci)
+  ) |>
+    dplyr::rename(
+      est = .data$hazard,
+      lcl = .data$lower.ci,
+      ucl = .data$upper.ci
+    )
 
   # Label the observed hazards and assign a thicker line width for the plot
   observed_hazards$dist <- "Observed"
@@ -424,7 +430,8 @@ plot_smoothed_hazards <- function(data,
   # Obtain the predicted hazards from the fits
   predicted_hazards <- lapply(fits$models, function(dist) {
     summary_hazards <- as.data.frame(
-      summary(dist, type = "hazard", t = t, ci = FALSE)[[group]])
+      summary(dist, type = "hazard", t = t, ci = FALSE)[[group]]
+    )
 
     # Thinner linewidth for non-observed hazards
     summary_hazards$linewidth <- 1
@@ -434,23 +441,26 @@ plot_smoothed_hazards <- function(data,
 
   # Combine predicted hazards into manageable object
   predicted_hazards <- Map(cbind,
-                           predicted_hazards,
-                           dist = names(predicted_hazards))
+    predicted_hazards,
+    dist = names(predicted_hazards)
+  )
 
   # Combine observed and predicted hazards into one object
-  all_hazards <- do.call(dplyr::bind_rows,
-                         c(list(observed_hazards), predicted_hazards))
+  all_hazards <- do.call(
+    dplyr::bind_rows,
+    c(list(observed_hazards), predicted_hazards)
+  )
 
   # Put the "Observed" line at the top of the plot legend.
   all_hazards$dist <- factor(all_hazards$dist,
-                             levels = unique(all_hazards$dist))
+    levels = unique(all_hazards$dist)
+  )
 
   # Sometimes the estimated hazard is relatively much larger for a distribution
   # that it extends the y-axis significantly and makes it difficult to interpret
   # the plot.
   # The below logic attempts to define a reasonable upper limit for the y-axis.
   if (is.null(ylimit)) {
-
     # Obtain maximum estimated hazard
     max_est_hazard <- max(all_hazards$est, na.rm = TRUE)
 
@@ -477,7 +487,8 @@ plot_smoothed_hazards <- function(data,
   )) +
     # Add the lines
     ggplot2::geom_line(aes(col = .data$dist, linewidth = I(.data$linewidth)),
-                       na.rm = TRUE) +
+      na.rm = TRUE
+    ) +
     # Add labels
     labs(
       col = "Models",
@@ -488,7 +499,8 @@ plot_smoothed_hazards <- function(data,
     ) +
     # Legend line width matching that in plot
     ggplot2::guides(
-      colour = ggplot2::guide_legend(override.aes = list(linewidth = 1))) +
+      colour = ggplot2::guide_legend(override.aes = list(linewidth = 1))
+    ) +
     # Assign y limit.
     ggplot2::ylim(NA, ylimit)
 
@@ -508,13 +520,15 @@ plot_smoothed_hazards <- function(data,
   }
 
   out <- out + plot.theme +
-    theme(text          = element_text(family = font.family),
-          plot.title    = element_text(family = font.family),
-          plot.subtitle = element_text(family = font.family),
-          axis.title.x  = element_text(family = font.family),
-          axis.title.y  = element_text(family = font.family),
-          axis.text.x   = element_text(family = font.family),
-          axis.text.y   = element_text(family = font.family))
+    theme(
+      text = element_text(family = font.family),
+      plot.title = element_text(family = font.family),
+      plot.subtitle = element_text(family = font.family),
+      axis.title.x = element_text(family = font.family),
+      axis.title.y = element_text(family = font.family),
+      axis.text.x = element_text(family = font.family),
+      axis.text.y = element_text(family = font.family)
+    )
 
   # Conditionally convert to a plotly object
   if (use_plotly) {
@@ -526,27 +540,34 @@ plot_smoothed_hazards <- function(data,
       " Time: ",
       format(time, big.mark = ",", digits = 2, nsmall = 2, trim = TRUE),
       ", Hazard: ",
-      sprintf(est, fmt = '%.3f'),
+      sprintf(est, fmt = "%.3f"),
       ifelse(dist == "Observed",
-             paste0(" (",
-                    sprintf(lcl, fmt = '%.3f'),
-                    ", ",
-                    sprintf(ucl, fmt = '%.3f'),
-                    ")" ),
-             ""))
-    )
+        paste0(
+          " (",
+          sprintf(lcl, fmt = "%.3f"),
+          ", ",
+          sprintf(ucl, fmt = "%.3f"),
+          ")"
+        ),
+        ""
+      )
+    ))
 
     # Convert ggplot to plotly via ggplotly
     # Disable some options, otherwise overwhelming.
     out_plotly <- plotly::ggplotly(out_plotly, tooltip = "text") |>
-      plotly::config(modeBarButtonsToRemove = c('zoom',
-                                                'pan2d',
-                                                'zoomIn',
-                                                'zoomOut',
-                                                'autoScale',
-                                                'select2d',
-                                                'lasso2d'),
-                     displaylogo = FALSE) |>
+      plotly::config(
+        modeBarButtonsToRemove = c(
+          "zoom",
+          "pan2d",
+          "zoomIn",
+          "zoomOut",
+          "autoScale",
+          "select2d",
+          "lasso2d"
+        ),
+        displaylogo = FALSE
+      ) |>
       plotly::layout(hovermode = "x unified")
 
     # ggplotly seems to convert the distributions in the legend to:
@@ -554,11 +575,13 @@ plot_smoothed_hazards <- function(data,
     # so here the code removes the "(,1)" wrapping.
     for (i in seq_along(out_plotly[["x"]][["data"]])) {
       temp_name <- out_plotly[["x"]][["data"]][[i]][["name"]]
-      if (startsWith(temp_name,"(") & endsWith(temp_name,",1)")) {
+      if (startsWith(temp_name, "(") & endsWith(temp_name, ",1)")) {
         out_plotly[["x"]][["data"]][[i]][["name"]] <-
-          substring(temp_name,
-                    2,
-                    nchar(temp_name)-3)
+          substring(
+            temp_name,
+            2,
+            nchar(temp_name) - 3
+          )
       }
     }
 

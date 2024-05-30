@@ -7,7 +7,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", 
+  comment = "#>",
   fig.path = "man/figures/"
 )
 
@@ -73,7 +73,8 @@ KM_quick <- easysurv::quick_KM(
   time = "time",
   event = "event",
   strata = "sex",
-  strata_labels = c("Male", "Female"))
+  strata_labels = c("Male", "Female")
+)
 
 # Print the newly created KM plot
 KM_quick[["KM_plot"]]
@@ -91,14 +92,14 @@ fit_quick <- easysurv::quick_fit(
   strata = "sex",
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
   strata_labels = c("Male", "Female"),
-  add_interactive_plots = TRUE)
+  add_interactive_plots = TRUE
+)
 
 # Print the hazard and fitted survival plots
 fit_quick[["hazard_plots"]][["Male"]]
 fit_quick[["fit_plots"]][["Male"]]
 # Print the AIC/BIC scores and their relative ranking
 fit_quick[["goodness_of_fit"]][["Male"]]
-
 ```
 
 ## Known issues

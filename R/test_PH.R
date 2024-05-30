@@ -23,34 +23,32 @@
 #' @examples
 #' \dontrun{
 #'
-#'PH_results <- get_PH(
-#'  data = easysurv::easy_bc,
-#'  time = "recyrs",
-#'  event = "censrec",
-#'  group = "group")
-#'
+#' PH_results <- get_PH(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group"
+#' )
 #' }
 test_PH <- function(data,
                     time,
                     event,
                     group,
-                    plot_theme = ggplot2::theme_bw()
-                    ) {
-
+                    plot_theme = ggplot2::theme_bw()) {
   if (!is.data.frame(data)) {
     cli::cli_abort(c(
       "The {.var data} argument must have class {.cls data.frame}.",
-      "x" = "You've provided an object of class: {.cls {class(data)}}"))
+      "x" = "You've provided an object of class: {.cls {class(data)}}"
+    ))
   }
 
   required_cols <- c(time, event, group)
   if (!all(required_cols %in% colnames(data))) {
-
     cli::cli_abort(
       paste0(
         "test_PH did not find the following columns in `data`: ",
         paste(setdiff(required_cols, colnames(data)),
-              collapse = ", "
+          collapse = ", "
         )
       )
     )
@@ -61,7 +59,8 @@ test_PH <- function(data,
   if (length(group_list) <= 1) {
     cli::cli_abort(c(
       "The {.field group} variable must contain multiple groups if looking to assess proportional hazards.",
-      "x" = "You've provided a group with the levels: {.var {group_list}}."))
+      "x" = "You've provided a group with the levels: {.var {group_list}}."
+    ))
   }
 
   PH_formula <- stats::as.formula(paste0(
@@ -71,16 +70,17 @@ test_PH <- function(data,
   ))
 
   KM_all <- do.call(survival::survfit,
-                    args = list(
-                      formula = PH_formula,
-                      conf.int = 0.95,
-                      data = data,
-                      type = "kaplan-meier"
-                    )
+    args = list(
+      formula = PH_formula,
+      conf.int = 0.95,
+      data = data,
+      type = "kaplan-meier"
+    )
   )
 
   cloglog_plot <- plot_cloglog(KM_all,
-                               plot_theme = plot_theme)
+    plot_theme = plot_theme
+  )
 
   the_coxph <- survival::coxph(
     formula = PH_formula,
@@ -107,7 +107,8 @@ test_PH <- function(data,
   schoenfeld_plot <-
     plot_schoenfeld(
       residuals = schoenfeld_residuals,
-      plot_theme = plot_theme)
+      plot_theme = plot_theme
+    )
 
   out <- list(
     cloglog_plot = cloglog_plot,
@@ -121,7 +122,6 @@ test_PH <- function(data,
   class(out) <- c(class(out), "test_PH")
 
   return(out)
-
 }
 
 
@@ -135,7 +135,6 @@ test_PH <- function(data,
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 print.test_PH <- function(x, ...) {
-
   cli::cli_h1("Proportional Hazards Assumption Testing")
 
   cli::cli_h2("Cox Proportional Hazards Model")
@@ -154,24 +153,28 @@ print.test_PH <- function(x, ...) {
 
   cli::cli_h2("Test Survival Curve Differences")
 
-  cli::cli_alert_info(c("{.fn survival::survdiff} uses a log-rank test to test ",
-                        "for differences in survival curves between groups."))
+  cli::cli_alert_info(c(
+    "{.fn survival::survdiff} uses a log-rank test to test ",
+    "for differences in survival curves between groups."
+  ))
   cli::cli_alert_info("The null hypothesis is that the survival curves are the same.")
   cli::cat_line()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (x$survdiff$pvalue > 0.05) {
-    cli::cli_alert_warning(c("The test suggests that survival differences ",
-                             "between groups are {.strong NOT} statistically significant."))
+    cli::cli_alert_warning(c(
+      "The test suggests that survival differences ",
+      "between groups are {.strong NOT} statistically significant."
+    ))
 
     cli::cli_alert_warning("p-value: {.val {x$survdiff$pvalue}}.")
-
   } else {
-    cli::cli_alert_success(c("The test suggests that survival differences ",
-                             "between groups {.strong ARE} statistically significant."))
+    cli::cli_alert_success(c(
+      "The test suggests that survival differences ",
+      "between groups {.strong ARE} statistically significant."
+    ))
 
     cli::cli_alert_success("p-value: {.val {x$survdiff$pvalue}}.")
-
   }
   cli::cli_end(divid)
 
@@ -182,7 +185,7 @@ print.test_PH <- function(x, ...) {
   cli::cat_line()
 
   p_vals <- as.data.frame(x$cox.zph_PH_test$table)[3]
-  global_p_val <- my_vals[nrow(my_vals),]
+  global_p_val <- my_vals[nrow(my_vals), ]
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (global_p_val > 0.05) {
@@ -204,17 +207,25 @@ print.test_PH <- function(x, ...) {
   cli::cli_text("The log cumulative hazard and Schoenfeld residuals plots have been printed.")
 
   cli::cli_h3("Log cumulative hazard plot")
-  cli::cli_text(c("{.strong Parallel Lines:} If the lines are roughly ",
-                        "parallel, this suggests that the proportional hazards ",
-                        "assumption holds."))
-  cli::cli_text(c("Parallel lines indicate that the ",
-                "hazard ratios between groups are consistent over time."))
+  cli::cli_text(c(
+    "{.strong Parallel Lines:} If the lines are roughly ",
+    "parallel, this suggests that the proportional hazards ",
+    "assumption holds."
+  ))
+  cli::cli_text(c(
+    "Parallel lines indicate that the ",
+    "hazard ratios between groups are consistent over time."
+  ))
 
-  cli::cli_text(c("{.strong Non-Parallel Lines:} If the lines are not ",
-                        "parallel and diverge or converge, ",
-                        "the PH assumption may be violated. "))
-  cli::cli_text(c("Non-parallel lines indicate that the hazard ratios ",
-                "between groups change over time."))
+  cli::cli_text(c(
+    "{.strong Non-Parallel Lines:} If the lines are not ",
+    "parallel and diverge or converge, ",
+    "the PH assumption may be violated. "
+  ))
+  cli::cli_text(c(
+    "Non-parallel lines indicate that the hazard ratios ",
+    "between groups change over time."
+  ))
 
 
   cli::cli_h3("Schoenfeld residual plot")
@@ -222,8 +233,10 @@ print.test_PH <- function(x, ...) {
   cli::cli_text(c("A {.strong non-flat smoothed line} with a trend suggests the PH assumption is violated."))
 
   cli::cli_rule()
-  cli::cli_alert_info(c("PH tests may not always agree, so ",
-                        "it is important to consider the results of all tests and plots."))
+  cli::cli_alert_info(c(
+    "PH tests may not always agree, so ",
+    "it is important to consider the results of all tests and plots."
+  ))
   cli::cli_alert_info(c("The full object can be inspected by running {.code View()} on the test_PH output."))
 
   invisible(x)

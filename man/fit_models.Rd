@@ -71,7 +71,7 @@ output_separate <- fit_models(
   time = "recyrs",
   event = "censrec",
   predict_by = "group",
-  covariates = c("age", "treatment"))
-
+  covariates = c("age", "treatment")
+)
 }
 }

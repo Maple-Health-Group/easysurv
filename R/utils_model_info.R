@@ -3,7 +3,6 @@
 #' @importFrom dplyr everything select mutate row_number
 #' @noRd
 create_newdata <- function(data) {
-
   # Create visible binding for R CMD check.
   profile <- NULL
 
@@ -41,7 +40,6 @@ create_newdata <- function(data) {
 #' @importFrom stats pnorm
 #' @noRd
 get_cure_fractions <- function(mod) {
-
   # Define the link function
   link_function <- mod$fit$link
 
@@ -49,8 +47,7 @@ get_cure_fractions <- function(mod) {
   theta <- mod$fit$res.t[1]
 
   # Calculate cure fraction based on the link function
-  cure_fraction <- switch(
-    link_function,
+  cure_fraction <- switch(link_function,
     logistic = exp(theta) / (1 + exp(theta)),
     loglog = exp(-exp(theta)),
     probit = stats::pnorm(theta),
@@ -59,7 +56,6 @@ get_cure_fractions <- function(mod) {
   )
 
   return(cure_fraction)
-
 }
 
 #' @importFrom cli cli_abort
@@ -72,7 +68,8 @@ get_fit_averages <- function(mod,
                              get_mean = FALSE) {
   if (!get_median & !get_rmst & !get_mean) {
     cli::cli_abort(c("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function",
-                     "x" = "You've provided {.field get_median} = {.var FALSE}, {.field get_rmst} = {.var FALSE}, and {.field get_mean} = {.var FALSE}."))
+      "x" = "You've provided {.field get_median} = {.var FALSE}, {.field get_rmst} = {.var FALSE}, and {.field get_mean} = {.var FALSE}."
+    ))
   }
 
   out <- list()
@@ -214,7 +211,6 @@ get_fit_averages <- function(mod,
     # if there are multiple factors, this will need to be updated.
     # but suspect that "flexsurv" style engines will be preferred.
     if (!is.null(mod$fit$xlevels)) {
-
       # this is for factor variables
       n_xlevels <- length(mod$fit$xlevels[[1]])
 
@@ -234,19 +230,18 @@ get_fit_averages <- function(mod,
         colnames(new_data) <- names(mod$fit$xlevels)
 
         if (!identical(filtered_terms, character(0))) {
-
           new_data <- c(new_data, mod$fit$means[filtered_terms])
-
         }
 
         # Get the median (IGNORE "new_data" warnings if appear, it does
         # in fact need to remain as "newdata".)
-        median.est[[i]] <- data.frame(strata = mod$fit$xlevels[[1]][i],
-                                      median.est = predict(mod$fit,
-                               newdata = new_data,
-                               type = "quantile",
-                               p = c(0.5),
-                               )
+        median.est[[i]] <- data.frame(
+          strata = mod$fit$xlevels[[1]][i],
+          median.est = predict(mod$fit,
+            newdata = new_data,
+            type = "quantile",
+            p = c(0.5),
+          )
         )
 
         out[[i]] <- cbind(out[[i]], median.est[[i]])
@@ -264,9 +259,9 @@ get_fit_averages <- function(mod,
 
       # Get the median (newdata does not matter)
       median.est <- predict(mod$fit,
-                        newdata = new_data,
-                        type = "quantile",
-                        p = c(0.5)
+        newdata = new_data,
+        type = "quantile",
+        p = c(0.5)
       )
 
       out <- cbind(out, median.est)
@@ -284,10 +279,10 @@ get_fit_averages_summary <- function(models,
                                      get_rmst = TRUE,
                                      get_mean = FALSE) {
   out <- lapply(models,
-                get_fit_averages,
-                get_median = get_median,
-                get_rmst = get_rmst,
-                get_mean = get_mean
+    get_fit_averages,
+    get_median = get_median,
+    get_rmst = get_rmst,
+    get_mean = get_mean
   )
 
   out <- data.table::rbindlist(out) |> tibble::as_tibble()
@@ -315,7 +310,6 @@ get_goodness_of_fit <- function(mod) {
   )
 
   return(out)
-
 }
 
 #' @importFrom dplyr bind_rows relocate
@@ -330,11 +324,11 @@ get_surv_parameters <- function(models) {
     engine <- models[[i]]$spec$engine
 
     distribution <- switch(engine,
-                           "flexsurv" = models[[i]]$fit$dlist$name,
-                           "flexsurvcure" = models[[i]]$fit$dlist$name,
-                           "flexsurvspline" = names(models[i]),
-                           "survival" = models[[i]]$fit$dist,
-                           stop("Unknown engine type")
+      "flexsurv" = models[[i]]$fit$dlist$name,
+      "flexsurvcure" = models[[i]]$fit$dlist$name,
+      "flexsurvspline" = names(models[i]),
+      "survival" = models[[i]]$fit$dist,
+      stop("Unknown engine type")
     )
 
     if (engine == "flexsurv" | engine == "flexsurvcure" | engine == "flexsurvspline") {
@@ -361,7 +355,7 @@ get_surv_parameters <- function(models) {
     } else if (engine == "survival") {
       # With the survival package, it's a bit tricky.
       # Get number of parameters using degrees of freedom
-      #par_length <- models[[i]]$fit$df
+      # par_length <- models[[i]]$fit$df
 
       # Get initial parameters from coefficients
       get_parameters <- models[[i]]$fit$coefficients |>
@@ -378,9 +372,9 @@ get_surv_parameters <- function(models) {
 
         get_parameters <- rbind(get_parameters, get_additional_parameters)
 
-        if (get_parameters[length(get_parameters[,1]),2] == 0) {
+        if (get_parameters[length(get_parameters[, 1]), 2] == 0) {
           # Drop the last row if it's zero (e.g. for exponential log(scale))
-          get_parameters <- get_parameters[-length(get_parameters[,1]),]
+          get_parameters <- get_parameters[-length(get_parameters[, 1]), ]
         }
       }
 
@@ -512,21 +506,19 @@ tidy_predict_surv <- function(models,
       table_pred_hazard[[i]] <- extract_predictions(list_pred_hazard[[i]], ".pred_hazard")
     }
 
-     names(list_pred_surv) <-
-       names(list_pred_hazard) <-
-       names(table_pred_surv) <-
-       names(table_pred_hazard) <-
-       new_data$profile
-       #paste0("profile", seq_len(profiles))
+    names(list_pred_surv) <-
+      names(list_pred_hazard) <-
+      names(table_pred_surv) <-
+      names(table_pred_hazard) <-
+      new_data$profile
+    # paste0("profile", seq_len(profiles))
 
-     if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
-
-       names(table_pred_surv_lower) <-
-         names(table_pred_surv_upper) <-
-         new_data$profile
-         #paste0("profile", seq_len(profiles))
-     }
-
+    if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+      names(table_pred_surv_lower) <-
+        names(table_pred_surv_upper) <-
+        new_data$profile
+      # paste0("profile", seq_len(profiles))
+    }
   }
 
   out <- c(

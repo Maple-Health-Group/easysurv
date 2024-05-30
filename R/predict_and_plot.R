@@ -15,13 +15,13 @@
 predict_and_plot <- function(fit_models,
                              eval_time,
                              data,
-                             interval = "none"
-                             ) {
+                             interval = "none") {
   ## Check fit_models ----
   if (!inherits(fit_models, "fit_models")) {
     cli::cli_abort(c(
       "The {.var fit_models} argument must be an object returned from {.fn fit_models}.",
-      "x" = "You've provided an object of class: {.cls {class(fit_models)}}"))
+      "x" = "You've provided an object of class: {.cls {class(fit_models)}}"
+    ))
   }
 
   ## Check eval_time ----
@@ -30,8 +30,9 @@ predict_and_plot <- function(fit_models,
   if (is.null(eval_time)) {
     max_time <- max(data[[fit_models$info$time]], na.rm = TRUE)
     eval_time <- seq(0,
-                     ceiling(max_time * 5),
-                     length.out = 100)
+      ceiling(max_time * 5),
+      length.out = 100
+    )
   }
 
   predictions <- list()
@@ -51,7 +52,6 @@ predict_and_plot <- function(fit_models,
   loop_labels <- if (inherits(fit_models, "pred_none")) "All" else fit_models$info$predict_list
 
   for (tx in seq_along(loop_labels)) {
-
     model_index <- if (inherits(fit_models, "pred_none") | inherits(fit_models, "pred_covariate")) 1 else tx
 
     if (inherits(fit_models, "pred_covariate")) {
@@ -93,7 +93,6 @@ predict_and_plot <- function(fit_models,
 #' @export
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
 print.pred_plot <- function(x, ...) {
-
   cli::cli_h1("Predictions Summary")
 
   cli::cli_alert_info("TODO: Keep adding more information here. Likely

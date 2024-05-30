@@ -28,12 +28,12 @@
 #' @examples
 #' \dontrun{
 #'
-#'KM_results <- get_KM(
-#'  data = easysurv::easy_bc,
-#'  time = "recyrs",
-#'  event = "censrec",
-#'  group = "group")
-#'
+#' KM_results <- get_KM(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group"
+#' )
 #' }
 get_KM <- function(data,
                    time,
@@ -41,12 +41,12 @@ get_KM <- function(data,
                    group = NULL,
                    group_labels = NULL,
                    ...) {
-
   # Validate argument inputs ----
   if (!is.data.frame(data)) {
     cli::cli_abort(c(
       "The {.var data} argument must have class {.cls data.frame}.",
-      "x" = "You've provided an object of class: {.cls {class(data)}}"))
+      "x" = "You've provided an object of class: {.cls {class(data)}}"
+    ))
   }
 
   # Are the required columns present?
@@ -88,64 +88,69 @@ get_KM <- function(data,
   ))
 
   KM <- do.call(survival::survfit,
-          args = list(
-            formula = KM_formula,
-            conf.int = 0.95,
-            data = data,
-            type = "kaplan-meier"
-          )
+    args = list(
+      formula = KM_formula,
+      conf.int = 0.95,
+      data = data,
+      type = "kaplan-meier"
+    )
   )
 
   KM_all <- do.call(survival::survfit,
-                args = list(
-                  formula = KM_formula_separate,
-                  conf.int = 0.95,
-                  data = data,
-                  type = "kaplan-meier"
-                )
+    args = list(
+      formula = KM_formula_separate,
+      conf.int = 0.95,
+      data = data,
+      type = "kaplan-meier"
+    )
   )
 
   KM_for_Excel <- list(all = step_KM(KM_all))
 
   if (!is.null(group)) {
-
     nested <- data |> tidyr::nest(.by = group)
 
     KM_per_group <- lapply(
       purrr::set_names(nested$data, group_list),
       function(data) {
-
         surv_out <- survival::survfit(
-                              formula = KM_formula_separate,
-                              conf.int = 0.95,
-                              data = data,
-                              type = "kaplan-meier"
-                            )
+          formula = KM_formula_separate,
+          conf.int = 0.95,
+          data = data,
+          type = "kaplan-meier"
+        )
 
         return(surv_out)
       }
     )
 
-    KM_for_Excel <- c(KM_for_Excel,
-                      lapply(purrr::set_names(KM_per_group, group_list),
-                             function(x) {
-                               step_KM(x)
-                             })
-                      )
+    KM_for_Excel <- c(
+      KM_for_Excel,
+      lapply(
+        purrr::set_names(KM_per_group, group_list),
+        function(x) {
+          step_KM(x)
+        }
+      )
+    )
 
-    KM_plot <- plot_KM(KM,
-                       ...)
+    KM_plot <- plot_KM(
+      KM,
+      ...
+    )
 
     KM_summary <- summarise_KM(KM,
-                               strata_labels = group_list)
+      strata_labels = group_list
+    )
 
     rownames(KM_summary) <- group_list
-
   } else {
     KM_per_group <- NULL
 
-    KM_plot <- plot_KM(KM,
-                       ...)
+    KM_plot <- plot_KM(
+      KM,
+      ...
+    )
 
     KM_summary <- summarise_KM(KM)
   }

@@ -56,25 +56,26 @@
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   predict_by = "group",
-#'   covariates = c("age", "treatment"))
-#'
+#'   covariates = c("age", "treatment")
+#' )
 #' }
 fit_models <- function(data,
                        time,
                        event,
                        predict_by = NULL,
                        covariates = NULL,
-                       dists = c("exp",
-                                 "gamma",
-                                 "gengamma",
-                                 "gompertz",
-                                 "llogis",
-                                 "lnorm",
-                                 "weibull"),
+                       dists = c(
+                         "exp",
+                         "gamma",
+                         "gengamma",
+                         "gompertz",
+                         "llogis",
+                         "lnorm",
+                         "weibull"
+                       ),
                        engine = "flexsurv",
                        k = c(1, 2, 3),
                        scale = c("hazard")) {
-
   # Create key objects ----
   distributions <- list()
   models <- list()
@@ -95,7 +96,8 @@ fit_models <- function(data,
   if (!is.data.frame(data)) {
     cli::cli_abort(c(
       "The {.var data} argument must have class {.cls data.frame}.",
-      "x" = "You've provided an object of class: {.cls {class(data)}}"))
+      "x" = "You've provided an object of class: {.cls {class(data)}}"
+    ))
   }
 
   # Are the required columns present?
@@ -137,26 +139,32 @@ fit_models <- function(data,
 
   ## Check engine ----
   rlang::arg_match(engine,
-            c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
-            multiple = FALSE)
+    c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
+    multiple = FALSE
+  )
 
   ## Check dists ----
   if (engine == "flexsurv") {
     rlang::arg_match(dists,
-                     values = c("exp", "exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
-                                "gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH"),
-                     multiple = TRUE)
-
+      values = c(
+        "exp", "exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
+        "gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH"
+      ),
+      multiple = TRUE
+    )
   } else if (engine == "flexsurvcure") {
     rlang::arg_match(dists,
-                     values = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-                     multiple = TRUE)
-
+      values = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
+      multiple = TRUE
+    )
   } else if (engine == "survival") {
     rlang::arg_match(dists,
-                     values = c("exponential", "extreme", "gaussian", "loggaussian", "logistic",
-                                "lognormal", "rayleigh", "weibull"),
-                     multiple = TRUE)
+      values = c(
+        "exponential", "extreme", "gaussian", "loggaussian", "logistic",
+        "lognormal", "rayleigh", "weibull"
+      ),
+      multiple = TRUE
+    )
   }
 
 
@@ -182,12 +190,12 @@ fit_models <- function(data,
 
   # Fit KM ----
   KM_fit <- do.call(survival::survfit,
-                     args = list(
-                       formula = km_formula,
-                       conf.int = 0.95,
-                       data = data,
-                       type = "kaplan-meier"
-                     )
+    args = list(
+      formula = km_formula,
+      conf.int = 0.95,
+      data = data,
+      type = "kaplan-meier"
+    )
   )
 
   KM_summary <- as.data.frame(summary(KM_fit)$table) |>
@@ -257,10 +265,9 @@ fit_models <- function(data,
   out <- out |> purrr::discard(is.null)
 
   # Assign a class
-  #class_name <- paste0("easy_", engine)
+  # class_name <- paste0("easy_", engine)
   class_fit_models <- "fit_models"
-  class_approach <- switch(
-    approach,
+  class_approach <- switch(approach,
     predict_by_none = "pred_none",
     predict_by_covariate = "pred_covariate",
     predict_by_other = "pred_other"
@@ -268,7 +275,6 @@ fit_models <- function(data,
   class(out) <- c(class(out), class_fit_models, class_approach)
 
   return(out)
-
 }
 
 #' Print methods for \code{fit_models}
@@ -282,7 +288,6 @@ fit_models <- function(data,
 #' @importFrom dplyr select filter pull
 #' @importFrom tidyr pivot_wider
 print.fit_models <- function(x, ...) {
-
   # Create visible binding for R CMD check.
   distribution <- strata <- dist <- AIC_rank <- NULL
 
@@ -321,7 +326,6 @@ print.fit_models <- function(x, ...) {
   cli::cli_h2("Median survival estimates")
 
   if (length(x$info$distributions) == 1) {
-
     # There's only one set of distributions to look at.
     if (length(x$info$distributions[[1]]$dists_failed) > 0) {
       cli::cli_alert_warning("Some distributions failed to converge.")
@@ -329,16 +333,12 @@ print.fit_models <- function(x, ...) {
     }
 
     if (inherits(x, "pred_covariate")) {
-
       median.est <- x$fit_averages[[1]] |>
         dplyr::select(distribution, strata, median.est) |>
         tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
         dplyr::select(-distribution)
-
     } else {
-
       median.est <- x$fit_averages[[1]]$median.est
-
     }
 
     # Goodness of fits and fit averages
@@ -362,7 +362,6 @@ print.fit_models <- function(x, ...) {
     cli::cli_end(divid)
 
     cli::cli_alert_info("The distribution with the best (lowest) AIC was {.val {best_dist}}.")
-
   } else {
     # There are multiple distribution sets to look at.
     for (i in seq_along(x$info$predict_list)) {
@@ -373,16 +372,12 @@ print.fit_models <- function(x, ...) {
       }
 
       if (inherits(x, "pred_covariate")) {
-
         median.est <- x$fit_averages[[1]] |>
           dplyr::select(distribution, strata, median.est) |>
           tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
           dplyr::select(-distribution)
-
       } else {
-
         median.est <- x$fit_averages[[i]]$median.est
-
       }
 
       # Goodness of fits and fit averages

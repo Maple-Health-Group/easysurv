@@ -11,7 +11,6 @@ pfit <- purrr::possibly(.f = parsnip::fit)
 #' @importFrom tidyr expand_grid
 #' @noRd
 process_spline_combinations <- function(k, scale, fit_formula, data) {
-
   combinations <- tidyr::expand_grid(k, scale)
 
   models <- purrr::pmap(combinations, function(k, scale) {

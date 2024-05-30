@@ -31,8 +31,8 @@ quick_start_select <- function(output_file_name = NULL,
     is.null(output_file_name),
     "easysurv_start.R",
     ifelse(!endsWith(output_file_name, ".R"),
-           paste0(output_file_name, ".R"),
-           output_file_name
+      paste0(output_file_name, ".R"),
+      output_file_name
     )
   )
 
@@ -40,8 +40,8 @@ quick_start_select <- function(output_file_name = NULL,
     is.null(template_file_name),
     "quick_template_lung.R",
     ifelse(!endsWith(template_file_name, ".R"),
-           paste0(template_file_name, ".R"),
-           template_file_name
+      paste0(template_file_name, ".R"),
+      template_file_name
     )
   )
 
@@ -80,10 +80,10 @@ quick_start_select <- function(output_file_name = NULL,
 #' quick_start()
 #' }
 quick_start <- function(output_file_name = NULL) {
-
-  #Run the quick_start selection function
-  quick_start_select(output_file_name = output_file_name,
-                     template_file_name = "quick_template_lung.R"
+  # Run the quick_start selection function
+  quick_start_select(
+    output_file_name = output_file_name,
+    template_file_name = "quick_template_lung.R"
   )
 }
 
@@ -105,10 +105,10 @@ quick_start <- function(output_file_name = NULL) {
 #' quick_start2()
 #' }
 quick_start2 <- function(output_file_name = NULL) {
-
-  #Run the quick_start selection function
-  quick_start_select(output_file_name = output_file_name,
-                     template_file_name = "quick_template_msbc.R"
+  # Run the quick_start selection function
+  quick_start_select(
+    output_file_name = output_file_name,
+    template_file_name = "quick_template_msbc.R"
   )
 }
 
@@ -131,9 +131,9 @@ quick_start2 <- function(output_file_name = NULL) {
 #' quick_start3()
 #' }
 quick_start3 <- function(output_file_name = NULL) {
-
-  #Run the quick_start selection function
-  quick_start_select(output_file_name = output_file_name,
-                     template_file_name = "quick_template_msadtte.R"
+  # Run the quick_start selection function
+  quick_start_select(
+    output_file_name = output_file_name,
+    template_file_name = "quick_template_msadtte.R"
   )
 }
