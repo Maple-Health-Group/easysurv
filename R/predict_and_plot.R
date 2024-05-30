@@ -52,7 +52,7 @@ predict_and_plot <- function(fit_models,
   loop_labels <- if (inherits(fit_models, "pred_none")) "All" else fit_models$info$predict_list
 
   for (tx in seq_along(loop_labels)) {
-    model_index <- if (inherits(fit_models, "pred_none") | inherits(fit_models, "pred_covariate")) 1 else tx
+    model_index <- if (inherits(fit_models, "pred_none") || inherits(fit_models, "pred_covariate")) 1 else tx
 
     if (inherits(fit_models, "pred_covariate")) {
       filtered_profile <- used_profile |> dplyr::filter(!!as.symbol(fit_models$info$predict_by) == fit_models$info$predict_list[tx])

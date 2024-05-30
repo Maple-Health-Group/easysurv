@@ -66,7 +66,7 @@ get_fit_averages <- function(mod,
                              get_median = TRUE,
                              get_rmst = TRUE,
                              get_mean = FALSE) {
-  if (!get_median & !get_rmst & !get_mean) {
+  if (!get_median && !get_rmst && !get_mean) {
     cli::cli_abort(c("You need to include at least one average (median, rmst, or mean) in the get_fit_averages function",
       "x" = "You've provided {.field get_median} = {.var FALSE}, {.field get_rmst} = {.var FALSE}, and {.field get_mean} = {.var FALSE}."
     ))
@@ -77,7 +77,7 @@ get_fit_averages <- function(mod,
 
   engine <- mod$spec$engine
 
-  if (engine == "flexsurv" | engine == "flexsurvcure" | engine == "flexsurvspline") {
+  if (engine == "flexsurv" || engine == "flexsurvcure" || engine == "flexsurvspline") {
     # Checking if the distribution is a spline model.
     distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
       mod$fit$k,
@@ -331,7 +331,7 @@ get_surv_parameters <- function(models) {
       stop("Unknown engine type")
     )
 
-    if (engine == "flexsurv" | engine == "flexsurvcure" | engine == "flexsurvspline") {
+    if (engine == "flexsurv" || engine == "flexsurvcure" || engine == "flexsurvspline") {
       # Get parameters from res.t
       get_parameters <- models[[i]]$fit$res.t |>
         as.data.frame() |>
@@ -451,7 +451,7 @@ tidy_predict_surv <- function(models,
 
     # Extract to summary tables
     table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
-    if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+    if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
       table_pred_surv_lower <- extract_predictions(list_pred_surv, ".pred_lower")
       table_pred_surv_upper <- extract_predictions(list_pred_surv, ".pred_upper")
     }
@@ -486,7 +486,7 @@ tidy_predict_surv <- function(models,
 
       # Extract to summary tables
       table_pred_surv[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_survival")
-      if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+      if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
         table_pred_surv_lower[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_lower")
         table_pred_surv_upper[[i]] <- extract_predictions(list_pred_surv[[i]], ".pred_upper")
       }
@@ -513,7 +513,7 @@ tidy_predict_surv <- function(models,
       new_data$profile
     # paste0("profile", seq_len(profiles))
 
-    if (interval == "confidence" & models[[1]]$spec$engine != "survival") {
+    if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
       names(table_pred_surv_lower) <-
         names(table_pred_surv_upper) <-
         new_data$profile

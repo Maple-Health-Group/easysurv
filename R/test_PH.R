@@ -202,9 +202,13 @@ print.test_PH <- function(x, ...) {
 
   cli::cli_h2("Plots")
 
-  print(x$cloglog_plot)
   print(x$schoenfeld_plot)
-  cli::cli_text("The log cumulative hazard and Schoenfeld residuals plots have been printed.")
+  print(x$cloglog_plot)
+  cli::cli_text("The Schoenfeld residuals and log cumulative hazard plots have been printed.")
+
+  cli::cli_h3("Schoenfeld residual plot")
+  cli::cli_text(c("A {.strong flat smoothed line} close to zero supports the PH assumption."))
+  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend suggests the PH assumption is violated."))
 
   cli::cli_h3("Log cumulative hazard plot")
   cli::cli_text(c(
@@ -226,11 +230,6 @@ print.test_PH <- function(x, ...) {
     "Non-parallel lines indicate that the hazard ratios ",
     "between groups change over time."
   ))
-
-
-  cli::cli_h3("Schoenfeld residual plot")
-  cli::cli_text(c("A {.strong flat smoothed line} close to zero supports the PH assumption."))
-  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend suggests the PH assumption is violated."))
 
   cli::cli_rule()
   cli::cli_alert_info(c(

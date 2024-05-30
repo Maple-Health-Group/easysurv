@@ -575,7 +575,7 @@ plot_smoothed_hazards <- function(data,
     # so here the code removes the "(,1)" wrapping.
     for (i in seq_along(out_plotly[["x"]][["data"]])) {
       temp_name <- out_plotly[["x"]][["data"]][[i]][["name"]]
-      if (startsWith(temp_name, "(") & endsWith(temp_name, ",1)")) {
+      if (startsWith(temp_name, "(") && endsWith(temp_name, ",1)")) {
         out_plotly[["x"]][["data"]][[i]][["name"]] <-
           substring(
             temp_name,
