@@ -25,8 +25,8 @@ time-to-event information.}
 \item{event}{The name of the column in \code{data} indicating whether the
 event of interest occurred.}
 
-\item{predict_by}{(Optional) The name of the column in \code{data} defining the
-prediction variable.}
+\item{predict_by}{(Optional) The name of the column in \code{data} defining
+the prediction variable.}
 
 \item{covariates}{(Optional) A character vector specifying the names of
 covariates to be included in the model.}
@@ -34,22 +34,23 @@ covariates to be included in the model.}
 \item{dists}{(Optional) A character vector specifying the distribution(s) to
 be fitted.
 
-For flexsurv-based engines, options are "exp", "gamma", "genf", "genf.orig",
-"gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm", "lognormal",
-"weibull", and "weibullPH".
+For flexsurv-based engines, options are "exp", "gamma", "genf",
+"genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
+"lognormal", "weibull", and "weibullPH".
 
 For the survival engine, options are "exponential", "extreme", "gaussian",
 "loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
 
 Default is \code{c("exp", "gamma", "gengamma", "gompertz",
-"llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.}
+  "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.}
 
 \item{engine}{(Optional) The survival analysis engine to be used.
 Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
 Default is "flexsurv".}
 
 \item{k}{(Optional) A numeric vector specifying the number of knots for
-spline-based models. Default is \code{c(1, 2, 3)} to test different numbers.}
+spline-based models. Default is \code{c(1, 2, 3)} to test different
+numbers.}
 
 \item{scale}{(Optional) A character vector specifying the scale parameter(s)
 for spline-based models. Options are "hazard", "odds", and "normal".

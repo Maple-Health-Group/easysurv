@@ -35,7 +35,7 @@ plot_fits <- function(data) {
 
   # may want an optional KM argument.
 
-  return(p)
+  p
 }
 
 #' Plot Kaplan-Meier Data
@@ -45,15 +45,15 @@ plot_fits <- function(data) {
 #' This function provides sensible defaults while allowing for customisation.
 #'
 #' @param fit A \code{\link[survival]{survfit}} object representing the
-#' survival data.
+#'   survival data.
 #' @param risk_table Logical value indicating whether to include a risk table
-#' below the plot. Default is \code{TRUE}.
+#'   below the plot. Default is \code{TRUE}.
 #' @param median_line Logical value indicating whether to include a line
-#' representing the median survival time. Default is \code{TRUE}.
+#'   representing the median survival time. Default is \code{TRUE}.
 #' @param legend_position Position of the legend in the plot. Default is
-#' "bottom".
+#'   "bottom".
 #' @param plot_theme ggplot2 theme for the plot. Default is
-#' \code{ggplot2::theme_bw()}.
+#'   \code{ggplot2::theme_bw()}.
 #' @param xlab Label for the x-axis. Default is "Time".
 #' @param ylab Label for the y-axis. Default is "Survival Probability (%)".
 #' @return A ggplot object representing the Kaplan-Meier survival curve plot.
@@ -93,7 +93,7 @@ plot_KM <- function(fit,
     out <- out + ggsurvfit::add_quantile(linetype = 2)
   }
 
-  return(out)
+  out
 }
 
 #' Cumulative Log Log Plot
@@ -103,15 +103,15 @@ plot_KM <- function(fit,
 #' This function provides sensible defaults while allowing for customisation.
 #'
 #' @param fit A \code{\link[survival]{survfit}} object representing the
-#' survival data.
+#'   survival data.
 #' @param risk_table Logical value indicating whether to include a risk table
-#' below the plot. Default is \code{TRUE}.
+#'   below the plot. Default is \code{TRUE}.
 #' @param median_line Logical value indicating whether to include a line
-#' representing the median survival time. Default is \code{TRUE}.
+#'   representing the median survival time. Default is \code{TRUE}.
 #' @param legend_position Position of the legend in the plot. Default is
-#' "bottom".
+#'   "bottom".
 #' @param plot_theme ggplot2 theme for the plot. Default is
-#' \code{ggplot2::theme_bw()}.
+#'   \code{ggplot2::theme_bw()}.
 #' @param xlab Label for the x-axis. Default is "Time (log-scaled)".
 #' @param ylab Label for the y-axis. Default is "log(-log(S(t)))".
 #' @return A ggplot object representing the Kaplan-Meier survival curve plot.
@@ -156,78 +156,8 @@ plot_cloglog <- function(fit,
     out <- out + ggsurvfit::add_quantile(linetype = 2)
   }
 
-  return(out)
+  out
 }
-
-# # test
-# library(survival)
-# test_fit <- survival::coxph(Surv(time, status) ~ surg, data = ggsurvfit::df_colon) |> ggsurvfit::survfit2()
-# test_fit <- survival::coxph(Surv(time, status) ~ surg, data = ggsurvfit::df_colon)
-#
-# residuals(test_fit, type = "schoenfeld")
-#
-# stats::resid(test_fit, type = "schoenfeld")
-#
-#
-# plot_schoenfeld2 <- function(fit_coxph,
-#                              hline = TRUE,
-#                              sline = TRUE, sline.se = TRUE,
-#                              hline.col = "red", hline.size = 1, hline.alpha = 1, hline.yintercept = 0,
-#                              hline.lty = "dashed",
-#                              sline.col = "blue", sline.size = 1, sline.alpha = 0.3, sline.lty = "dashed",
-#                              point.col = "black", point.size = 1, point.shape = 19, point.alpha = 1,
-#                              title = NULL, subtitle = NULL, caption = NULL,
-#                              plot.theme = theme_bw()) {
-#
-#   res <- as.data.frame(stats::resid(fit_coxph, type = "schoenfeld"))
-#
-# }
-#
-# plot_schoenfeld2(test_fit)
-
-
-
-#
-# get_scaledsch(test_fit2)
-#
-#
-# test_fit <- survival::cox.zph(survival::coxph(Surv(time, status) ~ sex, data = lung))
-#
-# test_fit2 <- survival::coxph(Surv(time, status) ~ sex, data = lung)
-#
-# test_out <- plot_sch3(test_fit2)
-# test_out
-#
-# testing <- plot(test_fit)
-# ggplot(test_fit)
-#
-# get_sch <- function(fit) {
-#
-#   # call zph functions that calculates scaled schoenfeld residuals (given
-#   # transformation of time)
-#   unscaled_sch <- do.call(residuals, args = list(type = "schoenfeld"))
-#
-#   as_tibble(unscaled_sch)
-#   ## extract scaled schoenfeld residuals, return in tidy format
-#   # as_tibble(zph$y) %>%
-#   #   cbind(
-#   #     time      = zph$x,
-#   #     transform = zph$transform) %>%
-#   #   tidyr::gather("variable","residual", -.data$time, -.data$transform)
-#
-# }
-#
-# get_sch(test_fit)
-#
-# test_fit <- survival::coxph(Surv(time, status) ~ sex, data = lung)
-#
-# test_func <- function(fit) {
-#
-#   as.data.frame(do.call(stats::residuals, args = list(object = fit, type = "schoenfeld")))
-#
-# }
-
-
 
 
 #' Plot Schoenfeld Residuals
@@ -238,13 +168,13 @@ plot_cloglog <- function(fit,
 #' and smoothed lines, and styling of points and plot elements.
 #'
 #' @param residuals A data frame containing the Schoenfeld residuals, typically
-#' with columns `time`, `residual`, `transform`, and `variable`.
+#'   with columns `time`, `residual`, `transform`, and `variable`.
 #' @param hline Logical. If `TRUE`, a horizontal line is added to the plot.
-#' Default is `TRUE`.
+#'   Default is `TRUE`.
 #' @param sline Logical. If `TRUE`, a smooth line is added to the plot.
-#' Default is `TRUE`.
+#'   Default is `TRUE`.
 #' @param sline.se Logical. If `TRUE`, confidence intervals are displayed around
-#'  the smooth line. Default is `TRUE`.
+#'   the smooth line. Default is `TRUE`.
 #' @param hline.col Color of the horizontal line. Default is `"red"`.
 #' @param hline.size Line width of the horizontal line. Default is `1`.
 #' @param hline.alpha Transparency of the horizontal line. Default is `1`.
@@ -255,12 +185,12 @@ plot_cloglog <- function(fit,
 #' @param sline.alpha Transparency of the smooth line. Default is `0.3`.
 #' @param sline.lty Line type for the smooth line. Default is `"dashed"`.
 #' @param point.col Color of the points representing residuals. Default is
-#' `"black"`.
+#'   `"black"`.
 #' @param point.size Size of the points representing residuals. Default is `1`.
 #' @param point.shape Shape of the points representing residuals. Default is
-#' `19`.
+#'   `19`.
 #' @param point.alpha Transparency of the points representing residuals. Default
-#' is `1`.
+#'   is `1`.
 #' @param plot_theme A ggplot2 theme for the plot. Default is
 #' `ggplot2::theme_bw()`.
 #'
@@ -310,7 +240,7 @@ plot_schoenfeld <- function(residuals,
 
   gg.zph <- gg.zph + plot_theme
 
-  return(gg.zph)
+  gg.zph
 }
 
 #' Plot smoothed hazards of survival data
@@ -322,11 +252,11 @@ plot_schoenfeld <- function(residuals,
 #' and the hazards predicted by different models.
 #'
 #' @param data The survival data as a data frame with columns
-#' \code{time} and \code{event}.
+#'   \code{time} and \code{event}.
 #' @param time The name of the time variable in data.
 #' @param event The name of the event variable in data.
 #' @param fits The \code{\link[survHE]{fit.models}} object containing
-#' survival models
+#'   survival models
 #' @param t A vector of time points at which to calculate the hazards.
 #' @param group The group number of the strata
 #' @param title The title of the plot.
@@ -588,5 +518,5 @@ plot_smoothed_hazards <- function(data,
     return(out_plotly)
   }
 
-  return(out)
+  out
 }

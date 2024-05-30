@@ -5,14 +5,14 @@
 #'
 #' @param data A data frame containing the survival data.
 #' @param time The name of the column in \code{data} containing the
-#' time-to-event information.
+#'   time-to-event information.
 #' @param event The name of the column in \code{data} indicating whether the
-#' event of interest occurred.
+#'   event of interest occurred.
 #' @param group (Optional) The name of the column in \code{data} defining the
-#' grouping variable. Default is \code{NULL}.
+#'   grouping variable. Default is \code{NULL}.
 #' @param group_labels Optional character vector containing the names of
-#' the strata (default is NULL). Provide in a consistent order with
-#' \code{levels(as.factor(data$group))}.
+#'   the strata (default is NULL). Provide in a consistent order with
+#'   \code{levels(as.factor(data$group))}.
 #' @param ... (Optional) Parameters to pass to ggsurvfit.
 #'
 #' @return A list containing Kaplan-Meier estimates, summary statistics, plots,
@@ -177,5 +177,5 @@ get_KM <- function(data,
   # Assign a class
   class(out) <- c(class(out), "easy_KM")
 
-  return(out)
+  out
 }

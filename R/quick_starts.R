@@ -7,10 +7,10 @@
 #' but modified to work outside the context of an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
-#' to "easysurv_start.R".
+#'   to "easysurv_start.R".
 #'
 #' @param template_file_name Optional. The name of the R script to be sourced
-#' as a template. Defaults to "quick_template_lung.R".
+#'   as a template. Defaults to "quick_template_lung.R".
 #'
 #' @importFrom usethis write_over
 #' @importFrom usethis edit_file
@@ -71,7 +71,7 @@ quick_start_select <- function(output_file_name = NULL,
 #' but modified to work outside the context of an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
-#' to "easysurv_start.R" within a helper function.
+#'   to "easysurv_start.R" within a helper function.
 #'
 #' @export
 #'
@@ -96,7 +96,7 @@ quick_start <- function(output_file_name = NULL) {
 #' modified to work outside the context of an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
-#' to "easysurv_start.R" within a helper function.
+#'   to "easysurv_start.R" within a helper function.
 #'
 #' @export
 #'
@@ -122,7 +122,7 @@ quick_start2 <- function(output_file_name = NULL) {
 #' but modified to work outside the context of an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
-#' to "easysurv_start.R"  within a helper function.
+#'   to "easysurv_start.R"  within a helper function.
 #'
 #' @export
 #'

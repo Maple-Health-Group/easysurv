@@ -8,8 +8,8 @@ get_schoenfeld(fit_zph)
 }
 \arguments{
 \item{fit_zph}{An object of class \code{cox.zph} produced by the \code{cox.zph}
-function, representing the Schoenfeld residuals of a Cox proportional hazards
-model.}
+function, representing the Schoenfeld residuals of a Cox proportional
+hazards model.}
 }
 \value{
 A tibble with the Schoenfeld residuals in long format, containing the columns:

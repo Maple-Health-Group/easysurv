@@ -3,7 +3,7 @@
 #' Reverses the censoring/event variable to derive median follow-up time.
 #'
 #' @param data A tibble or data frame containing the survival data with
-#' columns for \code{time}, \code{event} and \code{strata}.
+#'   columns for \code{time}, \code{event} and \code{group}.
 #' @param time The name of the time variable in data
 #' @param event The name of the event variable in data
 #' @param group The name of the group variable in data
@@ -58,7 +58,7 @@ get_median_FU <- function(data,
   out <- as.data.frame(quantiles$quantile)
   colnames(out) <- "Median follow-up"
 
-  return(out)
+  out
 }
 
 
@@ -69,9 +69,9 @@ get_median_FU <- function(data,
 #' suitable for external plotting, such as in Excel.
 #'
 #' @param KM A survival object generated from a call to
-#' \code{\link[survival]{survfit}}.
-#' The `KM` object should be of class "survfit" and should represent a
-#' single-arm survival analysis (e.g. \code{Surv(time, status) ~ 1}).
+#'  \code{\link[survival]{survfit}}.
+#'  The `KM` object should be of class "survfit" and should represent a
+#'  single-arm survival analysis (e.g. \code{Surv(time, status) ~ 1}).
 #'
 #' @importFrom tibble tibble
 #'
@@ -118,7 +118,7 @@ step_KM <- function(KM) {
 
   out <- out[order(out$time, -out$survival, -out$nrisk), ]
 
-  return(out)
+  out
 }
 
 
@@ -128,9 +128,9 @@ step_KM <- function(KM) {
 #' \code{\link[survival]{survfit}} and produces a concise summary table.
 #'
 #' @param fit A survival object generated from a call to
-#' \code{\link[survival]{survfit}}.
+#'   \code{\link[survival]{survfit}}.
 #' @param strata_labels Optional parameter to rename the group column
-#' (if multiple strata)
+#'   (if multiple strata)
 #'
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr select
@@ -164,5 +164,5 @@ summarise_KM <- function(fit, strata_labels = NULL) {
 
   out <- out |> dplyr::select(-"n.max", -"n.start")
 
-  return(out)
+  out
 }

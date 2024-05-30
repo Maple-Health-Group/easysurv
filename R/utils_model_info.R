@@ -34,7 +34,7 @@ create_newdata <- function(data) {
     dplyr::mutate(profile = paste0("profile", dplyr::row_number())) |>
     dplyr::select(profile, dplyr::everything())
 
-  return(newdata)
+  newdata
 }
 
 #' @importFrom stats pnorm
@@ -55,7 +55,7 @@ get_cure_fractions <- function(mod) {
     stop("Unknown link function")
   )
 
-  return(cure_fraction)
+  cure_fraction
 }
 
 #' @importFrom cli cli_abort
@@ -268,7 +268,7 @@ get_fit_averages <- function(mod,
     }
   }
 
-  return(out)
+  out
 }
 
 #' @importFrom data.table rbindlist
@@ -287,7 +287,7 @@ get_fit_averages_summary <- function(models,
 
   out <- data.table::rbindlist(out) |> tibble::as_tibble()
 
-  return(out)
+  out
 }
 
 #' @importFrom stats AIC BIC
@@ -309,7 +309,7 @@ get_goodness_of_fit <- function(mod) {
     "BIC_rank" = BIC_ranks
   )
 
-  return(out)
+  out
 }
 
 #' @importFrom dplyr bind_rows relocate
@@ -401,7 +401,7 @@ get_surv_parameters <- function(models) {
     dplyr::relocate("distribution", "parameter", "covariate_marker") |>
     tibble::as_tibble()
 
-  return(out)
+  out
 }
 
 #' @importFrom purrr map
@@ -531,5 +531,5 @@ tidy_predict_surv <- function(models,
     list(table_pred_hazard = table_pred_hazard)
   )
 
-  return(out)
+  out
 }

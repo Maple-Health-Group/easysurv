@@ -5,35 +5,36 @@
 #'
 #' @param data A data frame containing the survival data.
 #' @param time The name of the column in \code{data} containing the
-#' time-to-event information.
+#'   time-to-event information.
 #' @param event The name of the column in \code{data} indicating whether the
-#' event of interest occurred.
-#' @param predict_by (Optional) The name of the column in \code{data} defining the
-#' prediction variable.
+#'   event of interest occurred.
+#' @param predict_by (Optional) The name of the column in \code{data} defining
+#'   the prediction variable.
 #' @param covariates (Optional) A character vector specifying the names of
-#' covariates to be included in the model.
+#'   covariates to be included in the model.
 #' @param dists (Optional) A character vector specifying the distribution(s) to
-#' be fitted.
+#'   be fitted.
 #'
-#' For flexsurv-based engines, options are "exp", "gamma", "genf", "genf.orig",
-#' "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm", "lognormal",
-#' "weibull", and "weibullPH".
+#'   For flexsurv-based engines, options are "exp", "gamma", "genf",
+#'   "genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
+#'   "lognormal", "weibull", and "weibullPH".
 #'
-#' For the survival engine, options are "exponential", "extreme", "gaussian",
-#' "loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
+#'   For the survival engine, options are "exponential", "extreme", "gaussian",
+#'   "loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
 #'
-#' Default is \code{c("exp", "gamma", "gengamma", "gompertz",
-#' "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.
+#'   Default is \code{c("exp", "gamma", "gengamma", "gompertz",
+#'   "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.
 #'
 #'
 #' @param engine (Optional) The survival analysis engine to be used.
-#' Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
-#' Default is "flexsurv".
+#'   Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
+#'   Default is "flexsurv".
 #' @param k (Optional) A numeric vector specifying the number of knots for
-#' spline-based models. Default is \code{c(1, 2, 3)} to test different numbers.
+#'   spline-based models. Default is \code{c(1, 2, 3)} to test different
+#'   numbers.
 #' @param scale (Optional) A character vector specifying the scale parameter(s)
-#' for spline-based models. Options are "hazard", "odds", and "normal".
-#' Default is \code{"hazard"}.
+#'   for spline-based models. Options are "hazard", "odds", and "normal".
+#'   Default is \code{"hazard"}.
 #'
 #' @return A list containing various outputs including model distributions,
 #' parameters, predictions, plots, and summary statistics.
@@ -274,7 +275,7 @@ fit_models <- function(data,
   )
   class(out) <- c(class(out), class_fit_models, class_approach)
 
-  return(out)
+  out
 }
 
 #' Print methods for \code{fit_models}
@@ -413,4 +414,87 @@ print.fit_models <- function(x, ...) {
   cli::cli_alert("For more information, run {.code View()} on the fit_models output.")
 
   invisible(x)
+}
+
+# Helper functions ----
+
+#' @importFrom purrr possibly
+#' @importFrom parsnip fit
+#' @noRd
+pfit <- purrr::possibly(.f = parsnip::fit)
+
+#' @importFrom cli cli_alert_warning
+#' @importFrom parsnip survival_reg set_engine
+#' @importFrom purrr map discard keep pmap pmap_chr set_names
+#' @importFrom tidyr expand_grid
+#' @noRd
+process_spline_combinations <- function(k, scale, fit_formula, data) {
+  combinations <- tidyr::expand_grid(k, scale)
+
+  models <- purrr::pmap(combinations, function(k, scale) {
+    parsnip::survival_reg() |>
+      parsnip::set_engine("flexsurvspline", k = k, scale = scale) |>
+      pfit(
+        formula = fit_formula,
+        data = data
+      )
+  })
+
+  names(models) <- purrr::pmap_chr(combinations, function(k, scale) {
+    paste(k, "knot", scale, "scale", sep = "_")
+  })
+
+  distributions <- list(
+    dists_attempted = combinations,
+    dists_success = models |> purrr::discard(is.null) |> names(),
+    dists_failed = models |> purrr::keep(is.null) |> names()
+  )
+
+  if (length(distributions$dists_failed) > 0) {
+    cli::cli_alert_warning("{.strong Failed splines:} {.val {distributions$dists_failed}}.")
+  }
+
+  models <- models |> purrr::discard(is.null)
+
+  list(models = models, distributions = distributions)
+}
+
+#' @importFrom cli cli_alert_warning
+#' @importFrom parsnip survival_reg set_engine
+#' @importFrom purrr map discard keep pmap pmap_chr set_names
+#' @importFrom tibble as_tibble
+#' @importFrom tidyr pivot_longer
+#' @noRd
+process_distributions <- function(dists, fit_formula, data, engine) {
+  models <- purrr::map(
+    purrr::set_names(dists, dists), ~ {
+      parsnip::survival_reg(dist = .x) |>
+        parsnip::set_engine(engine) |>
+        pfit(
+          formula = fit_formula,
+          data = data
+        )
+    }
+  )
+
+  distributions <- list(
+    dists_attempted = dists,
+    dists_success = models |> purrr::discard(is.null) |> names(),
+    dists_failed = models |> purrr::keep(is.null) |> names()
+  )
+
+  if (length(distributions$dists_failed) > 0) {
+    cli::cli_alert_warning("{.strong Failed distributions:} {.val {distributions$dists_failed}}.")
+  }
+
+  models <- models |> purrr::discard(is.null)
+
+  if (engine == "flexsurvcure") {
+    cure_fractions <- purrr::map(models, get_cure_fractions) |>
+      tibble::as_tibble() |>
+      tidyr::pivot_longer(cols = everything(), names_to = "dist", values_to = "cure_fraction")
+    return(list(models = models, distributions = distributions, cure_fractions = cure_fractions))
+  }
+
+  list(models = models, distributions = distributions)
 }

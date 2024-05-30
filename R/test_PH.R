@@ -5,11 +5,11 @@
 #'
 #' @param data A data frame containing the survival data.
 #' @param time The name of the column in \code{data} containing the
-#' time-to-event information.
+#'   time-to-event information.
 #' @param event The name of the column in \code{data} indicating whether the
-#' event of interest occurred.
+#'   event of interest occurred.
 #' @param group The name of the column in \code{data} defining the grouping
-#' variable.
+#'   variable.
 #' @param plot_theme The theme to be used for the plots.
 #'
 #' @return A list containing plots and test results related to the assessment
@@ -121,7 +121,7 @@ test_PH <- function(data,
   # Assign a class
   class(out) <- c(class(out), "test_PH")
 
-  return(out)
+  out
 }
 
 
@@ -185,7 +185,7 @@ print.test_PH <- function(x, ...) {
   cli::cat_line()
 
   p_vals <- as.data.frame(x$cox.zph_PH_test$table)[3]
-  global_p_val <- my_vals[nrow(my_vals), ]
+  global_p_val <- p_vals[nrow(p_vals), ]
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (global_p_val > 0.05) {

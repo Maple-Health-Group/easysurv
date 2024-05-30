@@ -2,11 +2,11 @@
 #'
 #' @param fit_models An object returned from fit_models.
 #' @param eval_time (Optional) A vector of evaluation time points for generating
-#' predictions. Default is \code{NULL}, which if left as NULL, generates a
-#' sequence from 0 to 5 times the maximum observed time.
+#'   predictions. Default is \code{NULL}, which if left as NULL, generates a
+#'   sequence from 0 to 5 times the maximum observed time.
 #' @param data The survival data used to estimate the models.
 #' @param interval A character string specifying the type of interval to
-#' predict. Options are "none" or "confidence". Default is "none".
+#'   predict. Options are "none" or "confidence". Default is "none".
 #'
 #' @export
 #'
@@ -83,7 +83,7 @@ predict_and_plot <- function(fit_models,
 
   class(out) <- c(class(out), "pred_plot")
 
-  return(out)
+  out
 }
 
 

@@ -3,7 +3,6 @@
 S3method(print,fit_models)
 S3method(print,pred_plot)
 S3method(print,quick_KM)
-S3method(print,quick_PH)
 S3method(print,test_PH)
 export(fit_models)
 export(get_KM)
