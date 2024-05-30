@@ -66,11 +66,6 @@ surv_data |> dplyr::count(group, event)
 surv_data
 
 
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-#-#-#-#-#-#-#-#-#   Data import and cleaning complete   -#-#-#-#-#-#-#-##-#-#-#-
-#-#-#-#-#-#-#-#-#-#   easysurv analyses start here   -#-#-#-#-#-#-#-#-##-#-#-#-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
 # easysurv analysis -----------------------------------------------------------
 ## Kaplan Meier analysis -------------------------------------------------------
 
@@ -117,9 +112,6 @@ do_cure <- FALSE # TRUE: run mixture cure model fits
 # ?fit_models
 
 ### Separate fits --------------------------------------------------------------
-
-# make a surv_data2 with just 5 rows for testing
-surv_data2 <- surv_data[1:5, ]
 
 if (do_separate) {
   models_separate <- easysurv::fit_models(
