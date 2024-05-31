@@ -59,6 +59,7 @@ surv_data <- surv_data |>
 
 # Overwrite any labels impacted by re-coding
 attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
+levels(surv_data$group) <- c("Male", "Female")
 
 # See the levels of the groups
 surv_data |> dplyr::count(group)

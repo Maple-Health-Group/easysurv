@@ -88,148 +88,67 @@ get_fit_averages <- function(mod,
 
   out <- list()
   median.est <- list()
-
   engine <- mod$spec$engine
 
-  if (engine == "flexsurv" || engine == "flexsurvcure" || engine == "flexsurvspline") {
-    # Checking if the distribution is a spline model.
-    distribution <- `if`(is.null(mod$fit$k), mod$fit$dlist$name, paste(
-      mod$fit$k,
-      "knot",
-      mod$fit$scale
-    ))
+  distribution <- if (engine %in% c("flexsurv", "flexsurvcure")) {
+    mod$fit$dlist$name
+  } else if (engine == "flexsurvspline") {
+    paste(mod$fit$k, "knot", mod$fit$scale)
+  } else {
+    mod$fit$dist
+  }
 
-    # MEDIAN
-    if (get_median) {
-      median <- tryCatch(
-        {
-          summary(mod$fit, type = "median")
-        },
-        error = function(e) {
-          message(paste(
-            "warning:",
-            distribution,
-            "median survival time not calculable."
-          ))
-          return(list(as.data.frame(list(
-            "est" = "-",
-            "lcl" = "-",
-            "ucl" = "-"
-          ))))
-        }
-      )
-    }
+  calculate_summary <- function(type) {
+    tryCatch(summary(mod$fit, type = type), error = function(e) {
+      message(sprintf(
+        "warning: %s %s survival time not calculable.",
+        distribution,
+        type
+      ))
+      list(as.data.frame(list("est" = "-", "lcl" = "-", "ucl" = "-")))
+    })
+  }
 
-    # RESTRICTED MEAN
-    if (get_rmst) {
-      restricted_mean <- tryCatch(
-        {
-          summary(mod$fit, type = "rmst")
-        },
-        error = function(e) {
-          message(paste(
-            "warning:",
-            distribution,
-            "restricted mean survival time not calculable."
-          ))
-          return(list(as.data.frame(list(
-            "est" = "-",
-            "lcl" = "-",
-            "ucl" = "-"
-          ))))
-        }
-      )
-    }
+  if (engine %in% c("flexsurv", "flexsurvcure", "flexsurvspline")) {
+    median <- if (get_median) calculate_summary("median") else NULL
+    restricted_mean <- if (get_rmst) calculate_summary("rmst") else NULL
+    mean <- if (get_mean) calculate_summary("mean") else NULL
 
-    # MEAN (most likely to fail)
-    if (get_mean) {
-      mean <- tryCatch(
-        {
-          summary(mod$fit, type = "mean")
-        },
-        error = function(e) {
-          message(paste(
-            "warning:",
-            distribution,
-            "mean survival time not calculable",
-            "(likely due to a plateau in survival predictions)"
-          ))
-          return(list(as.data.frame(list(
-            "est" = "-",
-            "lcl" = "-",
-            "ucl" = "-"
-          ))))
-        }
-      )
-    }
-
-    if (get_median) {
-      myseq <- median
-    } else if (get_rmst) {
-      myseq <- restricted_mean
+    myseq <- if (!is.null(median)) {
+      median
+    } else if (!is.null(restricted_mean)) {
+      restricted_mean
     } else {
-      myseq <- mean
+      mean
     }
 
-    # In case of strata, use seq_along
     for (i in seq_along(myseq)) {
-      if (get_median) {
-        median[[i]] <- median[[i]] |>
-          dplyr::rename_with(~ paste0("median.", .x))
-      }
+      if (!is.null(median)) median[[i]] <- dplyr::rename_with(
+        median[[i]], ~ paste0("median.", .x)
+        )
+      if (!is.null(restricted_mean)) restricted_mean[[i]] <- dplyr::rename_with(
+        restricted_mean[[i]], ~ paste0("rmst.", .x)
+        )
+      if (!is.null(mean)) mean[[i]] <- dplyr::rename_with(
+        mean[[i]], ~ paste0("mean.", .x)
+        )
 
-      if (get_rmst) {
-        restricted_mean[[i]] <- restricted_mean[[i]] |>
-          dplyr::rename_with(~ paste0("rmst.", .x))
-      }
-
-      if (get_mean) {
-        mean[[i]] <- mean[[i]] |>
-          dplyr::rename_with(~ paste0("mean.", .x))
-      }
-    }
-
-
-
-    # Combine into list per strata
-    for (i in seq_along(myseq)) {
       out[[i]] <- data.frame(distribution = distribution)
+      if (!is.null(names(myseq)[i])) out[[i]] <- cbind(out[[i]],
+                                                       strata = names(myseq)[i])
 
-      if (!is.null(names(myseq)[i])) {
-        strata <- names(myseq)[i]
-        out[[i]] <- cbind(
-          out[[i]],
-          strata
-        )
-      }
-
-      if (get_median) {
-        out[[i]] <- cbind(
-          out[[i]],
-          median[[i]]
-        )
-      }
-
-      if (get_rmst) {
-        out[[i]] <- cbind(
-          out[[i]],
-          restricted_mean[[i]]
-        )
-      }
-
-      if (get_mean) {
-        out[[i]] <- cbind(
-          out[[i]],
-          mean[[i]]
-        )
-      }
+      if (!is.null(median)) out[[i]] <- cbind(out[[i]],
+                                              median[[i]])
+      if (!is.null(restricted_mean)) out[[i]] <- cbind(out[[i]],
+                                                       restricted_mean[[i]])
+      if (!is.null(mean)) out[[i]] <- cbind(out[[i]],
+                                            mean[[i]])
     }
 
     names(out) <- names(myseq)
-
     out <- data.table::rbindlist(out)
+
   } else if (engine == "survival") {
-    distribution <- mod$fit$dist
 
     # Check for groups
     # this only works for factors.
