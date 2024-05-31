@@ -203,7 +203,7 @@ fit_models <- function(data,
   ))
 
   # Fit KM ----
-  km_fit <- do.call(survival::survfit,
+  km <- do.call(survival::survfit,
     args = list(
       formula = km_formula,
       conf.int = 0.95,
@@ -212,7 +212,7 @@ fit_models <- function(data,
     )
   )
 
-  km_summary <- as.data.frame(summary(km_fit)$table) |>
+  km_summary <- as.data.frame(summary(km)$table) |>
     tibble::rownames_to_column(var = "group") |>
     dplyr::select(-"n.max", -"n.start")
 
@@ -262,6 +262,7 @@ fit_models <- function(data,
     predict_by = predict_by,
     predict_list = predict_list,
     distributions = distributions,
+    km = km,
     km_summary = km_summary
   )
 

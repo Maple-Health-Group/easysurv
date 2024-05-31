@@ -13,6 +13,8 @@
 #' @param group_labels Optional character vector containing the names of
 #'   the strata (default is NULL). Provide in a consistent order with
 #'   \code{levels(as.factor(data$group))}.
+#' @param just_km Logical. If \code{TRUE}, only the Kaplan-Meier estimates are
+#'   returned. Default is \code{FALSE}.
 #' @param ... (Optional) Parameters to pass to ggsurvfit.
 #'
 #' @return A list containing Kaplan-Meier estimates, summary statistics, plots,
@@ -40,6 +42,7 @@ get_km <- function(data,
                    event,
                    group = NULL,
                    group_labels = NULL,
+                   just_km = FALSE,
                    ...) {
   # Validate argument inputs ----
   if (!is.data.frame(data)) {
@@ -75,15 +78,6 @@ get_km <- function(data,
     km_covariate <- group
   }
 
-  km_formula_separate <- stats::as.formula(paste0(
-    "survival::Surv(time = ",
-    time,
-    ", event = ",
-    event,
-    ") ~",
-    1
-  ))
-
   km_formula <- stats::as.formula(paste0(
     "survival::Surv(time = ",
     time,
@@ -101,6 +95,17 @@ get_km <- function(data,
       type = "kaplan-meier"
     )
   )
+
+  if (just_km) return(km)
+
+  km_formula_separate <- stats::as.formula(paste0(
+    "survival::Surv(time = ",
+    time,
+    ", event = ",
+    event,
+    ") ~",
+    1
+  ))
 
   km_all <- do.call(survival::survfit,
     args = list(

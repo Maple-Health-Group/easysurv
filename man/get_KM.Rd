@@ -4,7 +4,15 @@
 \alias{get_km}
 \title{Generate Kaplan-Meier estimates}
 \usage{
-get_km(data, time, event, group = NULL, group_labels = NULL, ...)
+get_km(
+  data,
+  time,
+  event,
+  group = NULL,
+  group_labels = NULL,
+  just_km = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame containing the survival data.}
@@ -21,6 +29,9 @@ grouping variable. Default is \code{NULL}.}
 \item{group_labels}{Optional character vector containing the names of
 the strata (default is NULL). Provide in a consistent order with
 \code{levels(as.factor(data$group))}.}
+
+\item{just_km}{Logical. If \code{TRUE}, only the Kaplan-Meier estimates are
+returned. Default is \code{FALSE}.}
 
 \item{...}{(Optional) Parameters to pass to ggsurvfit.}
 }

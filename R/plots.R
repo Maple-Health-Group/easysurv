@@ -13,21 +13,21 @@
 #' @importFrom scales pseudo_log_trans
 plot_fits <- function(data) {
   # Create visible binding for R CMD check.
-  .eval_time <- Survival <- Model <- NULL
+  .eval_time <- survival <- model <- NULL
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(data,
     cols = -".eval_time",
-    names_to = "Model",
-    values_to = "Survival"
+    names_to = "model",
+    values_to = "survival"
   )
 
-  p <- ggplot(data = long_data, aes(x = .eval_time, y = Survival))
-  p <- p + geom_line(aes(color = Model, group = Model))
+  p <- ggplot(data = long_data, aes(x = .eval_time, y = survival))
+  p <- p + geom_line(aes(color = model, group = model))
   p <- p + labs(
     x = "Time",
     y = "Survival",
-    color = ifelse(length(unique(long_data$Model)) == 1, "Model", "Models")
+    color = ifelse(length(unique(long_data$model)) == 1, "Model", "Models")
   )
   p <- p + theme_bw()
 
