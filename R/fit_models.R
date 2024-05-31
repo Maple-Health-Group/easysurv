@@ -362,18 +362,18 @@ print.fit_models <- function(x, ...) {
     }
 
     if (inherits(x, "pred_covariate")) {
-      median.est <- x$fit_averages[[1]] |>
-        dplyr::select(distribution, strata, median.est) |>
-        tidyr::pivot_wider(names_from = "strata", values_from = "median.est") |>
+      median_est <- x$fit_averages[[1]] |>
+        dplyr::select(distribution, strata, median_est) |>
+        tidyr::pivot_wider(names_from = "strata", values_from = "median_est") |>
         dplyr::select(-distribution)
     } else {
-      median.est <- x$fit_averages[[1]]$median.est
+      median_est <- x$fit_averages[[1]]$median_est
     }
 
     # Goodness of fits and fit averages
     combined_data <- x$goodness_of_fit[[1]] |>
       dplyr::select(dist, AIC_rank) |>
-      cbind(median.est)
+      cbind(median_est)
 
     # say what dist had the AIC_rank == 1
     best_dist <- combined_data |>
@@ -412,21 +412,21 @@ print.fit_models <- function(x, ...) {
       }
 
       if (inherits(x, "pred_covariate")) {
-        median.est <- x$fit_averages[[1]] |>
-          dplyr::select(distribution, strata, median.est) |>
+        median_est <- x$fit_averages[[1]] |>
+          dplyr::select(distribution, strata, median_est) |>
           tidyr::pivot_wider(
             names_from = "strata",
-            values_from = "median.est"
+            values_from = "median_est"
           ) |>
           dplyr::select(-distribution)
       } else {
-        median.est <- x$fit_averages[[i]]$median.est
+        median_est <- x$fit_averages[[i]]$median_est
       }
 
       # Goodness of fits and fit averages
       combined_data <- x$goodness_of_fit[[i]] |>
         dplyr::select(dist, AIC_rank) |>
-        cbind(median.est)
+        cbind(median_est)
 
       # say what dist had the AIC_rank == 1
       best_dist <- combined_data |>

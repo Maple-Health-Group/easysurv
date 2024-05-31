@@ -87,7 +87,7 @@ get_fit_averages <- function(mod,
   }
 
   out <- list()
-  median.est <- list()
+  median_est <- list()
   engine <- mod$spec$engine
 
   distribution <- if (engine %in% c("flexsurv", "flexsurvcure")) {
@@ -124,13 +124,13 @@ get_fit_averages <- function(mod,
 
     for (i in seq_along(myseq)) {
       if (!is.null(median)) median[[i]] <- dplyr::rename_with(
-        median[[i]], ~ paste0("median.", .x)
+        median[[i]], ~ paste0("median_", .x)
         )
       if (!is.null(restricted_mean)) restricted_mean[[i]] <- dplyr::rename_with(
-        restricted_mean[[i]], ~ paste0("rmst.", .x)
+        restricted_mean[[i]], ~ paste0("rmst_", .x)
         )
       if (!is.null(mean)) mean[[i]] <- dplyr::rename_with(
-        mean[[i]], ~ paste0("mean.", .x)
+        mean[[i]], ~ paste0("mean_", .x)
         )
 
       out[[i]] <- data.frame(distribution = distribution)
@@ -179,16 +179,16 @@ get_fit_averages <- function(mod,
 
         # Get the median (IGNORE "new_data" warnings if appear, it does
         # in fact need to remain as "newdata".)
-        median.est[[i]] <- data.frame(
+        median_est[[i]] <- data.frame(
           strata = mod$fit$xlevels[[1]][i],
-          median.est = predict(mod$fit,
+          median_est = predict(mod$fit,
             newdata = new_data,
             type = "quantile",
             p = c(0.5),
           )
         )
 
-        out[[i]] <- cbind(out[[i]], median.est[[i]])
+        out[[i]] <- cbind(out[[i]], median_est[[i]])
       }
 
       out <- data.table::rbindlist(out)
@@ -204,13 +204,13 @@ get_fit_averages <- function(mod,
       }
 
       # Get the median (newdata does not matter)
-      median.est <- predict(mod$fit,
+      median_est <- predict(mod$fit,
         newdata = new_data,
         type = "quantile",
         p = c(0.5)
       )
 
-      out <- cbind(out, median.est)
+      out <- cbind(out, median_est)
     }
   }
 

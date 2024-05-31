@@ -223,34 +223,34 @@ plot_schoenfeld <- function(residuals,
   # Create visible binding for R CMD check.
   time <- residual <- NULL
 
-  trans.string <- ifelse(unique(residuals$transform) == "identity", "t",
+  trans_string <- ifelse(unique(residuals$transform) == "identity", "t",
     paste0(unique(residuals$transform), "(t)")
   )
 
-  gg.zph <- ggplot2::ggplot(residuals, ggplot2::aes(x = time, y = residual)) +
+  gg_zph <- ggplot2::ggplot(residuals, ggplot2::aes(x = time, y = residual)) +
     ggplot2::geom_point() +
     ggplot2::facet_wrap(~variable, nrow = 2, scales = "free_y") +
-    ggplot2::xlab(trans.string) +
+    ggplot2::xlab(trans_string) +
     ggplot2::ylab(expression(beta(t)))
 
   if (hline) {
-    gg.zph <- gg.zph + ggplot2::geom_hline(
+    gg_zph <- gg_zph + ggplot2::geom_hline(
       yintercept = hline_yintercept, col = hline_col,
       linewidth = hline_size, lty = hline_lty, alpha = hline_alpha
     )
   }
 
   if (sline) {
-    gg.zph <- gg.zph + ggplot2::geom_smooth(
+    gg_zph <- gg_zph + ggplot2::geom_smooth(
       col = sline_col, se = sline_se, method = "loess",
       linewidth = sline_size, lty = sline_lty, alpha = sline_alpha,
       formula = y ~ x
     )
   }
 
-  gg.zph <- gg.zph + plot_theme
+  gg_zph <- gg_zph + plot_theme
 
-  gg.zph
+  gg_zph
 }
 
 #' Plot smoothed hazards of survival data
