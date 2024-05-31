@@ -4,7 +4,13 @@
 \alias{predict_and_plot}
 \title{Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.}
 \usage{
-predict_and_plot(fit_models, eval_time = NULL, data, interval = "none")
+predict_and_plot(
+  fit_models,
+  eval_time = NULL,
+  data,
+  interval = "none",
+  km_include = TRUE
+)
 }
 \arguments{
 \item{fit_models}{An object returned from fit_models.}
@@ -17,6 +23,9 @@ sequence from 0 to 5 times the maximum observed time.}
 
 \item{interval}{A character string specifying the type of interval to
 predict. Options are "none" or "confidence". Default is "none".}
+
+\item{km_include}{A logical indicating whether to include Kaplan-Meier
+estimates in the plot outputs. Default is \code{TRUE}.}
 }
 \description{
 Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.

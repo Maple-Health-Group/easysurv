@@ -1,6 +1,5 @@
 # Non-exported helper functions.
 
-#' @note renaming time does not appear to be needed, but kept functions for now.
 #' @noRd
 flexsurvcure_rename_time <- function(pred) {
   # Create visible binding for R CMD check.
@@ -21,12 +20,13 @@ flexsurvcure_rename_time <- function(pred) {
 
 #' @noRd
 flexsurvcure_post <- function(pred, object) {
-  # if (utils::packageVersion("flexsurv") < "2.3") {
-  #   pred <- flexsurv_rename_time(pred)
-  # }
+  # Even though this function is for flexsurvcure, I suspect that the flexsurv
+  # version here is what is relevant.
+  if (utils::packageVersion("flexsurv") < "2.3") {
+    pred <- flexsurv_rename_time(pred)
+  }
 
-  # this did not appear to be needed for flexsurvcure.
-  # pred <- flexsurvcure_rename_time(pred)
+  pred <- flexsurvcure_rename_time(pred)
 
   # if there's only one observation in new_data,
   # flexsurvcure output isn't nested

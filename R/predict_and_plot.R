@@ -19,6 +19,10 @@ predict_and_plot <- function(fit_models,
                              data,
                              interval = "none",
                              km_include = TRUE) {
+
+  # Create visible binding for R CMD check
+  group <- NULL
+
   ## Check fit_models ----
   if (!inherits(fit_models, "fit_models")) {
     cli::cli_abort(c(
@@ -43,7 +47,7 @@ predict_and_plot <- function(fit_models,
 
   ## Prepare KM data ----
   km_survfit <- fit_models[["info"]][["km"]]
-  if(is.null(km_survfit[["strata"]])) {
+  if (is.null(km_survfit[["strata"]])) {
     group_vec <- rep(1, length(km_survfit[["time"]]))
     } else {
       group_vec <- mapply(rep,

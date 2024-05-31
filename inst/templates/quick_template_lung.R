@@ -104,8 +104,8 @@ ph_check
 
 do_separate <- TRUE # TRUE: run standard parametric model fits (separate)
 do_joint <- TRUE # TRUE: run standard parametric model fits (joint)
-do_splines <- FALSE # TRUE: run spline model fits
-do_cure <- FALSE # TRUE: run mixture cure model fits
+do_splines <- TRUE # TRUE: run spline model fits
+do_cure <- TRUE # TRUE: run mixture cure model fits
 
 ## Model Fitting ---------------------------------------------------------------
 

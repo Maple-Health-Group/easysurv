@@ -4,10 +4,15 @@
 \alias{plot_fits}
 \title{Plot Survival Fits}
 \usage{
-plot_fits(data)
+plot_fits(pred_data, km_data, km_include = TRUE)
 }
 \arguments{
-\item{data}{A data frame containing the survival predictions.}
+\item{pred_data}{A data frame containing the survival predictions.}
+
+\item{km_data}{A data frame containing the Kaplan-Meier survival data.}
+
+\item{km_include}{Logical value indicating whether to include lines for
+Kaplan-Meier survival data. Default is \code{TRUE}.}
 }
 \value{
 A ggplot2 object.
