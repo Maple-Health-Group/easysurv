@@ -212,7 +212,9 @@ fit_models <- function(data,
     )
   )
 
-  km_summary <- as.data.frame(summary(km)$table) |>
+  km_summary <- as.data.frame(summary(km)$table)
+  if (is.null(predict_by)) km_summary <- as.data.frame(t(km_summary))
+  km_summary <- km_summary |>
     tibble::rownames_to_column(var = "group") |>
     dplyr::select(-"n.max", -"n.start")
 
