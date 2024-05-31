@@ -11,12 +11,12 @@
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 #' @importFrom scales pseudo_log_trans
-plot_fits <- function(data) {
+plot_fits <- function(pred_data, km_data, km_include = TRUE) {
   # Create visible binding for R CMD check.
   .eval_time <- survival <- model <- NULL
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
-  long_data <- tidyr::pivot_longer(data,
+  long_data <- tidyr::pivot_longer(pred_data,
     cols = -".eval_time",
     names_to = "model",
     values_to = "survival"
@@ -24,6 +24,12 @@ plot_fits <- function(data) {
 
   p <- ggplot(data = long_data, aes(x = .eval_time, y = survival))
   p <- p + geom_line(aes(color = model, group = model))
+
+  if (km_include) {
+    p <- p + geom_step(data = km_data, aes(x = time, y = surv), color = "black")
+    p <- p + geom_ribbon(data = km_data, aes(x = time, ymin = lower, ymax = upper), alpha = 0.2)
+  }
+
   p <- p + labs(
     x = "Time",
     y = "Survival",

@@ -7,6 +7,8 @@
 #' @param data The survival data used to estimate the models.
 #' @param interval A character string specifying the type of interval to
 #'   predict. Options are "none" or "confidence". Default is "none".
+#' @param km_include A logical indicating whether to include Kaplan-Meier
+#'  estimates in the plot outputs. Default is \code{TRUE}.
 #'
 #' @export
 #'
@@ -15,7 +17,8 @@
 predict_and_plot <- function(fit_models,
                              eval_time = NULL,
                              data,
-                             interval = "none") {
+                             interval = "none",
+                             km_include = TRUE) {
   ## Check fit_models ----
   if (!inherits(fit_models, "fit_models")) {
     cli::cli_abort(c(
@@ -37,6 +40,26 @@ predict_and_plot <- function(fit_models,
       length.out = 100
     )
   }
+
+  ## Prepare KM data ----
+  km_survfit <- fit_models[["info"]][["km"]]
+  if(is.null(km_survfit[["strata"]])) {
+    group_vec <- rep(1, length(km_survfit[["time"]]))
+    } else {
+      group_vec <- mapply(rep,
+                          seq_along(names(km_survfit[["strata"]])),
+                          km_survfit[["strata"]]) |>
+        unlist() |>
+        unname()
+      }
+
+  km_df <- data.frame(
+    time  = km_survfit$time,
+    surv  = km_survfit$surv,
+    upper = km_survfit$upper,
+    lower = km_survfit$lower,
+    group = group_vec
+  )
 
   predictions <- list()
   plots <- list()
@@ -85,17 +108,22 @@ predict_and_plot <- function(fit_models,
       special_profiles = !is.null(profiles)
     )
 
+    filtered_km_df <- km_df |>
+      dplyr::filter(group == tx)
+
     if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
       # there are multiple profiles
       plots[[tx]] <- list(
         fit_plots = lapply(
           predictions[[tx]]$table_pred_surv,
-          plot_fits
+          plot_fits,
+          filtered_km_df,
+          km_include
         )
       )
     } else {
       plots[[tx]] <- list(
-        fit_plots = plot_fits(predictions[[tx]]$table_pred_surv)
+        fit_plots = plot_fits(predictions[[tx]]$table_pred_surv, filtered_km_df, km_include)
       )
     }
   }
