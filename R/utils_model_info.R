@@ -399,6 +399,10 @@ tidy_predict_surv <- function(models,
 
     # Extract to summary tables
     table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
+
+    # Label the columns
+    table_pred_surv <- label_table(table_pred_surv)
+
     if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
       table_pred_surv_lower <- extract_predictions(
         list_pred_surv,
@@ -408,6 +412,10 @@ tidy_predict_surv <- function(models,
         list_pred_surv,
         ".pred_upper"
       )
+
+      # Label the columns
+      table_pred_surv_lower <- label_table(table_pred_surv_lower)
+      table_pred_surv_upper <- label_table(table_pred_surv_upper)
     }
 
     # make the predictions (hazard)
@@ -492,4 +500,49 @@ tidy_predict_surv <- function(models,
   )
 
   out
+}
+
+# Helper functions
+
+label_table <- function(df) {
+
+  # Human readable label
+  dist_labels = c(
+    "exp" = "Exponential",
+    "exponential" = "Exponential",
+    "gamma" = "Gamma",
+    "genf" = "Gen. F",
+    "genf.orig" = "Gen. F (orig parametrisation)",
+    "gengamma" = "Gen. Gamma",
+    "gengamma.orig" = "Gen. Gamma (orig parametrisation)",
+    "gom" = "Gompertz",
+    "gompertz" = "Gompertz",
+    "llogis" = "log-Logistic",
+    "lnorm" = "log-Normal",
+    "lognormal" = "log-Normal",
+    "weibull" = "Weibull (AFT)",
+    "weibullPH" = "Weibull (PH)",
+    "extreme" = "Extreme",
+    "gaussian" = "Gaussian",
+    "loggaussian" = "Log-Gaussian",
+    "logistic" = "Logistic",
+    "lognormal" = "Log-Normal",
+    "rayleigh" = "Rayleigh"
+  )
+
+  # Get the current column names
+  current_names <- colnames(df)
+
+  # Map current names to readable labels using the lookup table
+  new_names <- unname(sapply(current_names,
+                             function(x)
+                               ifelse(x %in% names(dist_labels),
+                                      dist_labels[x],
+                                      x)))
+
+  # Set the new column names
+  colnames(df) <- new_names
+
+  df
+
 }
