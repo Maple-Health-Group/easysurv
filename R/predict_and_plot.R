@@ -9,6 +9,8 @@
 #'   predict. Options are "none" or "confidence". Default is "none".
 #' @param km_include A logical indicating whether to include Kaplan-Meier
 #'  estimates in the plot outputs. Default is \code{TRUE}.
+#' @param subtitle_include A logical indicating whether to include the subtitle.
+#'  Default is \code{TRUE}. The subtitle is the name of the group.
 #'
 #' @export
 #'
@@ -18,7 +20,8 @@ predict_and_plot <- function(fit_models,
                              eval_time = NULL,
                              data,
                              interval = "none",
-                             km_include = TRUE) {
+                             km_include = TRUE,
+                             subtitle_include = TRUE) {
 
   # Create visible binding for R CMD check
   group <- NULL
@@ -96,6 +99,12 @@ predict_and_plot <- function(fit_models,
       tx
     }
 
+    subtitle <- if (subtitle_include) {
+      loop_labels[tx]
+    } else {
+      NULL
+    }
+
     if (inherits(fit_models, "pred_covariate")) {
       filtered_profile <- used_profile |>
         dplyr::filter(!!as.symbol(fit_models$info$predict_by) ==
@@ -121,13 +130,17 @@ predict_and_plot <- function(fit_models,
         fit_plots = lapply(
           predictions[[tx]]$table_pred_surv,
           plot_fits,
-          filtered_km_df,
-          km_include
+          km_data = filtered_km_df,
+          km_include = km_include,
+          subtitle = subtitle
         )
       )
     } else {
       plots[[tx]] <- list(
-        fit_plots = plot_fits(predictions[[tx]]$table_pred_surv, filtered_km_df, km_include)
+        fit_plots = plot_fits(pred_data = predictions[[tx]]$table_pred_surv,
+                              km_data = filtered_km_df,
+                              km_include =  km_include,
+                              subtitle = subtitle)
       )
     }
   }

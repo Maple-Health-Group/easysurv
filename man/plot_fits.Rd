@@ -4,7 +4,7 @@
 \alias{plot_fits}
 \title{Plot Survival Fits}
 \usage{
-plot_fits(pred_data, km_data, km_include = TRUE)
+plot_fits(pred_data, km_data, km_include = TRUE, title = NULL, subtitle = NULL)
 }
 \arguments{
 \item{pred_data}{A data frame containing the survival predictions.}
@@ -13,6 +13,10 @@ plot_fits(pred_data, km_data, km_include = TRUE)
 
 \item{km_include}{Logical value indicating whether to include lines for
 Kaplan-Meier survival data. Default is \code{TRUE}.}
+
+\item{title}{Title of the plot. Default is \code{NULL}.}
+
+\item{subtitle}{Subtitle of the plot. Default is \code{NULL}.}
 }
 \value{
 A ggplot2 object.

@@ -6,6 +6,8 @@
 #' @param km_data A data frame containing the Kaplan-Meier survival data.
 #' @param km_include Logical value indicating whether to include lines for
 #'   Kaplan-Meier survival data. Default is \code{TRUE}.
+#' @param title Title of the plot. Default is \code{NULL}.
+#' @param subtitle Subtitle of the plot. Default is \code{NULL}.
 #'
 #' @return A ggplot2 object.
 #'
@@ -14,7 +16,8 @@
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 #' @importFrom scales pseudo_log_trans
-plot_fits <- function(pred_data, km_data, km_include = TRUE) {
+plot_fits <- function(pred_data, km_data, km_include = TRUE,
+                      title = NULL, subtitle = NULL) {
 
   # Create visible binding for R CMD check (pred_data)
   .eval_time <- survival <- model <- NULL
@@ -52,6 +55,14 @@ plot_fits <- function(pred_data, km_data, km_include = TRUE) {
     y = "Survival",
     color = ifelse(length(unique(long_data$model)) == 1, "Model", "Models")
   )
+
+  if (!is.null(title)) {
+    p <- p + ggtitle(title)
+  }
+
+  if (!is.null(subtitle)) {
+    p <- p + labs(subtitle = subtitle)
+  }
 
   # Add theme
   p <- p + theme_bw()

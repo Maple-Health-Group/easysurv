@@ -69,7 +69,7 @@ get_cure_fractions <- function(mod) {
 #' @noRd
 get_fit_averages <- function(mod,
                              get_median = TRUE,
-                             get_rmst = TRUE,
+                             get_rmst = FALSE,
                              get_mean = FALSE) {
   if (!get_median && !get_rmst && !get_mean) {
     cli::cli_abort(c(
@@ -222,7 +222,7 @@ get_fit_averages <- function(mod,
 #' @noRd
 get_fit_averages_summary <- function(models,
                                      get_median = TRUE,
-                                     get_rmst = TRUE,
+                                     get_rmst = FALSE,
                                      get_mean = FALSE) {
   out <- lapply(models,
     get_fit_averages,

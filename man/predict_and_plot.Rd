@@ -9,7 +9,8 @@ predict_and_plot(
   eval_time = NULL,
   data,
   interval = "none",
-  km_include = TRUE
+  km_include = TRUE,
+  subtitle_include = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ predict. Options are "none" or "confidence". Default is "none".}
 
 \item{km_include}{A logical indicating whether to include Kaplan-Meier
 estimates in the plot outputs. Default is \code{TRUE}.}
+
+\item{subtitle_include}{A logical indicating whether to include the subtitle.
+Default is \code{TRUE}. The subtitle is the name of the group.}
 }
 \description{
 Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.

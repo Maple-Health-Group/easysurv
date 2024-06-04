@@ -23,10 +23,10 @@ flexsurvcure_post <- function(pred, object) {
   # Even though this function is for flexsurvcure, I suspect that the flexsurv
   # version here is what is relevant.
   if (utils::packageVersion("flexsurv") < "2.3") {
-    pred <- flexsurv_rename_time(pred)
+    pred <- flexsurvcure_rename_time(pred)
   }
 
-  pred <- flexsurvcure_rename_time(pred)
+  #pred <- flexsurvcure_rename_time(pred)
 
   # if there's only one observation in new_data,
   # flexsurvcure output isn't nested
