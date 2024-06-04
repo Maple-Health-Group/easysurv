@@ -29,24 +29,32 @@ plot_fits <- function(pred_data, km_data, km_include = TRUE) {
     values_to = "survival"
   )
 
-  p <- ggplot(data = long_data, aes(x = .eval_time, y = survival))
-  p <- p + geom_line(aes(color = model, group = model))
+  # Initialise plot
+  p <- ggplot()
 
+  # KM as first layer
   if (km_include) {
     p <- p + geom_step(data = km_data, aes(x = time, y = surv), color = "black")
     p <- p + geom_ribbon(data = km_data, aes(x = time, ymin = lower, ymax = upper), alpha = 0.2)
   }
 
+  # Predictions as additional layer
+  p <- p + geom_line(data = long_data,
+                     aes(x = .eval_time,
+                         y = survival,
+                         color = model,
+                         group = model))
+
+
+  # Add labels
   p <- p + labs(
     x = "Time",
     y = "Survival",
     color = ifelse(length(unique(long_data$model)) == 1, "Model", "Models")
   )
+
+  # Add theme
   p <- p + theme_bw()
-
-  # more can be done here to improve this.
-
-  # may want an optional km argument.
 
   p
 }
