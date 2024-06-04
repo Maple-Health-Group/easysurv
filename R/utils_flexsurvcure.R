@@ -9,7 +9,7 @@ flexsurvcure_rename_time <- function(pred) {
     pred |>
       dplyr::rowwise() |>
       dplyr::mutate(
-        .pred = list(dplyr::rename(.pred, .eval_time = .pred_time))
+        .pred = list(dplyr::rename(.pred, .eval_time = .time))
       ) |>
       dplyr::ungroup()
   } else {
