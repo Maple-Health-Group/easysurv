@@ -151,10 +151,13 @@ predict_and_plot <- function(fit_models,
 #' @export
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
 print.pred_plot <- function(x, ...) {
-  cli::cli_h1("Predictions Summary")
 
-  cli::cli_alert_info("TODO: Keep adding more information here. Likely
-                      to look for any instances of table_pred_surv and just print those.")
+  cli::cli_alert_info(paste0("Survival predictions are stored in the ",
+                             "prediction list, namely under 'table_pred_surv'"))
+
+  cli::cli_alert_info("The following plots have been printed.")
+
+  print(x$plots)
 
   invisible(x)
 }
