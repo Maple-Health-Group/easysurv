@@ -242,18 +242,18 @@ get_fit_averages_summary <- function(models,
 get_goodness_of_fit <- function(mod) {
   # Get AIC and BIC values using stats:: because engine=survival
   # doesn't record these
-  AIC_values <- sapply(mod, function(x) stats::AIC(x$fit))
-  BIC_values <- sapply(mod, function(x) stats::BIC(x$fit))
+  aic_values <- sapply(mod, function(x) stats::AIC(x$fit))
+  bic_values <- sapply(mod, function(x) stats::BIC(x$fit))
 
-  AIC_ranks <- rank(AIC_values)
-  BIC_ranks <- rank(BIC_values)
+  aic_ranks <- rank(aic_values)
+  bic_ranks <- rank(bic_values)
 
   out <- tibble::tibble(
     "dist" = names(mod),
-    "AIC" = AIC_values,
-    "BIC" = BIC_values,
-    "AIC_rank" = AIC_ranks,
-    "BIC_rank" = BIC_ranks
+    "aic" = aic_values,
+    "bic" = bic_values,
+    "aic_rank" = aic_ranks,
+    "bic_rank" = bic_ranks
   )
 
   out
@@ -430,6 +430,27 @@ tidy_predict_surv <- function(models,
         tidyr::unnest(col = .pred))
 
     table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
+
+    # TODO: check if this will work for survival engine.
+    hazard_formula <- models[[1]]$fit$call$formula
+
+    # will need to add data as an argument to the function
+
+    # table_bshazard <- with(
+    #   bshazard::bshazard(hazard_formula,
+    #                      data = data,
+    #                      verbose = FALSE
+    #   ),
+    #   data.frame(time, hazard, lower.ci, upper.ci)
+    # ) |>
+    #   dplyr::rename(
+    #     est = .data$hazard,
+    #     lcl = .data$lower.ci,
+    #     ucl = .data$upper.ci
+    #   )
+
+
+
   }
 
 
@@ -507,7 +528,7 @@ tidy_predict_surv <- function(models,
 label_table <- function(df) {
 
   # Human readable label
-  dist_labels = c(
+  dist_labels <- c(
     "exp" = "Exponential",
     "exponential" = "Exponential",
     "gamma" = "Gamma",
@@ -535,10 +556,12 @@ label_table <- function(df) {
 
   # Map current names to readable labels using the lookup table
   new_names <- unname(sapply(current_names,
-                             function(x)
+                             function(x) {
                                ifelse(x %in% names(dist_labels),
                                       dist_labels[x],
-                                      x)))
+                                      x)
+                               }))
+
 
   # Set the new column names
   colnames(df) <- new_names

@@ -214,45 +214,23 @@ if (do_cure) {
 
 ## Excel Exports ---------------------------------------------------------------
 
-
 wb <- openxlsx::createWorkbook()
 write_to_xl(wb, km_check)
 write_to_xl(wb, ph_check)
-# write_to_xl(wb, models_separate)
-# write_to_xl(wb, pred_separate)
 
-write_to_xl(wb, models_joint)
-write_to_xl(wb, pred_joint)
+# Note: we recommend different Excel workbooks for different fit types.
+if (do_separate) {
+  write_to_xl(wb, models_separate)
+  write_to_xl(wb, pred_separate)
+}
 
-openxlsx::saveWorkbook(wb, file = "test.xlsx", overwrite = TRUE)
-openxlsx::openXL("test.xlsx")
+# Define a file name
+output_name <- paste0(
+    "easysurv output - ",
+    format(Sys.time(), "%Y-%m-%d %H.%M"),
+    ".xlsx"
+  )
 
-
-
-# # Create a new workbook object
-# wb <- openxlsx::createWorkbook()
-#
-# # The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
-# # Note that plots will be reproduced at a different DPI setting for Excel.
-# # This may make them appear strange in R temporarily.
-#
-# quick_to_XL(wb = wb, quick_object = KM_check)
-# quick_to_XL(wb = wb, quick_object = PH_check)
-#
-# if (do_separate) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
-# if (do_joint) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_joint)
-# if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
-# if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)
-#
-# # Give the workbook a name ending in .xlsx
-# output_name <- paste0(
-#   "easysurv output - ",
-#   format(Sys.time(), "%Y-%m-%d %H.%M"),
-#   ".xlsx"
-# )
-#
-# # Save the workbook - you can choose a directory before this if desired.
-# openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
-#
-# # Open the workbook and assess contents.
-# openxlsx::openXL(output_name)
+# Save and open the workbook
+openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
+openxlsx::openXL(output_name)

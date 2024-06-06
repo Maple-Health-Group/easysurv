@@ -305,7 +305,7 @@ fit_models <- function(data,
 #' @importFrom tidyr pivot_wider
 print.fit_models <- function(x, ...) {
   # Create visible binding for R CMD check.
-  distribution <- strata <- dist <- AIC_rank <- NULL
+  distribution <- strata <- dist <- aic_rank <- NULL
 
   cli::cli_h1("Fit Models Summary")
 
@@ -376,12 +376,12 @@ print.fit_models <- function(x, ...) {
 
     # Goodness of fits and fit averages
     combined_data <- x$goodness_of_fit[[1]] |>
-      dplyr::select(dist, AIC_rank) |>
+      dplyr::select(dist, aic_rank) |>
       cbind(median_est)
 
-    # say what dist had the AIC_rank == 1
+    # say what dist had the aic_rank == 1
     best_dist <- combined_data |>
-      dplyr::filter(AIC_rank == 1) |>
+      dplyr::filter(aic_rank == 1) |>
       dplyr::pull(dist) |>
       unique()
 
@@ -443,12 +443,12 @@ print.fit_models <- function(x, ...) {
 
       # Goodness of fits and fit averages
       combined_data <- x$goodness_of_fit[[i]] |>
-        dplyr::select(dist, AIC_rank) |>
+        dplyr::select(dist, aic_rank) |>
         cbind(median_est)
 
-      # say what dist had the AIC_rank == 1
+      # say what dist had the aic_rank == 1
       best_dist <- combined_data |>
-        dplyr::filter(AIC_rank == 1) |>
+        dplyr::filter(aic_rank == 1) |>
         dplyr::pull(dist) |>
         unique()
 

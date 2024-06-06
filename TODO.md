@@ -3,7 +3,6 @@
 ## This release
 
 ### High priority
-* Add an option to include KMs in predict_and_plot.
 * Add hazard plots in predict_and_plot.
 * Update `print` method for pred_plot. 
     * See the write_to_xl function for inspiration on how to handle situations 

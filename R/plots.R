@@ -38,7 +38,9 @@ plot_fits <- function(pred_data, km_data, km_include = TRUE,
   # KM as first layer
   if (km_include) {
     p <- p + geom_step(data = km_data, aes(x = time, y = surv), color = "black")
-    p <- p + geom_ribbon(data = km_data, aes(x = time, ymin = lower, ymax = upper), alpha = 0.2)
+    p <- p + geom_ribbon(data = km_data, aes(x = time,
+                                             ymin = lower,
+                                             ymax = upper), alpha = 0.2)
   }
 
   # Predictions as additional layer

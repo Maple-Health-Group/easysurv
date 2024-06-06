@@ -3,7 +3,7 @@
 #' @noRd
 flexsurvcure_rename_time <- function(pred) {
   # Create visible binding for R CMD check.
-  .pred <- .pred_time <- NULL
+  .pred <- .pred_time <- .time <- NULL
 
   if (".pred" %in% names(pred)) {
     pred |>
