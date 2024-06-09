@@ -3,15 +3,10 @@
 ## This release
 
 ### High priority
-* Add hazard plots in predict_and_plot.
-* Update `print` method for pred_plot. 
-    * See the write_to_xl function for inspiration on how to handle situations 
-    with accessing profiles if they are provided.
-* Consider group_labels style arguments for all plotting functions.
+* Add plots to Excel
 
 ### Medium priority
 * Add an inspect_surv_data() function to inspect the survival data.
-* Remove anything plotly-related (for this release)
 * Update quick_template_lung to include the new features.
 * Update quick_start, and also update/remove other quick_template files 
 (to discuss).

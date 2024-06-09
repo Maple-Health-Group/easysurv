@@ -68,10 +68,22 @@ predict_and_plot <- function(fit_models,
     group = group_vec
   )
 
+  ## Prepare predictions ----
   predictions <- list()
   plots <- list()
-
   profiles <- NULL
+
+  # Create legend label for the plots
+  if (fit_models$info$engine == "flexsurvcure") {
+    legend_label <- "Cure Model"
+  } else if (fit_models$info$engine == "flexsurvspline") {
+    legend_label <- "Spline Model"
+  } else if (fit_models$info$approach == "predict_by_covariate") {
+    legend_label <- "Joint Model"
+  } else {
+    legend_label <- "Model"
+  }
+
 
   # Create the profile data based on covariates
   if (is.null(fit_models$info$covariates)) {
@@ -114,7 +126,9 @@ predict_and_plot <- function(fit_models,
     }
 
     predictions[[tx]] <- tidy_predict_surv(
-      models = fit_models$models[[model_index]],
+      fit_models = fit_models,
+      tx_index = tx,
+      model_index = model_index,
       new_data = filtered_profile,
       eval_time = eval_time,
       interval = interval,
@@ -127,20 +141,33 @@ predict_and_plot <- function(fit_models,
     if (any(sapply(predictions[[tx]]$table_pred_surv, is.list))) {
       # there are multiple profiles
       plots[[tx]] <- list(
-        fit_plots = lapply(
+        surv_plots = lapply(
           predictions[[tx]]$table_pred_surv,
-          plot_fits,
+          plot_surv,
           km_data = filtered_km_df,
           km_include = km_include,
-          subtitle = subtitle
+          subtitle = subtitle,
+          legend_label = legend_label
+        ),
+        hazard_plots = lapply(
+          predictions[[tx]]$table_pred_hazard,
+          plot_hazards,
+          obs_data = predictions[[tx]]$table_bshazard,
+          subtitle = subtitle,
+          legend_label = legend_label
         )
       )
     } else {
       plots[[tx]] <- list(
-        fit_plots = plot_fits(pred_data = predictions[[tx]]$table_pred_surv,
+        surv_plots = plot_surv(pred_data = predictions[[tx]]$table_pred_surv,
                               km_data = filtered_km_df,
                               km_include =  km_include,
-                              subtitle = subtitle)
+                              subtitle = subtitle,
+                              legend_label = legend_label),
+        hazard_plots = plot_hazards(pred_data = predictions[[tx]]$table_pred_hazard,
+                                    obs_data = predictions[[tx]]$table_bshazard,
+                                    subtitle = subtitle,
+                                    legend_label = legend_label)
       )
     }
   }
@@ -170,7 +197,8 @@ print.pred_plot <- function(x, ...) {
 
   cli::cli_alert_info("The following plots have been printed.")
 
-  print(x$plots)
+  # Suppress warnings, mainly to do with hazard plots for Gompertz models.
+  suppressWarnings(print(x$plots))
 
   invisible(x)
 }

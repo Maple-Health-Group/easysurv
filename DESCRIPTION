@@ -27,7 +27,6 @@ Imports:
     ggsurvfit,
     openxlsx,
     parsnip,
-    plotly,
     purrr,
     rlang,
     scales,

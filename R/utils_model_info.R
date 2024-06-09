@@ -89,6 +89,7 @@ get_fit_averages <- function(mod,
   out <- list()
   median_est <- list()
   engine <- mod$spec$engine
+  filtered_terms <- character(0)
 
   distribution <- if (engine %in% c("flexsurv", "flexsurvcure")) {
     mod$fit$dlist$name
@@ -352,17 +353,45 @@ get_surv_parameters <- function(models) {
   out
 }
 
-#' @importFrom purrr map
+#' @importFrom bshazard bshazard
 #' @importFrom dplyr slice
+#' @importFrom purrr map
+#' @importFrom rlang .data
+#' @importFrom stats predict
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr unnest
-#' @importFrom stats predict
 #' @noRd
-tidy_predict_surv <- function(models,
+tidy_predict_surv <- function(fit_models,
+                              tx_index = 1,
+                              model_index = 1,
                               new_data,
                               eval_time,
                               interval = "none",
                               special_profiles = FALSE) {
+
+  models <- fit_models$models[[model_index]]
+
+  #  Calculate smoothed estimate of hazards based on B-splines (bshazard)
+  hazard_formula <- stats::as.formula(
+    paste0("survival::Surv(time = ",
+           fit_models$info$time,
+           ", event = ",
+           fit_models$info$event,
+           ") ~ 1"))
+
+  table_bshazard <- with(
+    bshazard::bshazard(hazard_formula,
+                       data = fit_models$info$nested[["data"]][[tx_index]],
+                       verbose = FALSE
+    ),
+    data.frame(time, hazard, lower.ci, upper.ci)
+  ) |>
+    dplyr::rename(
+      est = .data$hazard,
+      lcl = .data$lower.ci,
+      ucl = .data$upper.ci
+    )
+
   # Start with NULLs to make dropping them easy with c()
   list_pred_surv <-
     list_pred_hazard <-
@@ -431,28 +460,10 @@ tidy_predict_surv <- function(models,
 
     table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
 
-    # TODO: check if this will work for survival engine.
-    hazard_formula <- models[[1]]$fit$call$formula
-
-    # will need to add data as an argument to the function
-
-    # table_bshazard <- with(
-    #   bshazard::bshazard(hazard_formula,
-    #                      data = data,
-    #                      verbose = FALSE
-    #   ),
-    #   data.frame(time, hazard, lower.ci, upper.ci)
-    # ) |>
-    #   dplyr::rename(
-    #     est = .data$hazard,
-    #     lcl = .data$lower.ci,
-    #     ucl = .data$upper.ci
-    #   )
-
-
+    # Label columns
+    table_pred_hazard <- label_table(table_pred_hazard)
 
   }
-
 
   if (profiles > 1) {
     for (i in seq_len(profiles)) {
@@ -517,7 +528,8 @@ tidy_predict_surv <- function(models,
     list(table_pred_surv_lower = table_pred_surv_lower),
     list(table_pred_surv_upper = table_pred_surv_upper),
     list(list_pred_hazard = list_pred_hazard),
-    list(table_pred_hazard = table_pred_hazard)
+    list(table_pred_hazard = table_pred_hazard),
+    list(table_bshazard = table_bshazard)
   )
 
   out

@@ -72,12 +72,12 @@ returns various outputs including model parameters, predictions, and plots.
 \examples{
 \dontrun{
 
-output_separate <- fit_models(
-  data = easysurv::easy_bc,
-  time = "recyrs",
-  event = "censrec",
-  predict_by = "group",
-  covariates = c("age", "treatment")
+output_test <- fit_models(
+data = easysurv::easy_bc,
+time = "recyrs",
+event = "censrec",
+predict_by = "group",
+covariates = "group"
 )
 }
 }

@@ -56,12 +56,12 @@
 #' @examples
 #' \dontrun{
 #'
-#' output_separate <- fit_models(
-#'   data = easysurv::easy_bc,
-#'   time = "recyrs",
-#'   event = "censrec",
-#'   predict_by = "group",
-#'   covariates = c("age", "treatment")
+#' output_test <- fit_models(
+#' data = easysurv::easy_bc,
+#' time = "recyrs",
+#' event = "censrec",
+#' predict_by = "group",
+#' covariates = "group"
 #' )
 #' }
 fit_models <- function(data,
@@ -90,6 +90,7 @@ fit_models <- function(data,
 
   # Create NULL objects ----
   cure_fractions <- NULL
+  nested <- NULL
 
   # Validate argument inputs ----
 
@@ -133,6 +134,7 @@ fit_models <- function(data,
     predict_list <- NULL
     approach <- "predict_by_none"
   } else {
+    nested <- data |> tidyr::nest(.by = predict_by)
     predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
     approach <- if (predict_by %in% covariates) {
       "predict_by_covariate"
@@ -221,11 +223,12 @@ fit_models <- function(data,
 
   # Fit models ----
 
+
+
   if (approach %in% c("predict_by_none", "predict_by_covariate")) {
     data_sets <- list(data)
     fit_labels <- "All"
   } else {
-    nested <- data |> tidyr::nest(.by = predict_by)
     data_sets <- nested[["data"]]
     fit_labels <- predict_list
   }
@@ -251,6 +254,7 @@ fit_models <- function(data,
     names(parameters) <-
     names(goodness_of_fit) <-
     names(fit_averages) <-
+    names(data_sets) <-
     fit_labels
   if (engine == "flexsurvcure") names(cure_fractions) <- fit_labels
 
@@ -265,7 +269,9 @@ fit_models <- function(data,
     predict_list = predict_list,
     distributions = distributions,
     km = km,
-    km_summary = km_summary
+    km_summary = km_summary,
+    data = data_sets,
+    nested = nested
   )
 
   # Return ----
