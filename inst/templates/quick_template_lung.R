@@ -1,19 +1,12 @@
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 ##
-##       ___  ____ ________  _________  ________   __
-##      / _ \/ __ `/ ___/ / / / ___/ / / / ___/ | / /
-##     /  __/ /_/ (__  ) /_/ (__  ) /_/ / /   | |/ /
-##     \___/\__,_/____/\__, /____/\__,_/_/    |___/
-##                    /____/
-##
 ## This script provides an example workflow for conducting "quick" survival
 ## analysis using the easysurv package.
 ##
-## It includes data import, assessment, filtering, model fitting, and Excel
+## It includes data import, assessment, model fitting, plotting and Excel
 ## export steps.
 ##
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
 
 # Initialize R -----------------------------------------------------------------
 
@@ -23,14 +16,12 @@ rm(list = ls())
 # Suppress scientific notation
 options(scipen = 999)
 
-# Attach the easysurv package
+# Attach the easysurv package and other packages for data manipulation
 library(easysurv)
-
-# Attach other packages you may require for data manipulation
 library(dplyr)
 
 
-# Data Import ------------------------------------------------------------------
+# Data Import and Assessment----------------------------------------------------
 
 # Useful data import packages include: haven, readxl, and readr.
 # Here we are importing a package dataset for demonstration purposes.
@@ -39,14 +30,13 @@ surv_data <- easy_lung
 # Inspect the first few rows to check it looks as expected.
 head(surv_data, 6)
 
-
-# Data Filtering and Assessment ------------------------------------------------
-
-# We recommend defining a "tibble" with the following variables:
+# We recommend defining surv_data with the following variables:
 # - "time"       [Numeric] Time of event/censor
 # - "event"      [Numeric] Status (0 = right censored, 1 = event)
-# - "group"     [Factor]  The treatment arm / grouping.
+# - "group"      [Factor]  The treatment arm / grouping.
+# However, these names are not required.
 
+# For the easy_lung data set, we need to re-code the status variable.
 surv_data <- surv_data |>
   # dplyr::filter(PARAMCD == "PFS") |> # Filtering may be relevant for your data
   dplyr::mutate(
@@ -58,13 +48,21 @@ surv_data <- surv_data |>
   dplyr::as_tibble() # Convert to tibble for easier viewing
 
 # Overwrite any labels impacted by re-coding
+attr(surv_data$event, "label")
 attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
+
+# Define levels of the group factor variable, for neater labeling and plotting.
+levels(surv_data$group)
 levels(surv_data$group) <- c("Male", "Female")
 
-# See the levels of the groups
-surv_data |> dplyr::count(group)
-surv_data |> dplyr::count(group, event)
-surv_data
+# Get a quick summary of the data.
+surv_summary <- easysurv::inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+surv_summary
 
 
 # easysurv analysis -----------------------------------------------------------

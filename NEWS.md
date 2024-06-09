@@ -3,7 +3,7 @@
 ## Major changes
 
 * Transitioned to a `tidymodels` framework for survival analysis. Several updates were required to reflect this change including to function names, arguments, supporting documentation, and templates.
-    * The `tidymodels` framework is a collection of R packages for modeling and machine learning using `tidyverse` principles. From the `tidymodels` framework, we take advantage of the `parsnip` and `censored` packages to specify models and predict survival outputs. 
+    * The `tidymodels` framework is a collection of R packages for modeling and machine learning using `tidyverse` principles. From the `tidymodels` framework, we take advantage of the `parsnip` and `censored` packages to specify models and predict survival outputs.
     * The `parsnip` package provides an interface to many different modeling packages, allowing for a consistent syntax for fitting models and making predictions. 
     * The `censored` package is a `parsnip` extension that provides engines for various models to handle censored data in survival analysis.
 * `fit_models()` allows for additional covariates to be specified in model fitting.
@@ -15,6 +15,7 @@
 * Introduced print methods for key functions to simplify and summarise outputs.
 * Changed primary plotting package from `ggsurvplot` to `ggsurvfit`. `ggsurvplot` generates warning messages when median survival lines are added and generates misaligned risk tables as of `ggplot2` version 3.5.0, while `ggsurvfit` is being actively maintained.
 * To facilitate interpretation of Schoenfeld residual plots, scaled Schoenfeld residuals are now used and facets are no longer produced by strata. 
+* Added an `inspect_surv_data()` function to inspect the survival data used in the analysis.
 
 
 

@@ -6,7 +6,6 @@
 * Add plots to Excel
 
 ### Medium priority
-* Add an inspect_surv_data() function to inspect the survival data.
 * Update quick_template_lung to include the new features.
 * Update quick_start, and also update/remove other quick_template files 
 (to discuss).
