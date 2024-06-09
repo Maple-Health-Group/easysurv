@@ -371,6 +371,12 @@ tidy_predict_surv <- function(fit_models,
 
   models <- fit_models$models[[model_index]]
 
+  if (is.null(fit_models$info$nested)) {
+    bs_data <- fit_models$info$data[[1]]
+  } else {
+    bs_data <- fit_models$info$nested[["data"]][[tx_index]]
+  }
+
   #  Calculate smoothed estimate of hazards based on B-splines (bshazard)
   hazard_formula <- stats::as.formula(
     paste0("survival::Surv(time = ",
@@ -381,7 +387,7 @@ tidy_predict_surv <- function(fit_models,
 
   table_bshazard <- with(
     bshazard::bshazard(hazard_formula,
-                       data = fit_models$info$nested[["data"]][[tx_index]],
+                       data = bs_data,
                        verbose = FALSE
     ),
     data.frame(time, hazard, lower.ci, upper.ci)
