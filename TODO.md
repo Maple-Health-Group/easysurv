@@ -6,7 +6,7 @@
 * Add plots to Excel
 
 ### Medium priority
-* Update quick_template_lung to include the new features.
+* Update quick_template_lung to remove do_... type code.
 * Update quick_start, and also update/remove other quick_template files 
 (to discuss).
 * Re-instate a brief vignette that includes the new features

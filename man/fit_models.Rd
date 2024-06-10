@@ -44,7 +44,8 @@ For flexsurvcure, options are "exp", "gamma", "gengamma", "gompertz",
 For flexsurvspline, dists are ignored in favour of k and scale.
 
 For survival, options are "exponential", "extreme", "gaussian",
-"loggaussian", "logistic", "lognormal", "rayleigh", "weibull".
+"loggaussian" (same as lognormal), "logistic", "lognormal", "rayleigh",
+"weibull".
 
 Default is \code{c("exp", "gamma", "gengamma", "gompertz",
   "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.}

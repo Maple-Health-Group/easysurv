@@ -18,7 +18,6 @@
 #' @importFrom tidyr pivot_longer
 plot_surv <- function(pred_data, km_data, km_include = TRUE,
                       legend_label = "Model", title = NULL, subtitle = NULL) {
-
   # Create visible binding for R CMD check (pred_data)
   .eval_time <- survival <- model <- NULL
 
@@ -33,43 +32,57 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
   )
 
   # Initialise plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
 
   # KM as first layer
   if (km_include) {
-    p <- p + geom_step(data = km_data, aes(x = time, y = surv), color = "black")
-    p <- p + geom_ribbon(data = km_data, aes(x = time,
-                                             ymin = lower,
-                                             ymax = upper), alpha = 0.2)
+    p <- p + ggplot2::geom_step(
+      data = km_data,
+      ggplot2::aes(
+        x = time,
+        y = surv
+      ),
+      color = "black"
+    )
+    p <- p + ggplot2::geom_ribbon(data = km_data, ggplot2::aes(
+      x = time,
+      ymin = lower,
+      ymax = upper
+    ), alpha = 0.2)
   }
 
   # Predictions as additional layer
-  p <- p + geom_line(data = long_data,
-                     aes(x = .eval_time,
-                         y = survival,
-                         color = model,
-                         group = model))
+  p <- p + ggplot2::geom_line(
+    data = long_data,
+    ggplot2::aes(
+      x = .eval_time,
+      y = survival,
+      color = model,
+      group = model
+    )
+  )
 
 
   # Add labels
-  p <- p + labs(
+  p <- p + ggplot2::labs(
     x = "Time",
     y = "Survival",
     color = ifelse(length(unique(long_data$model)) == 1,
-                   legend_label,
-                   paste0(legend_label, "s"))
+      legend_label,
+      paste0(legend_label, "s")
+    )
   )
 
   if (!is.null(title)) {
-    p <- p + ggtitle(title)
+    p <- p + ggplot2::ggtitle(title)
   }
 
   if (!is.null(subtitle)) {
-    p <- p + labs(subtitle = subtitle)
+    p <- p + ggplot2::labs(subtitle = subtitle)
   }
 
   # Add theme
-  p <- p + theme_bw()
+  p <- p + ggplot2::theme_bw()
 
   p
 }
@@ -93,8 +106,7 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
-                      title = NULL, subtitle = NULL) {
-
+                         title = NULL, subtitle = NULL) {
   # Create visible binding for R CMD check (pred_data)
   .eval_time <- hazards <- model <- NULL
 
@@ -103,36 +115,45 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(pred_data,
-                                   cols = -".eval_time",
-                                   names_to = "model",
-                                   values_to = "hazards"
+    cols = -".eval_time",
+    names_to = "model",
+    values_to = "hazards"
   )
 
   # Initialise plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
 
   # Observed hazards as first layer
-  p <- p + ggplot2::geom_line(data = obs_data,
-                              aes(x = time, y = est),
-                              color = "black")
-  p <- p + ggplot2::geom_ribbon(data = obs_data, aes(x = time,
-                                             ymin = lcl,
-                                             ymax = ucl), alpha = 0.2)
+  p <- p + ggplot2::geom_line(
+    data = obs_data,
+    ggplot2::aes(x = time, y = est),
+    color = "black"
+  )
+  p <- p + ggplot2::geom_ribbon(data = obs_data, ggplot2::aes(
+    x = time,
+    ymin = lcl,
+    ymax = ucl
+  ), alpha = 0.2)
 
   # Predictions as additional layer
-  p <- p + ggplot2::geom_line(data = long_data,
-                     aes(x = .eval_time,
-                         y = hazards,
-                         color = model,
-                         group = model))
+  p <- p + ggplot2::geom_line(
+    data = long_data,
+    ggplot2::aes(
+      x = .eval_time,
+      y = hazards,
+      color = model,
+      group = model
+    )
+  )
 
   # Add labels
-  p <- p + labs(
+  p <- p + ggplot2::labs(
     x = "Time",
     y = "Hazards",
     color = ifelse(length(unique(long_data$model)) == 1,
-                   legend_label,
-                   paste0(legend_label, "s"))
+      legend_label,
+      paste0(legend_label, "s")
+    )
   )
 
   if (!is.null(title)) {
@@ -150,7 +171,7 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
   }
 
   # Add theme
-  p <- p + theme_bw()
+  p <- p + ggplot2::theme_bw()
 
   p
 }
@@ -177,6 +198,7 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
 #'
 #' @export
 #'
+#' @importFrom ggplot2 xlab ylab theme
 #' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
@@ -192,9 +214,9 @@ plot_km <- function(fit,
     theme = plot_theme
   ) +
     ggsurvfit::add_censor_mark() +
-    xlab(xlab) +
-    ylab(ylab) +
-    theme(legend.position = legend_position)
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab) +
+    ggplot2::theme(legend.position = legend_position)
 
   if (risk_table) {
     out <- out + ggsurvfit::add_risktable(
@@ -204,7 +226,7 @@ plot_km <- function(fit,
     )
   }
 
-  out <- out + scale_ggsurvfit()
+  out <- out + ggsurvfit::scale_ggsurvfit()
 
   if (median_line) {
     out <- out + ggsurvfit::add_quantile(linetype = 2)
@@ -236,7 +258,6 @@ plot_km <- function(fit,
 #' @export
 #'
 #' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
-#' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 #' @importFrom scales pseudo_log_trans
 plot_cloglog <- function(fit,
@@ -251,10 +272,10 @@ plot_cloglog <- function(fit,
     theme = plot_theme
   ) +
     ggsurvfit::add_censor_mark() +
-    xlab(xlab) +
-    ylab(ylab) +
-    theme(legend.position = legend_position) +
-    scale_x_continuous(
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab) +
+    ggplot2::theme(legend.position = legend_position) +
+    ggplot2::scale_x_continuous(
       transform = scales::pseudo_log_trans(sigma = 0.01),
       labels = function(x) round(as.numeric(x), digits = 2)
     )

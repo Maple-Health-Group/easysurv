@@ -118,6 +118,7 @@ predict_and_plot <- function(fit_models,
     }
 
     if (inherits(fit_models, "pred_covariate")) {
+      # This relies on it being a factor variable.
       filtered_profile <- used_profile |>
         dplyr::filter(!!as.symbol(fit_models$info$predict_by) ==
           fit_models$info$predict_list[tx])

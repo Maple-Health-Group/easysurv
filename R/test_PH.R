@@ -211,13 +211,13 @@ print.test_ph <- function(x, ...) {
                   "have been printed."))
 
   cli::cli_h3("Schoenfeld residual plot")
-  cli::cli_text(c("A {.strong flat smoothed line} close to zero ",
+  cli::cli_alert_info(c("A {.strong flat smoothed line} close to zero ",
                   "supports the PH assumption."))
-  cli::cli_text(c("A {.strong non-flat smoothed line} with a trend ",
+  cli::cli_alert_info(c("A {.strong non-flat smoothed line} with a trend ",
                   "suggests the PH assumption is violated."))
 
   cli::cli_h3("Log cumulative hazard plot")
-  cli::cli_text(c(
+  cli::cli_alert_info(c(
     "{.strong Parallel Lines:} If the lines are roughly ",
     "parallel, this suggests that the proportional hazards ",
     "assumption holds."
@@ -227,7 +227,7 @@ print.test_ph <- function(x, ...) {
     "hazard ratios between groups are consistent over time."
   ))
 
-  cli::cli_text(c(
+  cli::cli_alert_info(c(
     "{.strong Non-Parallel Lines:} If the lines are not ",
     "parallel and diverge or converge, ",
     "the PH assumption may be violated. "
@@ -243,7 +243,7 @@ print.test_ph <- function(x, ...) {
     "it is important to consider the results of all tests and plots."
   ))
   cli::cli_alert_info(c("The full object can be inspected by running ",
-                        "{.code View()} on the test_ph output."))
+                        "{.code View()} on saved test_ph output."))
 
   invisible(x)
 }

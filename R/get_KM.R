@@ -119,6 +119,11 @@ get_km <- function(data,
   km_for_excel <- list(all = step_km(km_all))
 
   if (!is.null(group)) {
+
+    if (!is.factor(data[[group]])) {
+      data[[group]] <- as.factor(data[[group]])
+    }
+
     nested <- data |> tidyr::nest(.by = group)
 
     km_per_group <- lapply(
@@ -232,7 +237,7 @@ print.get_km <- function(x, ...) {
   cli::cli_text("The km_plot has been printed.")
   cli::cli_alert(c(
     "For more information, run {.code View()} ",
-    "on the get_km output."
+    "on saved get_km output."
   ))
 
   invisible(x)

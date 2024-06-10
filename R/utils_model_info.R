@@ -331,6 +331,19 @@ get_surv_parameters <- function(models) {
       get_vcov <- models[[i]]$fit$var |>
         as.data.frame()
 
+      if (models[[i]]$fit$dist == "rayleigh") {
+        # The survival package does not include the Log(scale) parameter in the
+        # vcov matrix for the Rayleigh distribution.
+
+        # As this is an edge case, this is handled for now by adding 0s to the
+        # vcov matrix.
+        if (!identical(models[[i]]$fit$coefficients, models[[i]]$fit$icoef)) {
+          get_vcov <- cbind(rbind(get_vcov, 0),0)
+          colnames(get_vcov) <- rownames(get_vcov) <- get_parameters$parameter
+        }
+
+      }
+
       # Make the column names consistent between models (v1, v2, v3, ...)
       colnames(get_vcov) <- paste0("v", seq_along(get_parameters$parameter))
 

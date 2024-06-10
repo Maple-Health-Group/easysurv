@@ -9,9 +9,12 @@
 #'   indicator data.
 #' @export
 #' @importFrom dplyr count group_by mutate slice
+#' @importFrom purrr discard
 #' @importFrom stats as.formula
 #' @importFrom survival Surv survfit
 inspect_surv_data <- function(data, time, event, group = NULL) {
+  # Create visible binding for R CMD check.
+  n <- factor_warning <- NULL
 
   ## Check data ----
   # Is it a data frame?
@@ -48,17 +51,24 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
   survival_summary <- summary(survival::survfit(surv_formula, data = data))$table
 
   if (is.null(group)) {
-
     sample_sizes <- data |> dplyr::count()
     events_summary <- data |>
-      dplyr::count(event) |>
+      dplyr::count(!!as.name(event)) |>
       dplyr::mutate(percent = n / sum(n))
-
   } else {
-    sample_sizes <- data |> dplyr::count(group)
+    if (!is.factor(data[[group]])) {
+      data[[group]] <- as.factor(data[[group]])
+      factor_warning <- paste0(
+        "The group column is not a factor variable. ",
+          "It is advised to convert this to a factor for ",
+          "other easysurv functions."
+      )
+    }
+
+    sample_sizes <- data |> dplyr::count(!!as.name(group))
     events_summary <- data |>
-      dplyr::count(group, event) |>
-      dplyr::group_by(group) |>
+      dplyr::count(!!as.name(group), !!as.name(event)) |>
+      dplyr::group_by(!!as.name(group)) |>
       dplyr::mutate(percent = n / sum(n))
   }
 
@@ -66,9 +76,11 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
     first_few_rows = first_few_rows,
     sample_sizes = sample_sizes,
     events_summary = events_summary,
-    survival_summary = survival_summary
+    survival_summary = survival_summary,
+    factor_warning = factor_warning
   )
 
-  out
+  out <- out |> purrr::discard(is.null)
 
+  out
 }
