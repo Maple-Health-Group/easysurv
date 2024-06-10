@@ -462,8 +462,7 @@ tidy_predict_surv <- function(fit_models,
       eval_time = eval_time,
       interval = interval
     ) |>
-      purrr::map(~ .x |>
-        tidyr::unnest(col = .pred))
+      purrr::map(~ .x |> tidyr::unnest(col = .pred))
 
     # Extract to summary tables
     table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
@@ -494,8 +493,7 @@ tidy_predict_surv <- function(fit_models,
       eval_time = eval_time,
       interval = interval
     ) |>
-      purrr::map(~ .x |>
-        tidyr::unnest(col = .pred))
+      purrr::map(~ .x |> tidyr::unnest(col = .pred))
 
     table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
 
@@ -512,8 +510,7 @@ tidy_predict_surv <- function(fit_models,
         type = "survival",
         eval_time = eval_time,
         interval = interval
-      ) |> purrr::map(~ .x |>
-        tidyr::unnest(col = .pred))
+      ) |> purrr::map(~ .x |> tidyr::unnest(col = .pred))
 
       # Extract to summary tables
       table_pred_surv[[i]] <-
@@ -537,8 +534,7 @@ tidy_predict_surv <- function(fit_models,
         type = "hazard",
         eval_time = eval_time,
         interval = interval
-      ) |> purrr::map(~ .x |>
-        tidyr::unnest(col = .pred))
+      ) |> purrr::map(~ .x |> tidyr::unnest(col = .pred))
 
       table_pred_hazard[[i]] <- extract_predictions(
         list_pred_hazard[[i]],

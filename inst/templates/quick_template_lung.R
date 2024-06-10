@@ -225,10 +225,10 @@ if (do_separate) {
 
 # Define a file name
 output_name <- paste0(
-    "easysurv output - ",
-    format(Sys.time(), "%Y-%m-%d %H.%M"),
-    ".xlsx"
-  )
+  "easysurv output - ",
+  format(Sys.time(), "%Y-%m-%d %H.%M"),
+  ".xlsx"
+)
 
 # Save and open the workbook
 openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
