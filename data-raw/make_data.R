@@ -47,9 +47,10 @@ adtte <-
   dplyr::mutate(
     AVAL = AVAL / 365.25,
     PARAM = gsub(PARAM,
-                 pattern = "(days)",
-                 replacement = "(years)",
-                 fixed = TRUE)
+      pattern = "(days)",
+      replacement = "(years)",
+      fixed = TRUE
+    )
   )
 
 # Attach labels

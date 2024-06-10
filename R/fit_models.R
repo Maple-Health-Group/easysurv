@@ -58,11 +58,11 @@
 #' \dontrun{
 #'
 #' output_test <- fit_models(
-#' data = easysurv::easy_bc,
-#' time = "recyrs",
-#' event = "censrec",
-#' predict_by = "group",
-#' covariates = "group"
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group",
+#'   covariates = "group"
 #' )
 #' }
 fit_models <- function(data,
@@ -371,7 +371,7 @@ print.fit_models <- function(x, ...) {
     }
 
     if ("strata" %in% colnames(x$fit_averages[[1]]) ||
-        inherits(x, "pred_covariate")) {
+      inherits(x, "pred_covariate")) {
       median_est <- x$fit_averages[[1]] |>
         dplyr::select(distribution, strata, median_est) |>
         tidyr::pivot_wider(names_from = "strata", values_from = "median_est") |>
@@ -431,7 +431,6 @@ print.fit_models <- function(x, ...) {
           ) |>
           dplyr::select(-distribution)
       } else {
-
         if ("strata" %in% colnames(x$fit_averages[[i]])) {
           median_est <- x$fit_averages[[i]] |>
             dplyr::select(distribution, strata, median_est) |>
@@ -440,12 +439,9 @@ print.fit_models <- function(x, ...) {
               values_from = "median_est"
             ) |>
             dplyr::select(-distribution)
-
         } else {
-
           median_est <- x$fit_averages[[i]]$median_est
         }
-
       }
 
       # Goodness of fits and fit averages

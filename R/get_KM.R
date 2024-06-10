@@ -68,7 +68,6 @@ get_km <- function(data,
   if (is.null(group)) {
     km_covariate <- 1
   } else {
-
     group_list <- if (is.null(group_labels)) {
       levels(droplevels(as.factor(data[[group]])))
     } else {
@@ -96,7 +95,9 @@ get_km <- function(data,
     )
   )
 
-  if (just_km) return(km)
+  if (just_km) {
+    return(km)
+  }
 
   km_formula_separate <- stats::as.formula(paste0(
     "survival::Surv(time = ",
@@ -119,7 +120,6 @@ get_km <- function(data,
   km_for_excel <- list(all = step_km(km_all))
 
   if (!is.null(group)) {
-
     if (!is.factor(data[[group]])) {
       data[[group]] <- as.factor(data[[group]])
     }
@@ -345,7 +345,6 @@ get_median_fu <- function(data,
 #' }
 #'
 step_km <- function(km) {
-
   # add the first 1 , 0.
   km <- survival::survfit0(km, start.time = 0)
 

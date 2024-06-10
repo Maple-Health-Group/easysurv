@@ -26,8 +26,6 @@ flexsurvcure_post <- function(pred, object) {
     pred <- flexsurvcure_rename_time(pred)
   }
 
-  #pred <- flexsurvcure_rename_time(pred)
-
   # if there's only one observation in new_data,
   # flexsurvcure output isn't nested
   if (!(".pred" %in% names(pred))) {

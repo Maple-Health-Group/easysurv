@@ -58,8 +58,10 @@ test_ph <- function(data,
 
   if (length(group_list) <= 1) {
     cli::cli_abort(c(
-      paste0("The {.field group} variable must contain multiple groups if ",
-             "looking to assess proportional hazards."),
+      paste0(
+        "The {.field group} variable must contain multiple groups if ",
+        "looking to assess proportional hazards."
+      ),
       "x" = "You've provided a group with the levels: {.var {group_list}}."
     ))
   }
@@ -155,8 +157,10 @@ print.test_ph <- function(x, ...) {
     "{.fn survival::survdiff} uses a log-rank test to test ",
     "for differences in survival curves between groups."
   ))
-  cli::cli_alert_info(c("The null hypothesis is that the survival curves are ",
-                        "the same."))
+  cli::cli_alert_info(c(
+    "The null hypothesis is that the survival curves are ",
+    "the same."
+  ))
   cli::cat_line()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
@@ -179,10 +183,14 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_h2("Test the Proportional Hazards Assumption of a Cox Regression")
 
-  cli::cli_alert_info(c("{.fn survival::cox.zph} tests the proportional ",
-                        "hazards assumption."))
-  cli::cli_alert_info(c("The null hypothesis is that the hazards are ",
-                        "proportional."))
+  cli::cli_alert_info(c(
+    "{.fn survival::cox.zph} tests the proportional ",
+    "hazards assumption."
+  ))
+  cli::cli_alert_info(c(
+    "The null hypothesis is that the hazards are ",
+    "proportional."
+  ))
   cli::cat_line()
 
   p_vals <- as.data.frame(x$coxph_test$table)[3]
@@ -190,12 +198,16 @@ print.test_ph <- function(x, ...) {
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (global_p_val > 0.05) {
-    cli::cli_alert_success(c("The global test suggests that the PH assumption ",
-                             "{.strong MAY BE} valid."))
+    cli::cli_alert_success(c(
+      "The global test suggests that the PH assumption ",
+      "{.strong MAY BE} valid."
+    ))
     cli::cli_alert_success("p-value: {.val {global_p_val}}.")
   } else {
-    cli::cli_alert_warning(c("The global test suggests that the PH assumption ",
-                             "{.strong MAY NOT BE} valid."))
+    cli::cli_alert_warning(c(
+      "The global test suggests that the PH assumption ",
+      "{.strong MAY NOT BE} valid."
+    ))
     cli::cli_alert_warning("p-value: {.val {global_p_val}}.")
   }
   cli::cli_end(divid)
@@ -207,14 +219,20 @@ print.test_ph <- function(x, ...) {
 
   print(x$schoenfeld_plot)
   print(x$cloglog_plot)
-  cli::cli_text(c("The Schoenfeld residuals and log cumulative hazard plots ",
-                  "have been printed."))
+  cli::cli_text(c(
+    "The Schoenfeld residuals and log cumulative hazard plots ",
+    "have been printed."
+  ))
 
   cli::cli_h3("Schoenfeld residual plot")
-  cli::cli_alert_info(c("A {.strong flat smoothed line} close to zero ",
-                  "supports the PH assumption."))
-  cli::cli_alert_info(c("A {.strong non-flat smoothed line} with a trend ",
-                  "suggests the PH assumption is violated."))
+  cli::cli_alert_info(c(
+    "A {.strong flat smoothed line} close to zero ",
+    "supports the PH assumption."
+  ))
+  cli::cli_alert_info(c(
+    "A {.strong non-flat smoothed line} with a trend ",
+    "suggests the PH assumption is violated."
+  ))
 
   cli::cli_h3("Log cumulative hazard plot")
   cli::cli_alert_info(c(
@@ -242,8 +260,10 @@ print.test_ph <- function(x, ...) {
     "PH tests may not always agree, so ",
     "it is important to consider the results of all tests and plots."
   ))
-  cli::cli_alert_info(c("The full object can be inspected by running ",
-                        "{.code View()} on saved test_ph output."))
+  cli::cli_alert_info(c(
+    "The full object can be inspected by running ",
+    "{.code View()} on saved test_ph output."
+  ))
 
   invisible(x)
 }

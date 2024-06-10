@@ -1,5 +1,4 @@
 test_that("separate models work in predict_and_plot()", {
-
   separate_models <- fit_models(
     data = easy_lung,
     time = "time",
@@ -38,19 +37,21 @@ test_that("joint models work in predict_and_plot()", {
 
 test_that("separate models work with survival engine in predict_and_plot()", {
   surv_models <- fit_models(
-      data = easy_lung,
-      time = "time",
-      event = "status",
-      predict_by = "sex",
-      dists = c("exponential",
-                "extreme",
-                "gaussian",
-                "logistic",
-                "lognormal",
-                "rayleigh",
-                "weibull"),
-      engine = "survival"
-    )
+    data = easy_lung,
+    time = "time",
+    event = "status",
+    predict_by = "sex",
+    dists = c(
+      "exponential",
+      "extreme",
+      "gaussian",
+      "logistic",
+      "lognormal",
+      "rayleigh",
+      "weibull"
+    ),
+    engine = "survival"
+  )
 
   expect_no_error(
     predict_and_plot(

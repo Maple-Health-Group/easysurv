@@ -22,7 +22,6 @@ predict_and_plot <- function(fit_models,
                              interval = "none",
                              km_include = TRUE,
                              subtitle_include = TRUE) {
-
   # Create visible binding for R CMD check
   group <- NULL
 
@@ -52,13 +51,15 @@ predict_and_plot <- function(fit_models,
   km_survfit <- fit_models[["info"]][["km"]]
   if (is.null(km_survfit[["strata"]])) {
     group_vec <- rep(1, length(km_survfit[["time"]]))
-    } else {
-      group_vec <- mapply(rep,
-                          seq_along(names(km_survfit[["strata"]])),
-                          km_survfit[["strata"]]) |>
-        unlist() |>
-        unname()
-      }
+  } else {
+    group_vec <- mapply(
+      rep,
+      seq_along(names(km_survfit[["strata"]])),
+      km_survfit[["strata"]]
+    ) |>
+      unlist() |>
+      unname()
+  }
 
   km_df <- data.frame(
     time  = km_survfit$time,
@@ -160,15 +161,19 @@ predict_and_plot <- function(fit_models,
       )
     } else {
       plots[[tx]] <- list(
-        surv_plots = plot_surv(pred_data = predictions[[tx]]$table_pred_surv,
-                              km_data = filtered_km_df,
-                              km_include =  km_include,
-                              subtitle = subtitle,
-                              legend_label = legend_label),
-        hazard_plots = plot_hazards(pred_data = predictions[[tx]]$table_pred_hazard,
-                                    obs_data = predictions[[tx]]$table_bshazard,
-                                    subtitle = subtitle,
-                                    legend_label = legend_label)
+        surv_plots = plot_surv(
+          pred_data = predictions[[tx]]$table_pred_surv,
+          km_data = filtered_km_df,
+          km_include = km_include,
+          subtitle = subtitle,
+          legend_label = legend_label
+        ),
+        hazard_plots = plot_hazards(
+          pred_data = predictions[[tx]]$table_pred_hazard,
+          obs_data = predictions[[tx]]$table_bshazard,
+          subtitle = subtitle,
+          legend_label = legend_label
+        )
       )
     }
   }
@@ -192,9 +197,10 @@ predict_and_plot <- function(fit_models,
 #' @export
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
 print.pred_plot <- function(x, ...) {
-
-  cli::cli_alert_info(paste0("Survival predictions are stored in the ",
-                             "prediction list, namely under 'table_pred_surv'"))
+  cli::cli_alert_info(paste0(
+    "Survival predictions are stored in the ",
+    "prediction list, namely under 'table_pred_surv'"
+  ))
 
   cli::cli_alert_info("The following plots have been printed.")
 

@@ -60,8 +60,8 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
       data[[group]] <- as.factor(data[[group]])
       factor_warning <- paste0(
         "The group column is not a factor variable. ",
-          "It is advised to convert this to a factor for ",
-          "other easysurv functions."
+        "It is advised to convert this to a factor for ",
+        "other easysurv functions."
       )
     }
 

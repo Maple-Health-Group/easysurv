@@ -58,13 +58,15 @@ test_that("separate models work with survival engine", {
       time = "time",
       event = "status",
       predict_by = "sex",
-      dists = c("exponential",
-                "extreme",
-                "gaussian",
-                "logistic",
-                "lognormal",
-                "rayleigh",
-                "weibull"),
+      dists = c(
+        "exponential",
+        "extreme",
+        "gaussian",
+        "logistic",
+        "lognormal",
+        "rayleigh",
+        "weibull"
+      ),
       engine = "survival"
     )
   )
@@ -81,13 +83,15 @@ test_that("joint models work with survival engine", {
       event = "status",
       predict_by = "sex",
       covariates = "sex",
-      dists = c("exponential",
-                "extreme",
-                "gaussian",
-                "logistic",
-                "lognormal",
-                "rayleigh",
-                "weibull"),
+      dists = c(
+        "exponential",
+        "extreme",
+        "gaussian",
+        "logistic",
+        "lognormal",
+        "rayleigh",
+        "weibull"
+      ),
       engine = "survival"
     )
   )

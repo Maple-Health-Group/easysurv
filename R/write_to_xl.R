@@ -16,7 +16,6 @@
 #' # To add
 #' }
 write_to_xl <- function(wb, object) {
-
   class_names <- c(
     "get_km",
     "test_ph",

@@ -2,7 +2,7 @@
 # This file has NOT been updated for the new easysurv release.
 ###########
 
-#nolint start
+# nolint start
 #' Example clinical trial data from `ggsurvfit`
 #'
 #' Background
@@ -65,7 +65,7 @@
 #'
 #' @source \url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
 "easy_adtte"
-#nolint end
+# nolint end
 
 #' Formatted Copy of `survival::lung`
 #'

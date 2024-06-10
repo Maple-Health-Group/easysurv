@@ -124,33 +124,52 @@ get_fit_averages <- function(mod,
     }
 
     for (i in seq_along(myseq)) {
-      if (!is.null(median)) median[[i]] <- dplyr::rename_with(
-        median[[i]], ~ paste0("median_", .x)
+      if (!is.null(median)) {
+        median[[i]] <- dplyr::rename_with(
+          median[[i]], ~ paste0("median_", .x)
         )
-      if (!is.null(restricted_mean)) restricted_mean[[i]] <- dplyr::rename_with(
-        restricted_mean[[i]], ~ paste0("rmst_", .x)
+      }
+      if (!is.null(restricted_mean)) {
+        restricted_mean[[i]] <- dplyr::rename_with(
+          restricted_mean[[i]], ~ paste0("rmst_", .x)
         )
-      if (!is.null(mean)) mean[[i]] <- dplyr::rename_with(
-        mean[[i]], ~ paste0("mean_", .x)
+      }
+      if (!is.null(mean)) {
+        mean[[i]] <- dplyr::rename_with(
+          mean[[i]], ~ paste0("mean_", .x)
         )
+      }
 
       out[[i]] <- data.frame(distribution = distribution)
-      if (!is.null(names(myseq)[i])) out[[i]] <- cbind(out[[i]],
-                                                       strata = names(myseq)[i])
+      if (!is.null(names(myseq)[i])) {
+        out[[i]] <- cbind(out[[i]],
+          strata = names(myseq)[i]
+        )
+      }
 
-      if (!is.null(median)) out[[i]] <- cbind(out[[i]],
-                                              median[[i]])
-      if (!is.null(restricted_mean)) out[[i]] <- cbind(out[[i]],
-                                                       restricted_mean[[i]])
-      if (!is.null(mean)) out[[i]] <- cbind(out[[i]],
-                                            mean[[i]])
+      if (!is.null(median)) {
+        out[[i]] <- cbind(
+          out[[i]],
+          median[[i]]
+        )
+      }
+      if (!is.null(restricted_mean)) {
+        out[[i]] <- cbind(
+          out[[i]],
+          restricted_mean[[i]]
+        )
+      }
+      if (!is.null(mean)) {
+        out[[i]] <- cbind(
+          out[[i]],
+          mean[[i]]
+        )
+      }
     }
 
     names(out) <- names(myseq)
     out <- data.table::rbindlist(out)
-
   } else if (engine == "survival") {
-
     # Check for groups
     # this only works for factors.
     # if there are multiple factors, this will need to be updated.
@@ -338,10 +357,9 @@ get_surv_parameters <- function(models) {
         # As this is an edge case, this is handled for now by adding 0s to the
         # vcov matrix.
         if (!identical(models[[i]]$fit$coefficients, models[[i]]$fit$icoef)) {
-          get_vcov <- cbind(rbind(get_vcov, 0),0)
+          get_vcov <- cbind(rbind(get_vcov, 0), 0)
           colnames(get_vcov) <- rownames(get_vcov) <- get_parameters$parameter
         }
-
       }
 
       # Make the column names consistent between models (v1, v2, v3, ...)
@@ -381,7 +399,6 @@ tidy_predict_surv <- function(fit_models,
                               eval_time,
                               interval = "none",
                               special_profiles = FALSE) {
-
   models <- fit_models$models[[model_index]]
 
   if (is.null(fit_models$info$nested)) {
@@ -392,16 +409,19 @@ tidy_predict_surv <- function(fit_models,
 
   #  Calculate smoothed estimate of hazards based on B-splines (bshazard)
   hazard_formula <- stats::as.formula(
-    paste0("survival::Surv(time = ",
-           fit_models$info$time,
-           ", event = ",
-           fit_models$info$event,
-           ") ~ 1"))
+    paste0(
+      "survival::Surv(time = ",
+      fit_models$info$time,
+      ", event = ",
+      fit_models$info$event,
+      ") ~ 1"
+    )
+  )
 
   table_bshazard <- with(
     bshazard::bshazard(hazard_formula,
-                       data = bs_data,
-                       verbose = FALSE
+      data = bs_data,
+      verbose = FALSE
     ),
     data.frame(time, hazard, lower.ci, upper.ci)
   ) |>
@@ -481,7 +501,6 @@ tidy_predict_surv <- function(fit_models,
 
     # Label columns
     table_pred_hazard <- label_table(table_pred_hazard)
-
   }
 
   if (profiles > 1) {
@@ -557,7 +576,6 @@ tidy_predict_surv <- function(fit_models,
 # Helper functions
 
 label_table <- function(df) {
-
   # Human readable label
   dist_labels <- c(
     "exp" = "Exponential",
@@ -586,17 +604,19 @@ label_table <- function(df) {
   current_names <- colnames(df)
 
   # Map current names to readable labels using the lookup table
-  new_names <- unname(sapply(current_names,
-                             function(x) {
-                               ifelse(x %in% names(dist_labels),
-                                      dist_labels[x],
-                                      x)
-                               }))
+  new_names <- unname(sapply(
+    current_names,
+    function(x) {
+      ifelse(x %in% names(dist_labels),
+        dist_labels[x],
+        x
+      )
+    }
+  ))
 
 
   # Set the new column names
   colnames(df) <- new_names
 
   df
-
 }
