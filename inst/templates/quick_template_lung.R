@@ -55,6 +55,10 @@ attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
 levels(surv_data$group)
 levels(surv_data$group) <- c("Male", "Female")
 
+# Overwrite time label for neater plotting (get_km and test_ph will use this)
+attr(surv_data$time, "label")
+attr(surv_data$time, "label") <- "Time (months)"
+
 # Get a quick summary of the data.
 surv_summary <- easysurv::inspect_surv_data(
   data = surv_data,
