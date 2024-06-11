@@ -40,6 +40,9 @@
 #' @param scale (Optional) A character vector specifying the scale parameter(s)
 #'   for spline-based models. Options are "hazard", "odds", and "normal".
 #'   Default is \code{"hazard"}.
+#' @param add_time_0 Optional. Uses `survival::survfit0()` to add a starting
+#'   time of 0 to the KM survfit object. This may be useful for plotting the KM
+#'   at a subsequent stage (in surv_plots). Default is TRUE.
 #'
 #' @return A list containing various outputs including model distributions,
 #' parameters, predictions, plots, and summary statistics.
@@ -81,7 +84,8 @@ fit_models <- function(data,
                        ),
                        engine = "flexsurv",
                        k = c(1, 2, 3),
-                       scale = c("hazard")) {
+                       scale = c("hazard"),
+                       add_time_0 = TRUE) {
   # Create key objects ----
   distributions <- list()
   models <- list()
@@ -213,16 +217,7 @@ fit_models <- function(data,
     type = "kaplan-meier"
   )
 
-  km <- survival::survfit0(km, start.time = 0)
-
-  # km <- do.call(survival::survfit0,
-  #   args = list(
-  #     formula = km_formula,
-  #     conf.int = 0.95,
-  #     data = data,
-  #     type = "kaplan-meier"
-  #   )
-  # )
+  if (add_time_0) km <- survival::survfit0(km, start.time = 0)
 
   km_summary <- as.data.frame(summary(km)$table)
   if (is.null(predict_by)) km_summary <- as.data.frame(t(km_summary))

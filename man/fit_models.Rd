@@ -13,7 +13,8 @@ fit_models(
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
   engine = "flexsurv",
   k = c(1, 2, 3),
-  scale = c("hazard")
+  scale = c("hazard"),
+  add_time_0 = TRUE
 )
 }
 \arguments{
@@ -61,6 +62,10 @@ numbers.}
 \item{scale}{(Optional) A character vector specifying the scale parameter(s)
 for spline-based models. Options are "hazard", "odds", and "normal".
 Default is \code{"hazard"}.}
+
+\item{add_time_0}{Optional. Uses \code{survival::survfit0()} to add a starting
+time of 0 to the KM survfit object. This may be useful for plotting the KM
+at a subsequent stage (in surv_plots). Default is TRUE.}
 }
 \value{
 A list containing various outputs including model distributions,

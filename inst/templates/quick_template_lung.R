@@ -175,13 +175,6 @@ if (do_separate) {
     data = surv_data
   )
   pred_separate
-
-  pred_separate2 <- predict_and_plot(
-    fit_models = models_separate,
-    eval_time = times,
-    data = surv_data,
-    add_plotly = TRUE
-  )
 }
 
 if (do_joint) {
