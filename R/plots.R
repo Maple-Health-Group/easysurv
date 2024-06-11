@@ -9,6 +9,8 @@
 #' @param legend_label Label for the legend. Default is "Model".
 #' @param title Title of the plot. Default is \code{NULL}.
 #' @param subtitle Subtitle of the plot. Default is \code{NULL}.
+#' @param plot_theme ggplot2 theme for the plot. Default is
+#'   \code{theme_easysurv()}.
 #'
 #' @return A ggplot2 object.
 #'
@@ -16,10 +18,16 @@
 #'
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
-plot_surv <- function(pred_data, km_data, km_include = TRUE,
-                      legend_label = "Model", title = NULL, subtitle = NULL) {
+plot_surv <- function(pred_data,
+                      km_data,
+                      km_include = TRUE,
+                      legend_label = "Model",
+                      title = NULL,
+                      subtitle = NULL,
+                      plot_theme = theme_easysurv()) {
+
   # Create visible binding for R CMD check (pred_data)
-  .eval_time <- survival <- model <- NULL
+  .eval_time <- model <- NULL
 
   # Create visible binding for R CMD check (km_data)
   time <- surv <- lower <- upper <- NULL
@@ -28,8 +36,11 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
   long_data <- tidyr::pivot_longer(pred_data,
     cols = -".eval_time",
     names_to = "model",
-    values_to = "survival"
+    values_to = "surv"
   )
+
+  # Use consistent column names to appease plotly later
+  long_data <- dplyr::rename(long_data, time = .eval_time)
 
   # Initialise plot
   p <- ggplot2::ggplot()
@@ -55,8 +66,8 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
   p <- p + ggplot2::geom_line(
     data = long_data,
     ggplot2::aes(
-      x = .eval_time,
-      y = survival,
+      x = time,
+      y = surv,
       color = model,
       group = model
     )
@@ -82,7 +93,7 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
   }
 
   # Add theme
-  p <- p + ggplot2::theme_bw()
+  p <- p + plot_theme
 
   p
 }
@@ -98,6 +109,8 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
 #' @param legend_label Label for the legend. Default is "Model".
 #' @param title Title of the plot. Default is \code{NULL}.
 #' @param subtitle Subtitle of the plot. Default is \code{NULL}.
+#' @param plot_theme ggplot2 theme for the plot. Default is
+#'   \code{theme_easysurv()}.
 #'
 #' @return A ggplot2 object.
 #'
@@ -105,10 +118,14 @@ plot_surv <- function(pred_data, km_data, km_include = TRUE,
 #'
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
-plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
-                         title = NULL, subtitle = NULL) {
+plot_hazards <- function(pred_data,
+                         obs_data,
+                         legend_label = "Model",
+                         title = NULL,
+                         subtitle = NULL,
+                         plot_theme = theme_easysurv()) {
   # Create visible binding for R CMD check (pred_data)
-  .eval_time <- hazards <- model <- NULL
+  .eval_time <- model <- NULL
 
   # Create visible binding for R CMD check (obs_data)
   time <- est <- lcl <- ucl <- NULL
@@ -117,8 +134,11 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
   long_data <- tidyr::pivot_longer(pred_data,
     cols = -".eval_time",
     names_to = "model",
-    values_to = "hazards"
+    values_to = "est"
   )
+
+  # Use consistent column names to appease plotly later
+  long_data <- dplyr::rename(long_data, time = .eval_time)
 
   # Initialise plot
   p <- ggplot2::ggplot()
@@ -139,8 +159,8 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
   p <- p + ggplot2::geom_line(
     data = long_data,
     ggplot2::aes(
-      x = .eval_time,
-      y = hazards,
+      x = time,
+      y = est,
       color = model,
       group = model
     )
@@ -171,7 +191,7 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
   }
 
   # Add theme
-  p <- p + ggplot2::theme_bw()
+  p <- p + plot_theme
 
   p
 }
@@ -184,49 +204,56 @@ plot_hazards <- function(pred_data, obs_data, legend_label = "Model",
 #'
 #' @param fit A \code{\link[survival]{survfit}} object representing the
 #'   survival data.
-#' @param risk_table Logical value indicating whether to include a risk table
+#' @param risktable Logical value indicating whether to include a risk table
 #'   below the plot. Default is \code{TRUE}.
+#' @param risktable_circles Logical value indicating whether to include circles
+#'   instead of text to label risk table strata. Default is \code{TRUE}.
 #' @param median_line Logical value indicating whether to include a line
 #'   representing the median survival time. Default is \code{TRUE}.
 #' @param legend_position Position of the legend in the plot. Default is
-#'   "bottom".
+#'   "top".
 #' @param plot_theme ggplot2 theme for the plot. Default is
-#'   \code{ggplot2::theme_bw()}.
-#' @param xlab Label for the x-axis. Default is "Time".
-#' @param ylab Label for the y-axis. Default is "Survival Probability (%)".
+#'   \code{theme_easysurv()}.
+#' @param risktable_theme ggplot2 theme for the risk table. Default is
+#'   \code{theme_risktable_easysurv()}.
 #' @return A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
 #'
-#' @importFrom ggplot2 xlab ylab theme
-#' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
+#' @importFrom ggplot2 theme
+#' @importFrom ggsurvfit add_censor_mark add_confidence_interval add_quantile
+#' @importFrom ggsurvfit add_risktable add_risktable_strata_symbol
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
-#' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 plot_km <- function(fit,
-                    risk_table = TRUE,
+                    risktable = TRUE,
+                    risktable_circles = TRUE,
                     median_line = TRUE,
-                    legend_position = "bottom",
-                    plot_theme = ggplot2::theme_bw(),
-                    xlab = "Time",
-                    ylab = "Survival Probability (%)") {
+                    legend_position = "top",
+                    plot_theme = theme_easysurv(),
+                    risktable_theme = theme_risktable_easysurv()) {
   out <- ggsurvfit::ggsurvfit(fit,
     type = "survival",
     theme = plot_theme
   ) +
     ggsurvfit::add_censor_mark() +
-    ggplot2::xlab(xlab) +
-    ggplot2::ylab(ylab) +
+    ggsurvfit::add_confidence_interval() +
+    ggsurvfit::scale_ggsurvfit() +
     ggplot2::theme(legend.position = legend_position)
 
-  if (risk_table) {
+  if (risktable) {
     out <- out + ggsurvfit::add_risktable(
       risktable_stats = "n.risk",
       stats_label = list(n.risk = "Number at risk"),
-      theme = ggsurvfit::theme_risktable_boxed()
+      theme = risktable_theme
     )
-  }
 
-  out <- out + ggsurvfit::scale_ggsurvfit()
+    if (risktable_circles) {
+      out <- out + ggsurvfit::add_risktable_strata_symbol(
+        symbol = "\U25CF",
+        size = 10
+      )
+    }
+  }
 
   if (median_line) {
     out <- out + ggsurvfit::add_quantile(linetype = 2)
@@ -243,16 +270,12 @@ plot_km <- function(fit,
 #'
 #' @param fit A \code{\link[survival]{survfit}} object representing the
 #'   survival data.
-#' @param risk_table Logical value indicating whether to include a risk table
-#'   below the plot. Default is \code{TRUE}.
 #' @param median_line Logical value indicating whether to include a line
-#'   representing the median survival time. Default is \code{TRUE}.
+#'   representing the median survival time. Default is \code{FALSE}.
 #' @param legend_position Position of the legend in the plot. Default is
-#'   "bottom".
+#'   "top".
 #' @param plot_theme ggplot2 theme for the plot. Default is
-#'   \code{ggplot2::theme_bw()}.
-#' @param xlab Label for the x-axis. Default is "Time (log-scaled)".
-#' @param ylab Label for the y-axis. Default is "log(-log(S(t)))".
+#'   \code{theme_easysurv()}.
 #' @return A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
@@ -261,19 +284,15 @@ plot_km <- function(fit,
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 #' @importFrom scales pseudo_log_trans
 plot_cloglog <- function(fit,
-                         risk_table = FALSE,
                          median_line = FALSE,
-                         legend_position = "bottom",
-                         plot_theme = ggplot2::theme_bw(),
-                         xlab = "Time (log-scaled)",
-                         ylab = "log(-log(S(t)))") {
+                         legend_position = "top",
+                         plot_theme = theme_easysurv()) {
   out <- ggsurvfit::ggsurvfit(fit,
     type = "cloglog",
     theme = plot_theme
   ) +
     ggsurvfit::add_censor_mark() +
-    ggplot2::xlab(xlab) +
-    ggplot2::ylab(ylab) +
+    ggsurvfit::add_confidence_interval() +
     ggplot2::theme(legend.position = legend_position) +
     ggplot2::scale_x_continuous(
       transform = scales::pseudo_log_trans(sigma = 0.01),
@@ -282,14 +301,6 @@ plot_cloglog <- function(fit,
 
   # Used scales::pseudo_log_trans(sigma = 0.01) to avoid "log" and the
   # infinite values in log-transformed axis.
-
-  if (risk_table) {
-    out <- out + ggsurvfit::add_risktable(
-      risktable_stats = "n.risk",
-      stats_label = list(n.risk = "Number at risk"),
-      theme = ggsurvfit::theme_risktable_boxed()
-    )
-  }
 
   if (median_line) {
     out <- out + ggsurvfit::add_quantile(linetype = 2)
@@ -314,14 +325,14 @@ plot_cloglog <- function(fit,
 #'   Default is `TRUE`.
 #' @param sline_se Logical. If `TRUE`, confidence intervals are displayed around
 #'   the smooth line. Default is `TRUE`.
-#' @param hline_col Color of the horizontal line. Default is `"red"`.
+#' @param hline_col Color of the horizontal line. Default is `"#F8766D"` (red).
 #' @param hline_size Line width of the horizontal line. Default is `1`.
 #' @param hline_alpha Transparency of the horizontal line. Default is `1`.
 #' @param hline_yintercept Y-intercept for the horizontal line. Default is `0`.
 #' @param hline_lty Line type for the horizontal line. Default is `"dashed"`.
-#' @param sline_col Color of the smooth line. Default is `"blue"`.
+#' @param sline_col Color of the smooth line. Default is `"#00BFC4"` (blue).
 #' @param sline_size Line width of the smooth line. Default is `1`.
-#' @param sline_alpha Transparency of the smooth line. Default is `0.3`.
+#' @param sline_alpha Transparency of the smooth line. Default is `0.2`.
 #' @param sline_lty Line type for the smooth line. Default is `"dashed"`.
 #' @param point_col Color of the points representing residuals. Default is
 #'   `"black"`.
@@ -345,14 +356,14 @@ plot_schoenfeld <- function(residuals,
                             hline = TRUE,
                             sline = TRUE,
                             sline_se = TRUE,
-                            hline_col = "red",
+                            hline_col = "#F8766D",
                             hline_size = 1,
                             hline_alpha = 1,
                             hline_yintercept = 0,
                             hline_lty = "dashed",
-                            sline_col = "blue",
+                            sline_col = "#00BFC4",
                             sline_size = 1,
-                            sline_alpha = 0.3,
+                            sline_alpha = 0.2,
                             sline_lty = "dashed",
                             point_col = "black",
                             point_size = 1,
@@ -383,11 +394,100 @@ plot_schoenfeld <- function(residuals,
     gg_zph <- gg_zph + ggplot2::geom_smooth(
       col = sline_col, se = sline_se, method = "loess",
       linewidth = sline_size, lty = sline_lty, alpha = sline_alpha,
-      formula = y ~ x
+      formula = y ~ x,
+      fill = sline_col
     )
   }
 
   gg_zph <- gg_zph + plot_theme
 
   gg_zph
+}
+
+#' @noRd
+#' @importFrom ggplot2 aes
+#' @importFrom plotly ggplotly config layout
+plotly_surv <- function(surv_plot) {
+
+  # Create visible binding for R CMD check
+  model <- time <- surv <- NULL
+
+  # group = 1 was required so that tooltips do not cause display issues.
+  out <- surv_plot + ggplot2::aes(text = paste0(
+    "<b>",
+    `if`(is.null(model), "KM", model),
+    "</b>",
+    " Time: ",
+    format(time,
+           big.mark = ",",
+           digits = 2,
+           nsmall = 2,
+           trim = TRUE),
+    " Surv: ",
+    sprintf(surv, fmt = "%.3f")
+  ), group = 1)
+
+  out <- plotly::ggplotly(out, tooltip = c("text")) |>
+    plotly::config(modeBarButtonsToRemove = c('zoom',
+                                              'pan2d',
+                                              'zoomIn',
+                                              'zoomOut',
+                                              'autoScale',
+                                              'select2d',
+                                              'lasso2d'),
+                   displaylogo = FALSE) |>
+    plotly::layout(hovermode = "x unified")
+
+  for (i in seq_along(out$x$data)) {
+    # Remove the tooltip for any confidence interval bands
+    if ("fill" %in% names(out$x$data[[i]])) {
+      out$x$data[[i]]$hoverinfo <- "skip"
+    }
+  }
+
+  out
+}
+
+#' @noRd
+#' @importFrom ggplot2 aes
+#' @importFrom plotly ggplotly config layout
+plotly_hazards <- function(hazard_plot) {
+
+  # Create visible binding for R CMD check
+  model <- time <- est <- NULL
+
+  # group = 1 was required so that tooltips do not cause display issues.
+  out <- hazard_plot + ggplot2::aes(text = paste0(
+    "<b>",
+    `if`(is.null(model), "Observed", model),
+    "</b>",
+    " Time: ",
+    format(time,
+           big.mark = ",",
+           digits = 2,
+           nsmall = 2,
+           trim = TRUE),
+    " Hazard: ",
+    sprintf(est, fmt = "%.3f")
+  ), group = 1)
+
+  out <- plotly::ggplotly(out, tooltip = c("text")) |>
+    plotly::config(modeBarButtonsToRemove = c('zoom',
+                                              'pan2d',
+                                              'zoomIn',
+                                              'zoomOut',
+                                              'autoScale',
+                                              'select2d',
+                                              'lasso2d'),
+                   displaylogo = FALSE) |>
+    plotly::layout(hovermode = "x unified")
+
+  for (i in seq_along(out$x$data)) {
+    # Remove the tooltip for any confidence interval bands
+    if ("fill" %in% names(out$x$data[[i]])) {
+      out$x$data[[i]]$hoverinfo <- "skip"
+    }
+  }
+
+  out
 }

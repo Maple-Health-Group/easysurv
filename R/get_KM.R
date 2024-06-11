@@ -23,6 +23,7 @@
 #' @export
 #'
 #' @importFrom cli cli_abort
+#' @importFrom ggsurvfit survfit2
 #' @importFrom survival Surv survfit
 #' @importFrom stats as.formula
 #' @importFrom tidyr nest
@@ -86,13 +87,15 @@ get_km <- function(data,
     km_covariate
   ))
 
-  km <- do.call(survival::survfit,
-    args = list(
-      formula = km_formula,
-      conf.int = 0.95,
-      data = data,
-      type = "kaplan-meier"
-    )
+  # ggsurvfit::survfit2 as an alternative to survival::survfit
+  # it returns the calling environment, which means it removes things like
+  # group=Male from the plot output, and keeps the Time label.
+  # Revisit if this turns out to be a problem.
+  km <- ggsurvfit::survfit2(
+    formula = km_formula,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
   )
 
   if (just_km) {
@@ -108,13 +111,11 @@ get_km <- function(data,
     1
   ))
 
-  km_all <- do.call(survival::survfit,
-    args = list(
-      formula = km_formula_separate,
-      conf.int = 0.95,
-      data = data,
-      type = "kaplan-meier"
-    )
+  km_all <- survival::survfit(
+    formula = km_formula_separate,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
   )
 
   km_for_excel <- list(all = step_km(km_all))
@@ -234,6 +235,7 @@ print.get_km <- function(x, ...) {
 
   cli::cat_line()
   cli::cli_rule()
+  print(x$km_plot)
   cli::cli_text("The km_plot has been printed.")
   cli::cli_alert(c(
     "For more information, run {.code View()} ",

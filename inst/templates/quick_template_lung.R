@@ -68,9 +68,6 @@ surv_summary
 # easysurv analysis -----------------------------------------------------------
 ## Kaplan Meier analysis -------------------------------------------------------
 
-# Toggle the comment on the next line to see more about get_km
-# ?get_km
-
 km_check <- easysurv::get_km(
   data = surv_data,
   time = "time",
@@ -81,9 +78,6 @@ km_check <- easysurv::get_km(
 km_check
 
 ## Proportional Hazards Tests ------------------------------------------
-
-# Toggle the comment on the next line to see more about test_ph
-# ?test_ph
 
 ph_check <- easysurv::test_ph(
   data = surv_data,
@@ -181,6 +175,13 @@ if (do_separate) {
     data = surv_data
   )
   pred_separate
+
+  pred_separate2 <- predict_and_plot(
+    fit_models = models_separate,
+    eval_time = times,
+    data = surv_data,
+    add_plotly = TRUE
+  )
 }
 
 if (do_joint) {

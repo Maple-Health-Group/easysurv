@@ -10,7 +10,8 @@ predict_and_plot(
   data,
   interval = "none",
   km_include = TRUE,
-  subtitle_include = TRUE
+  subtitle_include = TRUE,
+  add_plotly = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ estimates in the plot outputs. Default is \code{TRUE}.}
 
 \item{subtitle_include}{A logical indicating whether to include the subtitle.
 Default is \code{TRUE}. The subtitle is the name of the group.}
+
+\item{add_plotly}{A logical indicating whether to add interactive plotly
+outputs for each plot. Default is \code{FALSE}.}
 }
 \description{
 Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.

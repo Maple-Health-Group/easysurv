@@ -10,7 +10,8 @@ plot_surv(
   km_include = TRUE,
   legend_label = "Model",
   title = NULL,
-  subtitle = NULL
+  subtitle = NULL,
+  plot_theme = theme_easysurv()
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ Kaplan-Meier survival data. Default is \code{TRUE}.}
 \item{title}{Title of the plot. Default is \code{NULL}.}
 
 \item{subtitle}{Subtitle of the plot. Default is \code{NULL}.}
+
+\item{plot_theme}{ggplot2 theme for the plot. Default is
+\code{theme_easysurv()}.}
 }
 \value{
 A ggplot2 object.

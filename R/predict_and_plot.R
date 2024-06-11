@@ -11,6 +11,8 @@
 #'  estimates in the plot outputs. Default is \code{TRUE}.
 #' @param subtitle_include A logical indicating whether to include the subtitle.
 #'  Default is \code{TRUE}. The subtitle is the name of the group.
+#' @param add_plotly A logical indicating whether to add interactive plotly
+#'   outputs for each plot. Default is \code{FALSE}.
 #'
 #' @export
 #'
@@ -21,7 +23,8 @@ predict_and_plot <- function(fit_models,
                              data,
                              interval = "none",
                              km_include = TRUE,
-                             subtitle_include = TRUE) {
+                             subtitle_include = TRUE,
+                             add_plotly = FALSE) {
   # Create visible binding for R CMD check
   group <- NULL
 
@@ -184,6 +187,22 @@ predict_and_plot <- function(fit_models,
   out <- list(
     profiles = profiles$profiles, predictions = predictions, plots = plots
   )
+
+  if (add_plotly) {
+    plotly <- plots
+
+    for (i in seq_along(plots)) {
+
+      plotly[[i]]$surv_plots <- plotly_surv(plots[[i]]$surv_plots)
+
+      plotly[[i]]$hazard_plots <- plotly_hazards(plots[[i]]$hazard_plots)
+
+    }
+
+    names(plotly) <- names(plots)
+
+    out$plotly <- plotly
+  }
 
   class(out) <- c(class(out), "pred_plot")
 

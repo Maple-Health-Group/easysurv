@@ -49,7 +49,7 @@
 #' @importFrom dplyr select
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
-#' @importFrom survival survfit
+#' @importFrom survival survfit survfit0
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr nest
 #' @importFrom rlang arg_match
@@ -206,14 +206,23 @@ fit_models <- function(data,
   ))
 
   # Fit KM ----
-  km <- do.call(survival::survfit,
-    args = list(
-      formula = km_formula,
-      conf.int = 0.95,
-      data = data,
-      type = "kaplan-meier"
-    )
+  km <- survival::survfit(
+    formula = km_formula,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
   )
+
+  km <- survival::survfit0(km, start.time = 0)
+
+  # km <- do.call(survival::survfit0,
+  #   args = list(
+  #     formula = km_formula,
+  #     conf.int = 0.95,
+  #     data = data,
+  #     type = "kaplan-meier"
+  #   )
+  # )
 
   km_summary <- as.data.frame(summary(km)$table)
   if (is.null(predict_by)) km_summary <- as.data.frame(t(km_summary))
@@ -223,8 +232,6 @@ fit_models <- function(data,
 
 
   # Fit models ----
-
-
 
   if (approach %in% c("predict_by_none", "predict_by_covariate")) {
     data_sets <- list(data)

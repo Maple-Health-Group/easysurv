@@ -6,33 +6,35 @@
 \usage{
 plot_km(
   fit,
-  risk_table = TRUE,
+  risktable = TRUE,
+  risktable_circles = TRUE,
   median_line = TRUE,
-  legend_position = "bottom",
-  plot_theme = ggplot2::theme_bw(),
-  xlab = "Time",
-  ylab = "Survival Probability (\%)"
+  legend_position = "top",
+  plot_theme = theme_easysurv(),
+  risktable_theme = theme_risktable_easysurv()
 )
 }
 \arguments{
 \item{fit}{A \code{\link[survival]{survfit}} object representing the
 survival data.}
 
-\item{risk_table}{Logical value indicating whether to include a risk table
+\item{risktable}{Logical value indicating whether to include a risk table
 below the plot. Default is \code{TRUE}.}
+
+\item{risktable_circles}{Logical value indicating whether to include circles
+instead of text to label risk table strata. Default is \code{TRUE}.}
 
 \item{median_line}{Logical value indicating whether to include a line
 representing the median survival time. Default is \code{TRUE}.}
 
 \item{legend_position}{Position of the legend in the plot. Default is
-"bottom".}
+"top".}
 
 \item{plot_theme}{ggplot2 theme for the plot. Default is
-\code{ggplot2::theme_bw()}.}
+\code{theme_easysurv()}.}
 
-\item{xlab}{Label for the x-axis. Default is "Time".}
-
-\item{ylab}{Label for the y-axis. Default is "Survival Probability (\%)".}
+\item{risktable_theme}{ggplot2 theme for the risk table. Default is
+\code{theme_risktable_easysurv()}.}
 }
 \value{
 A ggplot object representing the Kaplan-Meier survival curve plot.

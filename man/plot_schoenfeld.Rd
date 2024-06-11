@@ -9,14 +9,14 @@ plot_schoenfeld(
   hline = TRUE,
   sline = TRUE,
   sline_se = TRUE,
-  hline_col = "red",
+  hline_col = "#F8766D",
   hline_size = 1,
   hline_alpha = 1,
   hline_yintercept = 0,
   hline_lty = "dashed",
-  sline_col = "blue",
+  sline_col = "#00BFC4",
   sline_size = 1,
-  sline_alpha = 0.3,
+  sline_alpha = 0.2,
   sline_lty = "dashed",
   point_col = "black",
   point_size = 1,
@@ -38,7 +38,7 @@ Default is \code{TRUE}.}
 \item{sline_se}{Logical. If \code{TRUE}, confidence intervals are displayed around
 the smooth line. Default is \code{TRUE}.}
 
-\item{hline_col}{Color of the horizontal line. Default is \code{"red"}.}
+\item{hline_col}{Color of the horizontal line. Default is \code{"#F8766D"} (red).}
 
 \item{hline_size}{Line width of the horizontal line. Default is \code{1}.}
 
@@ -48,11 +48,11 @@ the smooth line. Default is \code{TRUE}.}
 
 \item{hline_lty}{Line type for the horizontal line. Default is \code{"dashed"}.}
 
-\item{sline_col}{Color of the smooth line. Default is \code{"blue"}.}
+\item{sline_col}{Color of the smooth line. Default is \code{"#00BFC4"} (blue).}
 
 \item{sline_size}{Line width of the smooth line. Default is \code{1}.}
 
-\item{sline_alpha}{Transparency of the smooth line. Default is \code{0.3}.}
+\item{sline_alpha}{Transparency of the smooth line. Default is \code{0.2}.}
 
 \item{sline_lty}{Line type for the smooth line. Default is \code{"dashed"}.}
 

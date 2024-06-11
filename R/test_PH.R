@@ -17,6 +17,7 @@
 #'
 #' @export
 #'
+#' @importFrom ggsurvfit survfit2
 #' @importFrom stats as.formula
 #' @importFrom survival cox.zph coxph survdiff Surv
 #'
@@ -34,7 +35,7 @@ test_ph <- function(data,
                     time,
                     event,
                     group,
-                    plot_theme = ggplot2::theme_bw()) {
+                    plot_theme = theme_easysurv()) {
   if (!is.data.frame(data)) {
     cli::cli_abort(c(
       "The {.var data} argument must have class {.cls data.frame}.",
@@ -72,13 +73,20 @@ test_ph <- function(data,
     ") ~ ", group
   ))
 
-  km_all <- do.call(survival::survfit,
-    args = list(
-      formula = ph_formula,
-      conf.int = 0.95,
-      data = data,
-      type = "kaplan-meier"
-    )
+  # km_all <- do.call(survival::survfit,
+  #   args = list(
+  #     formula = ph_formula,
+  #     conf.int = 0.95,
+  #     data = data,
+  #     type = "kaplan-meier"
+  #   )
+  # )
+
+  km_all <- ggsurvfit::survfit2(
+    formula = ph_formula,
+    conf.int = 0.95,
+    data = data,
+    type = "kaplan-meier"
   )
 
   cloglog_plot <- plot_cloglog(km_all,
@@ -100,10 +108,10 @@ test_ph <- function(data,
 
   schoenfeld_residuals <- get_schoenfeld(coxph_test)
 
+  # removing plot_theme for now, since theme_easysurv() strips right axis line
   schoenfeld_plot <-
     plot_schoenfeld(
-      residuals = schoenfeld_residuals,
-      plot_theme = plot_theme
+      residuals = schoenfeld_residuals
     )
 
   out <- list(

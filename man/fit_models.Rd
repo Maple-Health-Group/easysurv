@@ -74,11 +74,11 @@ returns various outputs including model parameters, predictions, and plots.
 \dontrun{
 
 output_test <- fit_models(
-data = easysurv::easy_bc,
-time = "recyrs",
-event = "censrec",
-predict_by = "group",
-covariates = "group"
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  predict_by = "group",
+  covariates = "group"
 )
 }
 }

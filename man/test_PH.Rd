@@ -4,7 +4,7 @@
 \alias{test_ph}
 \title{Test Proportional Hazards Assumption}
 \usage{
-test_ph(data, time, event, group, plot_theme = ggplot2::theme_bw())
+test_ph(data, time, event, group, plot_theme = theme_easysurv())
 }
 \arguments{
 \item{data}{A data frame containing the survival data.}
