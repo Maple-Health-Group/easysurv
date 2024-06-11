@@ -34,7 +34,7 @@ head(surv_data, 6)
 # - "time"       [Numeric] Time of event/censor
 # - "event"      [Numeric] Status (0 = right censored, 1 = event)
 # - "group"      [Factor]  The treatment arm / grouping.
-# However, these names are not required.
+# These names are not required, but are useful for this template.
 
 # For the easy_lung data set, we need to re-code the status variable.
 surv_data <- surv_data |>
@@ -94,70 +94,29 @@ ph_check
 # After assessing the Kaplan Meier and Proportional Hazards outputs,
 # choose a set of analyses to perform.
 
-do_separate <- TRUE # TRUE: run standard parametric model fits (separate)
-do_joint <- TRUE # TRUE: run standard parametric model fits (joint)
-do_splines <- TRUE # TRUE: run spline model fits
-do_cure <- TRUE # TRUE: run mixture cure model fits
-
 ## Model Fitting ---------------------------------------------------------------
-
-# Toggle line below to see the function help
-# ?fit_models
 
 ### Separate fits --------------------------------------------------------------
 
-if (do_separate) {
-  models_separate <- easysurv::fit_models(
-    data = surv_data,
-    time = "time",
-    event = "event",
-    predict_by = "group"
-  )
-  models_separate
-
-}
+models_separate <- easysurv::fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
+)
+models_separate
 
 ### Joint fits -----------------------------------------------------------------
 
-if (do_joint) {
-  models_joint <- easysurv::fit_models(
-    data = surv_data,
-    time = "time",
-    event = "event",
-    predict_by = "group",
-    covariates = "group"
-  )
-  models_joint
-}
+models_joint <- easysurv::fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group",
+  covariates = "group"
+)
+models_joint
 
-### Spline fits ----------------------------------------------------------------
-
-if (do_splines) {
-  models_splines <- easysurv::fit_models(
-    data = surv_data,
-    time = "time",
-    event = "event",
-    predict_by = "group",
-    engine = "flexsurvspline",
-    k = c(1, 2, 3),
-    scale = "hazard"
-  )
-  models_splines
-}
-
-
-### Mixture cure fits ----------------------------------------------------------
-
-if (do_cure) {
-  models_cure <- easysurv::fit_models(
-    data = surv_data,
-    time = "time",
-    event = "event",
-    predict_by = "group",
-    engine = "flexsurvcure"
-  )
-  models_cure
-}
 
 ## Predictions -----------------------------------------------------------------
 
@@ -168,62 +127,56 @@ times <- seq(
   length.out = 200
 )
 
-if (do_separate) {
-  pred_separate <- predict_and_plot(
-    fit_models = models_separate,
-    eval_time = times,
-    data = surv_data
-  )
-  pred_separate
-}
+pred_separate <- predict_and_plot(
+  fit_models = models_separate,
+  eval_time = times,
+  data = surv_data
+)
+pred_separate
 
-if (do_joint) {
-  pred_joint <- predict_and_plot(
-    fit_models = models_joint,
-    eval_time = times,
-    data = surv_data
-  )
-  pred_joint
-}
-
-if (do_splines) {
-  pred_splines <- predict_and_plot(
-    fit_models = models_splines,
-    eval_time = times,
-    data = surv_data
-  )
-  pred_splines
-}
-
-if (do_cure) {
-  pred_cure <- predict_and_plot(
-    fit_models = models_cure,
-    eval_time = times,
-    data = surv_data
-  )
-  pred_cure
-}
+pred_joint <- predict_and_plot(
+  fit_models = models_joint,
+  eval_time = times,
+  data = surv_data
+)
+pred_joint
 
 
 ## Excel Exports ---------------------------------------------------------------
 
-wb <- openxlsx::createWorkbook()
-write_to_xl(wb, km_check)
-write_to_xl(wb, ph_check)
+### Separate fits --------------------------------------------------------------
+# Note: use different files for different fit types to avoid clashes
+wb_separate <- openxlsx::createWorkbook()
+write_to_xl(wb_separate, km_check)
+write_to_xl(wb_separate, ph_check)
+write_to_xl(wb_separate, models_separate)
+write_to_xl(wb_separate, pred_separate)
 
-# Note: we recommend different Excel workbooks for different fit types.
-if (do_separate) {
-  write_to_xl(wb, models_separate)
-  write_to_xl(wb, pred_separate)
-}
-
-# Define a file name
-output_name <- paste0(
-  "easysurv output - ",
+# Define file name
+name_separate <- paste0(
+  "easysurv output separate - ",
   format(Sys.time(), "%Y-%m-%d %H.%M"),
   ".xlsx"
 )
 
 # Save and open the workbook
-openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
-openxlsx::openXL(output_name)
+openxlsx::saveWorkbook(wb_separate, file = name_separate, overwrite = TRUE)
+openxlsx::openXL(name_separate)
+
+### Joint fits --------------------------------------------------------------
+wb_joint <- openxlsx::createWorkbook()
+write_to_xl(wb_joint, km_check)
+write_to_xl(wb_joint, ph_check)
+write_to_xl(wb_joint, models_joint)
+write_to_xl(wb_joint, pred_joint)
+
+# Define file name
+name_joint <- paste0(
+  "easysurv output joint - ",
+  format(Sys.time(), "%Y-%m-%d %H.%M"),
+  ".xlsx"
+)
+
+# Save and open the workbook
+openxlsx::saveWorkbook(wb_joint, file = name_joint, overwrite = TRUE)
+openxlsx::openXL(name_joint)

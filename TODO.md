@@ -1,19 +1,9 @@
 # easysurv to do list
 
 ## This release
-
-### High priority
-* Add plots to Excel
-
-### Medium priority
-* Update quick_template_lung to remove do_... type code.
 * Update quick_start, and also update/remove other quick_template files 
 (to discuss).
 * Re-instate a brief vignette that includes the new features
-
-
-### Low priority
-* ...
 
 ### Final steps (to save til end)
 * Update the version number in the DESCRIPTION file to one we're happy with.
@@ -24,7 +14,6 @@
 
 ## Future releases
 
-* Re-instate plotly support.
 * Look into adding integrated brier scores that the censored package can help 
 with.
 * Vignettes for other workflows.

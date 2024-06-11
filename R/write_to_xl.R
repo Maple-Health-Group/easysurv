@@ -270,7 +270,23 @@ write_to_xl <- function(wb, object) {
       }
     }
 
-    # TODO: Add plots to Excel.
+    for (tx in seq_along(object$plots)) {
+      sheet_name <- paste0("Plots", tx)
+      add_sheet(wb, sheet_name)
+
+      for (plot in seq_along(object$plots[[tx]])) {
+
+        suppressWarnings(print(object$plots[[tx]][[plot]]))
+
+        openxlsx::insertPlot(wb, sheet_name,
+          width = 8,
+          height = 6,
+          startRow = 2,
+          startCol = 2 + (plot - 1) * 10,
+          fileType = "png", units = "in"
+        )
+      }
+    }
   }
 
   invisible()
