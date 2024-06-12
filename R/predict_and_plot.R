@@ -217,8 +217,7 @@ predict_and_plot <- function(fit_models,
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
 print.pred_plot <- function(x, ...) {
   cli::cli_alert_info(paste0(
-    "Survival predictions are stored in the ",
-    "prediction list, namely under 'table_pred_surv'"
+    "Survival predictions are stored in the prediction list."
   ))
 
   cli::cli_alert_info("The following plots have been printed.")

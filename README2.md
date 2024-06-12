@@ -161,30 +161,14 @@ print(ph_check)
 groupFemale -0.5310235 0.5880028 0.1671786 -3.176385 0.001491229
 The exp(coef) column shows the hazard ratio was <span style='color: #0000BB;'>0.588</span>.
 &#10;── <span style='font-weight: bold;'>Test Survival Curve Differences</span> ──
-&#10;<span style='color: #00BBBB;'>ℹ</span> `survival::survdiff()` uses a log-rank test to test for differences in survival curves between groups.
-<span style='color: #00BBBB;'>ℹ</span> The null hypothesis is that the survival curves are the same.
-<span style='color: #00BB00;'>✔</span> The test suggests that survival differences between groups <span style='font-weight: bold;'>ARE</span> statistically significant.
-<span style='color: #00BB00;'>✔</span> p-value: <span style='color: #0000BB;'>0.001</span>.
+&#10;<span style='color: #00BB00;'>✔</span> `survival::survdiff()` found a p-value of <span style='color: #0000BB;'>0.001</span>, which suggests that survival differences between groups are statistically significant.
 &#10;── <span style='font-weight: bold;'>Test the Proportional Hazards Assumption of a Cox Regression</span> ──
-&#10;<span style='color: #00BBBB;'>ℹ</span> `survival::cox.zph()` tests the proportional hazards assumption.
-<span style='color: #00BBBB;'>ℹ</span> The null hypothesis is that the hazards are proportional.
-<span style='color: #00BB00;'>✔</span> The global test suggests that the PH assumption <span style='font-weight: bold;'>MAY BE</span> valid.
-<span style='color: #00BB00;'>✔</span> p-value: <span style='color: #0000BB;'>0.091</span>.
+&#10;<span style='color: #00BB00;'>✔</span> The `survival::cox.zph()` global test suggests the PH assumption <span style='font-weight: bold;'>MAY BE</span> valid, p-value: <span style='color: #0000BB;'>0.091</span>.
 &#10;                p
 group  0.09062506
 GLOBAL 0.09062506
 &#10;── <span style='font-weight: bold;'>Plots</span> ──
 &#10;The Schoenfeld residuals and log cumulative hazard plots have been printed.
-── Schoenfeld residual plot 
-<span style='color: #00BBBB;'>ℹ</span> A <span style='font-weight: bold;'>flat smoothed line</span> close to zero supports the PH assumption.
-<span style='color: #00BBBB;'>ℹ</span> A <span style='font-weight: bold;'>non-flat smoothed line</span> with a trend suggests the PH assumption is violated.
-&#10;── Log cumulative hazard plot 
-<span style='color: #00BBBB;'>ℹ</span> <span style='font-weight: bold;'>Parallel Lines:</span> If the lines are roughly parallel, this suggests that the proportional hazards assumption holds.
-Parallel lines indicate that the hazard ratios between groups are consistent
-over time.
-<span style='color: #00BBBB;'>ℹ</span> <span style='font-weight: bold;'>Non-Parallel Lines:</span> If the lines are not parallel and diverge or converge, the PH assumption may be violated. 
-Non-parallel lines indicate that the hazard ratios between groups change over
-time.
 ────────────────────────────────────────────────────────────────────────────────
 <span style='color: #00BBBB;'>ℹ</span> PH tests may not always agree, so it is important to consider the results of all tests and plots.
 <span style='color: #00BBBB;'>ℹ</span> The full object can be inspected by running `View()` on saved test_ph output.

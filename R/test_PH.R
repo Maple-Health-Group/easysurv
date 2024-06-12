@@ -13,7 +13,23 @@
 #' @param plot_theme The theme to be used for the plots.
 #'
 #' @return A list containing plots and test results related to the assessment
-#' of the proportional hazards assumption.
+#'   of the proportional hazards assumption.
+#'
+#'   \item{cloglog_plot}{A plot of the log cumulative hazard function. If the
+#'   lines are roughly parallel, this suggests that the proportional hazards
+#'   assumption holds."}
+#'   \item{coxph_model}{The coefficients from the Cox proportional hazards
+#'   model. The exp(coef) column shows the hazard ratio.}
+#'   \item{survdiff}{The results of the log-rank test for differences in
+#'   survival curves between groups. A p-value less than 0.05 suggests that
+#'   survival differences between groups are statistically significant.}
+#'   \item{coxph_test}{The results of the proportional hazards assumption test.
+#'   A p-value less than 0.05 suggests that the proportional hazards assumption
+#'   may be violated.}
+#'   \item{schoenfeld_plot}{A plot of the Schoenfeld residuals. A flat smoothed
+#'   line close to zero supports the proportional hazards assumption. A non-flat
+#'   smoothed line with a trend suggests the proportional hazards assumption is
+#'   violated.}
 #'
 #' @export
 #'
@@ -161,45 +177,23 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_h2("Test Survival Curve Differences")
 
-  cli::cli_alert_info(c(
-    "{.fn survival::survdiff} uses a log-rank test to test ",
-    "for differences in survival curves between groups."
-  ))
-  cli::cli_alert_info(c(
-    "The null hypothesis is that the survival curves are ",
-    "the same."
-  ))
-  cli::cat_line()
-
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (x$survdiff$pvalue > 0.05) {
     cli::cli_alert_warning(c(
-      "The test suggests that survival differences ",
-      "between groups are {.strong NOT} statistically significant."
+      "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}},",
+      " which suggests that survival differences between groups are ",
+      "{.strong NOT} statistically significant."
     ))
-
-    cli::cli_alert_warning("p-value: {.val {x$survdiff$pvalue}}.")
   } else {
     cli::cli_alert_success(c(
-      "The test suggests that survival differences ",
-      "between groups {.strong ARE} statistically significant."
+      "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}},",
+      " which suggests that survival differences between groups are ",
+      "statistically significant."
     ))
-
-    cli::cli_alert_success("p-value: {.val {x$survdiff$pvalue}}.")
   }
   cli::cli_end(divid)
 
   cli::cli_h2("Test the Proportional Hazards Assumption of a Cox Regression")
-
-  cli::cli_alert_info(c(
-    "{.fn survival::cox.zph} tests the proportional ",
-    "hazards assumption."
-  ))
-  cli::cli_alert_info(c(
-    "The null hypothesis is that the hazards are ",
-    "proportional."
-  ))
-  cli::cat_line()
 
   p_vals <- as.data.frame(x$coxph_test$table)[3]
   global_p_val <- p_vals[nrow(p_vals), ]
@@ -207,16 +201,14 @@ print.test_ph <- function(x, ...) {
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   if (global_p_val > 0.05) {
     cli::cli_alert_success(c(
-      "The global test suggests that the PH assumption ",
-      "{.strong MAY BE} valid."
+      "The {.fn survival::cox.zph} global test suggests the PH assumption ",
+      "{.strong MAY BE} valid, p-value: {.val {global_p_val}}."
     ))
-    cli::cli_alert_success("p-value: {.val {global_p_val}}.")
   } else {
     cli::cli_alert_warning(c(
-      "The global test suggests that the PH assumption ",
-      "{.strong MAY NOT BE} valid."
+      "The {.fn survival::cox.zph} global test suggests the PH assumption ",
+      "{.strong MAY NOT BE} valid, p-value: {.val {global_p_val}}."
     ))
-    cli::cli_alert_warning("p-value: {.val {global_p_val}}.")
   }
   cli::cli_end(divid)
 
@@ -230,37 +222,6 @@ print.test_ph <- function(x, ...) {
   cli::cli_text(c(
     "The Schoenfeld residuals and log cumulative hazard plots ",
     "have been printed."
-  ))
-
-  cli::cli_h3("Schoenfeld residual plot")
-  cli::cli_alert_info(c(
-    "A {.strong flat smoothed line} close to zero ",
-    "supports the PH assumption."
-  ))
-  cli::cli_alert_info(c(
-    "A {.strong non-flat smoothed line} with a trend ",
-    "suggests the PH assumption is violated."
-  ))
-
-  cli::cli_h3("Log cumulative hazard plot")
-  cli::cli_alert_info(c(
-    "{.strong Parallel Lines:} If the lines are roughly ",
-    "parallel, this suggests that the proportional hazards ",
-    "assumption holds."
-  ))
-  cli::cli_text(c(
-    "Parallel lines indicate that the ",
-    "hazard ratios between groups are consistent over time."
-  ))
-
-  cli::cli_alert_info(c(
-    "{.strong Non-Parallel Lines:} If the lines are not ",
-    "parallel and diverge or converge, ",
-    "the PH assumption may be violated. "
-  ))
-  cli::cli_text(c(
-    "Non-parallel lines indicate that the hazard ratios ",
-    "between groups change over time."
   ))
 
   cli::cli_rule()

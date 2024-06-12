@@ -23,6 +23,22 @@ variable.}
 \value{
 A list containing plots and test results related to the assessment
 of the proportional hazards assumption.
+
+\item{cloglog_plot}{A plot of the log cumulative hazard function. If the
+lines are roughly parallel, this suggests that the proportional hazards
+assumption holds."}
+\item{coxph_model}{The coefficients from the Cox proportional hazards
+model. The exp(coef) column shows the hazard ratio.}
+\item{survdiff}{The results of the log-rank test for differences in
+survival curves between groups. A p-value less than 0.05 suggests that
+survival differences between groups are statistically significant.}
+\item{coxph_test}{The results of the proportional hazards assumption test.
+A p-value less than 0.05 suggests that the proportional hazards assumption
+may be violated.}
+\item{schoenfeld_plot}{A plot of the Schoenfeld residuals. A flat smoothed
+line close to zero supports the proportional hazards assumption. A non-flat
+smoothed line with a trend suggests the proportional hazards assumption is
+violated.}
 }
 \description{
 Assesses the proportional hazards assumption for survival data using a
