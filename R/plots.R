@@ -242,7 +242,7 @@ plot_schoenfeld <- function(residuals,
 #'   \code{theme_easysurv()}.
 #'
 #' @return A ggplot2 object.
-#'
+#' @noRd
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 plot_surv <- function(pred_data,
@@ -341,7 +341,7 @@ plot_surv <- function(pred_data,
 #'   \code{theme_easysurv()}.
 #'
 #' @return A ggplot2 object.
-#'
+#' @noRd
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 plot_hazards <- function(pred_data,

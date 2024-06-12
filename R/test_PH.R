@@ -176,16 +176,19 @@ print.test_ph <- function(x, ...) {
   cli::cli_h2("Test Survival Curve Differences")
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+
+  cli::cli_text(c(
+    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}")
+  )
+
   if (x$survdiff$pvalue > 0.05) {
     cli::cli_alert_warning(c(
-      "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}},",
-      " which suggests that survival differences between groups are ",
+      "This suggests survival differences between groups are ",
       "{.strong NOT} statistically significant."
     ))
   } else {
     cli::cli_alert_success(c(
-      "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}},",
-      " which suggests that survival differences between groups are ",
+      "This suggests survival differences between groups are ",
       "statistically significant."
     ))
   }
@@ -197,15 +200,18 @@ print.test_ph <- function(x, ...) {
   global_p_val <- p_vals[nrow(p_vals), ]
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+
+  cli::cli_text(c(
+    "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}")
+  )
+
   if (global_p_val > 0.05) {
     cli::cli_alert_success(c(
-      "The {.fn survival::cox.zph} global test suggests the PH assumption ",
-      "{.strong MAY BE} valid, p-value: {.val {global_p_val}}."
-    ))
+      "This suggests the PH assumption {.strong may be} valid."
+      ))
   } else {
     cli::cli_alert_warning(c(
-      "The {.fn survival::cox.zph} global test suggests the PH assumption ",
-      "{.strong MAY NOT BE} valid, p-value: {.val {global_p_val}}."
+      "This suggests the PH assumption {.strong may not be} valid."
     ))
   }
   cli::cli_end(divid)
@@ -225,11 +231,10 @@ print.test_ph <- function(x, ...) {
   cli::cli_rule()
   cli::cli_alert_info(c(
     "PH tests may not always agree, so ",
-    "it is important to consider the results of all tests and plots."
+    "consider the results of all tests and plots."
   ))
   cli::cli_alert_info(c(
-    "The full object can be inspected by running ",
-    "{.code View()} on saved test_ph output."
+    "Run {.code View()} on saved test_ph output to see more."
   ))
 
   invisible(x)

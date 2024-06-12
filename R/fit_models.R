@@ -310,6 +310,7 @@ fit_models <- function(data,
 #' @importFrom cli cat_line qty
 #' @importFrom dplyr select filter pull
 #' @importFrom tidyr pivot_wider
+#' @noRd
 print.fit_models <- function(x, ...) {
   # Create visible binding for R CMD check.
   distribution <- strata <- dist <- aic_rank <- NULL

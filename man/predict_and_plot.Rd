@@ -36,7 +36,9 @@ Default is \code{TRUE}. The subtitle is the name of the group.}
 outputs for each plot. Default is \code{FALSE}.}
 }
 \description{
-Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.
+This function generates survival and hazard predictions and plots for each
+model in a \code{fit_models} object. Optionally, interactive \code{plotly}
+outputs can be added for each plot.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

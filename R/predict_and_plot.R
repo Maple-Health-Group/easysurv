@@ -1,5 +1,9 @@
 #' Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.
 #'
+#' This function generates survival and hazard predictions and plots for each
+#' model in a \code{fit_models} object. Optionally, interactive \code{plotly}
+#' outputs can be added for each plot.
+#'
 #' @param fit_models An object returned from fit_models.
 #' @param eval_time (Optional) A vector of evaluation time points for generating
 #'   predictions. Default is \code{NULL}, which if left as NULL, generates a
@@ -225,6 +229,7 @@ predict_and_plot <- function(fit_models,
 #' @param ... Additional arguments
 #' @export
 #' @importFrom cli cli_h1 cli_text cli_ul cli_li cli_end cli_alert_info
+#' @noRd
 print.pred_plot <- function(x, ...) {
   cli::cli_alert_info(paste0(
     "Survival and hazard predictions are stored in the prediction list."
