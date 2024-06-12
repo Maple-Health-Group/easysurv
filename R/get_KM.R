@@ -23,6 +23,7 @@
 #' @export
 #'
 #' @importFrom cli cli_abort
+#' @importFrom dplyr arrange
 #' @importFrom ggsurvfit survfit2
 #' @importFrom survival Surv survfit
 #' @importFrom stats as.formula
@@ -123,7 +124,9 @@ get_km <- function(data,
       data[[group]] <- as.factor(data[[group]])
     }
 
-    nested <- data |> tidyr::nest(.by = group)
+    nested <- data |>
+      dplyr::arrange(factor(group, levels = levels(group))) |>
+      tidyr::nest(.by = group)
 
     km_per_group <- lapply(
       purrr::set_names(nested$data, group_list),

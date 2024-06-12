@@ -49,7 +49,7 @@
 #' @export
 #'
 #' @importFrom cli cli_abort
-#' @importFrom dplyr select
+#' @importFrom dplyr arrange select
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
 #' @importFrom survival survfit survfit0
@@ -137,7 +137,15 @@ fit_models <- function(data,
     predict_list <- NULL
     approach <- "predict_by_none"
   } else {
-    nested <- data |> tidyr::nest(.by = predict_by)
+
+    if (!is.factor(data[[predict_by]])) {
+      data[[predict_by]] <- as.factor(data[[predict_by]])
+    }
+
+    nested <- data |>
+      dplyr::arrange(factor(predict_by, levels = levels(predict_by))) |>
+      tidyr::nest(.by = predict_by)
+
     predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
     approach <- if (predict_by %in% covariates) {
       "predict_by_covariate"
