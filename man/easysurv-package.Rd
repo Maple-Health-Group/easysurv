@@ -4,11 +4,11 @@
 \name{easysurv-package}
 \alias{easysurv}
 \alias{easysurv-package}
-\title{easysurv: Estimate and Inspect Parametric Survival Models}
+\title{easysurv: Tools to Simplify Survival Data Analysis and Model Fitting}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Functions to streamline the process of fitting parametric models to extrapolate survival data. easysurv can fit data via simple parametric modelling, mixture cure modelling and spline modelling.
+The easysurv package aims to simplify fitting parametric models for extrapolating survival data. It facilitates plotting Kaplan-Meier curves, assessing the proportional hazards assumption, estimating parametric survival models using engines such as flexsurv, flexsurvspline, flexsurvcure, and survival, and exporting the analyses to Excel.
 }
 \seealso{
 Useful links:
@@ -20,7 +20,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com}
+\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID})
 
 Authors:
 \itemize{

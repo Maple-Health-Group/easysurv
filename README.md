@@ -9,10 +9,15 @@
 [![test-coverage](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-The *easysurv* R package provides tools to estimate and inspect
-parametric survival models.
+The *easysurv* R package provides tools to simplify survival data
+analysis and model fitting.
 
-The package is built upon the *flexsurv* engine, and aims to provide a
+*easysurv* facilitates plotting Kaplan-Meier curves, assessing the
+proportional hazards assumption, estimating parametric survival models
+using engines such as `flexsurv`, `flexsurvspline`, `flexsurvcure` and
+`survival`, and exporting associated analyses to Excel.
+
+By default, the package uses the `flexsurv` engine and provides a
 helpful starting point to explore survival extrapolations across
 frequently used distributions (such as exponential, generalized gamma,
 gamma, Gompertz, log-logistic, log-normal and Weibull).
@@ -20,8 +25,8 @@ gamma, Gompertz, log-logistic, log-normal and Weibull).
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
-consider using [RStudio](https://www.rstudio.com/) as your integrated
-development environment (IDE).
+consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
+your integrated development environment (IDE).
 
 ``` r
 # You will need to have the pak package installed.
@@ -34,7 +39,7 @@ pak::pkg_install("Maple-Health-Group/easysurv")
 ## Getting started
 
 ``` r
-# Load the easysurv library
+# Attach the easysurv library
 library(easysurv)
 
 # Open an example script
@@ -44,100 +49,75 @@ quick_start()
 
 # Access help files
 help(package = "easysurv")
-
-# Access a detailed vignette
-browseVignettes("easysurv")
 ```
 
 ## Examples
 
-### `quick_KM()`
-
-The `quick_KM()` function can generate themed KM plots, accompanied by
-pertinent statistics such as numbers at risk over time.
+### Start by tidying your data
 
 ``` r
-# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)
+# Load the easy_lung data from the easysurv package
+# Recode the "status" variable to create an event indicator (0/1)
 surv_data <- easy_lung |>
-  dplyr::mutate(event = status - 1)
+  dplyr::mutate(
+    time = time,
+    event = status - 1,
+    group = sex
+  )
 
-# Run "quick_KM()" on this formatted dataset
-KM_quick <- easysurv::quick_KM(
+# Make the group variable a factor and assign level labels.
+surv_data <- surv_data |>
+  dplyr::mutate_at("group", as.factor)
+levels(surv_data$group) <- c("Male", "Female")
+```
+
+### `get_km()`
+
+``` r
+km_check <- get_km(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "sex",
-  strata_labels = c("Male", "Female"))
+  group = "group"
+)
 
-# Print the newly created KM plot
-KM_quick[["KM_plot"]]
+km_check
 ```
 
-![](man/figures/quick-KM-1.png)<!-- -->
+<pre class="r-output"><code>
+</code></pre>
+<pre class="r-output"><code><span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Kaplan-Meier Data</span> <span style='color: #00BBBB;'>───────────────────────────────────────────────────────────</span>
+</code></pre>
+<pre class="r-output"><code>The get_km function has produced the following outputs:
+</code></pre>
+<pre class="r-output"><code>• <span style='font-weight: bold;'>km</span>: A `survival::survfit()` object for Kaplan-Meier estimates.
+</code></pre>
+<pre class="r-output"><code>• <span style='font-weight: bold;'>km_for_excel</span>: A list of stepped Kaplan-Meier data for external plotting.
+</code></pre>
+<pre class="r-output"><code>• <span style='font-weight: bold;'>km_per_group</span>: A list of Kaplan-Meier estimates for each group.
+</code></pre>
+<pre class="r-output"><code>• <span style='font-weight: bold;'>km_plot</span>: A Kaplan-Meier plot.
+</code></pre>
+<pre class="r-output"><code>• <span style='font-weight: bold;'>km_summary</span>: A summary table of the Kaplan-Meier estimates.
+</code></pre>
+<pre class="r-output"><code>
+</code></pre>
+<pre class="r-output"><code>── <span style='font-weight: bold;'>km Summary</span> ──
+</code></pre>
+<pre class="r-output"><code>
+</code></pre>
+<pre class="r-output"><code>        group records events    rmean se(rmean)    median   0.95LCL  0.95UCL
+Male     Male     138    112 10.71324 0.7527413  8.870637  6.965092 10.18480
+Female Female      90     53 15.13420 1.1397075 13.995893 11.433265 18.06982
+       Median follow-up
+Male           27.59754
+Female         17.37988
+</code></pre>
+<pre class="r-output"><code>────────────────────────────────────────────────────────────────────────────────
+</code></pre>
+<pre class="r-output"><code>The km_plot has been printed.
+</code></pre>
+<pre class="r-output"><code>→ For more information, run `View()` on saved get_km output.
+</code></pre>
 
-### `quick_fit()`
-
-For a user-defined set of distributions, the `quick_fit()` function can
-check distribution convergence, generate plots for extrapolations and
-smoothed hazards, create survival parameter tables, show goodness-of-fit
-statistics, and calculate average survival times.
-
-``` r
-# Run "quick_fit()" on the formatted "lung" dataset, examining the effect of the "sex" variable
-fit_quick <- easysurv::quick_fit(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  strata = "sex",
-  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-  strata_labels = c("Male", "Female"),
-  add_interactive_plots = TRUE)
-
-# Print the hazard and fitted survival plots
-fit_quick[["hazard_plots"]][["Male"]]
-```
-
-![](man/figures/quick-fit-1.png)<!-- -->
-
-``` r
-fit_quick[["fit_plots"]][["Male"]]
-```
-
-![](man/figures/quick-fit-2.png)<!-- -->
-
-``` r
-# Print the AIC/BIC scores and their relative ranking
-fit_quick[["goodness_of_fit"]][["Male"]]
-#>           model      AIC      BIC AIC_rank BIC_rank
-#> 1   Exponential 772.4134 775.3406        5        3
-#> 2         Gamma 767.6859 773.5404        2        2
-#> 3    Gen. Gamma 769.2226 778.0044        3        5
-#> 4      Gompertz 769.7047 775.5592        4        4
-#> 5  log-Logistic 776.5899 782.4444        6        6
-#> 6    log-Normal 784.6606 790.5151        7        7
-#> 7 Weibull (AFT) 767.2281 773.0826        1        1
-```
-
-## Known issues
-
-#### Fonts
-
-The standard plots produced in *easysurv* use the Roboto Condensed font.
-R attempts to load the font when calling `library(easysurv)`. If the
-font does not display correctly, we recommend calling
-`library(easysurv)` again. You should see the following initialization
-plot at start-up:
-
-![](man/figures/font-issue-1.png)<!-- -->
-
-If the font displays as expected, disregard font-related warnings R may
-display. If you want to show easysurv plots in an R Markdown file,
-consider adding `fig.showtext = TRUE` to the code chunk options to fix
-the font size.
-
-## Future plans
-
-- Expand test framework with increased coverage.
-- Expand diagnostic test capabilities with additional outputs and plots.
-- Create additional vignettes for other workflows (e.g., mixture cure
-  analysis, spline analysis).
+![](man/figures/get-KM-1.png)<!-- -->

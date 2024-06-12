@@ -1,17 +1,37 @@
 ---
-output: github_document
+output: 
+  github_document:
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include=FALSE}
+# For cli output
+options(crayon.enabled = TRUE)
+
+ansi_aware_handler <- function(x, options) {
+  paste0(
+    "<pre class=\"r-output\"><code>",
+    fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
+    "</code></pre>"
+  )
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
+  comment = '',
   fig.path = "man/figures/"
 )
 
+knitr::knit_hooks$set(
+  output = ansi_aware_handler,
+  message = ansi_aware_handler,
+  warning = ansi_aware_handler,
+  error = ansi_aware_handler
+)
+
 library(easysurv)
+library(cli)
 ```
 
 # <b>easysurv</b> <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
@@ -21,13 +41,15 @@ library(easysurv)
 [![test-coverage](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-The *easysurv* R package provides tools to estimate and inspect parametric survival models. 
+The *easysurv* R package provides tools to simplify survival data analysis and model fitting.
 
-The package is built upon the *flexsurv* engine, and aims to provide a helpful starting point to explore survival extrapolations across frequently used distributions (such as exponential, generalized gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
+*easysurv* facilitates plotting Kaplan-Meier curves, assessing the proportional hazards assumption, estimating parametric survival models using engines such as `flexsurv`, `flexsurvspline`, `flexsurvcure` and `survival`, and exporting associated analyses to Excel.
+
+By default, the package uses the `flexsurv` engine and provides a helpful starting point to explore survival extrapolations across frequently used distributions (such as exponential, generalized gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
 
 ## Installation
 
-If you haven't already, install [R](https://www.r-project.org) and consider using [RStudio](https://www.rstudio.com/) as your integrated development environment (IDE).
+If you haven't already, install [R](https://www.r-project.org) and consider using [RStudio](https://posit.co/download/rstudio-desktop/) as your integrated development environment (IDE).
 
 
 ```{r install, eval = FALSE}
@@ -41,7 +63,7 @@ pak::pkg_install("Maple-Health-Group/easysurv")
 ## Getting started
 
 ```{r getting-started, eval = FALSE}
-# Load the easysurv library
+# Attach the easysurv library
 library(easysurv)
 
 # Open an example script
@@ -51,68 +73,37 @@ quick_start()
 
 # Access help files
 help(package = "easysurv")
-
-# Access a detailed vignette
-browseVignettes("easysurv")
 ```
 
 
 ## Examples
-### `quick_KM()`
+### Start by tidying your data
 
-The `quick_KM()` function can generate themed KM plots, accompanied by pertinent statistics such as numbers at risk over time.
-
-```{r quick-KM, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
-# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)
+```{r tidy-data, echo = TRUE}
+# Load the easy_lung data from the easysurv package
+# Recode the "status" variable to create an event indicator (0/1)
 surv_data <- easy_lung |>
-  dplyr::mutate(event = status - 1)
+  dplyr::mutate(
+    time = time,
+    event = status - 1,
+    group = sex
+  )
 
-# Run "quick_KM()" on this formatted dataset
-KM_quick <- easysurv::quick_KM(
+# Make the group variable a factor and assign level labels.
+surv_data <- surv_data |>
+  dplyr::mutate_at("group", as.factor)
+levels(surv_data$group) <- c("Male", "Female")
+```
+
+### `get_km()`
+
+```{r get-KM, collapse = TRUE, fig.width=6, fig.height=5}
+km_check <- get_km(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "sex",
-  strata_labels = c("Male", "Female")
+  group = "group"
 )
 
-# Print the newly created KM plot
-KM_quick[["KM_plot"]]
+km_check
 ```
-
-### `quick_fit()`
-For a user-defined set of distributions, the `quick_fit()` function can check distribution convergence, generate plots for extrapolations and smoothed hazards, create survival parameter tables, show goodness-of-fit statistics, and calculate average survival times.
-
-```{r quick-fit, warning=FALSE, message=FALSE, fig.width=6, fig.height=5, fig.showtext = TRUE}
-# Run "quick_fit()" on the formatted "lung" dataset, examining the effect of the "sex" variable
-fit_quick <- easysurv::quick_fit(
-  data = surv_data,
-  time = "time",
-  event = "event",
-  strata = "sex",
-  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-  strata_labels = c("Male", "Female"),
-  add_interactive_plots = TRUE
-)
-
-# Print the hazard and fitted survival plots
-fit_quick[["hazard_plots"]][["Male"]]
-fit_quick[["fit_plots"]][["Male"]]
-# Print the AIC/BIC scores and their relative ranking
-fit_quick[["goodness_of_fit"]][["Male"]]
-```
-
-## Known issues
-
-#### Fonts
-The standard plots produced in *easysurv* use the Roboto Condensed font. R attempts to load the font when calling `library(easysurv)`. If the font does not display correctly, we recommend calling `library(easysurv)` again. You should see the following initialization plot at start-up:
-
-![](man/figures/font-issue-1.png)<!-- -->
-
-If the font displays as expected, disregard font-related warnings R may display. If you want to show easysurv plots in an R Markdown file, consider adding `fig.showtext = TRUE` to the code chunk options to fix the font size.
-
-## Future plans
-
-* Expand test framework with increased coverage.
-* Expand diagnostic test capabilities with additional outputs and plots.
-* Create additional vignettes for other workflows (e.g., mixture cure analysis, spline analysis).
