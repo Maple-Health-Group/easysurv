@@ -209,11 +209,3 @@ plots <- predict_and_plot(
 print(plots)
 
 ```
-
-
-## Prefer the old easysurv?
-
-```{r install-old, eval = FALSE}
-# You can install a previous version of easysurv (version 1.1) with the following line of code.
-pak::pkg_install("Maple-Health-Group/easysurv@1.1")
-```

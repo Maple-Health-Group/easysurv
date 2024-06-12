@@ -36,7 +36,6 @@ reference:
     These functions are used to plot various stages of survival analysis.
   contents:
   - plot_cloglog
-  - plot_hazards
   - plot_km
   - plot_schoenfeld
 

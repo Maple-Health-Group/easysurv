@@ -163,17 +163,19 @@ print(ph_check)
 groupFemale -0.5310235 0.5880028 0.1671786 -3.176385 0.001491229
 The exp(coef) column shows the hazard ratio was <span style='color: #0000BB;'>0.588</span>.
 &#10;── <span style='font-weight: bold;'>Test Survival Curve Differences</span> ──
-&#10;<span style='color: #00BB00;'>✔</span> `survival::survdiff()` found a p-value of <span style='color: #0000BB;'>0.001</span>, which suggests that survival differences between groups are statistically significant.
+&#10;`survival::survdiff()` found a p-value of <span style='color: #0000BB;'>0.001</span>
+<span style='color: #00BB00;'>✔</span> This suggests survival differences between groups are statistically significant.
 &#10;── <span style='font-weight: bold;'>Test the Proportional Hazards Assumption of a Cox Regression</span> ──
-&#10;<span style='color: #00BB00;'>✔</span> The `survival::cox.zph()` global test suggests the PH assumption <span style='font-weight: bold;'>MAY BE</span> valid, p-value: <span style='color: #0000BB;'>0.091</span>.
+&#10;`survival::cox.zph()` found a p-value of <span style='color: #0000BB;'>0.091</span>
+<span style='color: #00BB00;'>✔</span> This suggests the PH assumption <span style='font-weight: bold;'>may be</span> valid.
 &#10;                p
 group  0.09062506
 GLOBAL 0.09062506
 &#10;── <span style='font-weight: bold;'>Plots</span> ──
 &#10;The Schoenfeld residuals and log cumulative hazard plots have been printed.
 ────────────────────────────────────────────────────────────────────────────────
-<span style='color: #00BBBB;'>ℹ</span> PH tests may not always agree, so it is important to consider the results of all tests and plots.
-<span style='color: #00BBBB;'>ℹ</span> The full object can be inspected by running `View()` on saved test_ph output.
+<span style='color: #00BBBB;'>ℹ</span> PH tests may not always agree, so consider the results of all tests and plots.
+<span style='color: #00BBBB;'>ℹ</span> Run `View()` on saved test_ph output to see more.
 </code></pre>
 
 ### `fit_models()`
@@ -237,29 +239,6 @@ print(plots)
 ```
 
 ![](man/figures/plot-models-1.png)<!-- -->![](man/figures/plot-models-2.png)<!-- -->![](man/figures/plot-models-3.png)<!-- -->![](man/figures/plot-models-4.png)<!-- -->
-
 <pre class="r-output"><code><span style='color: #00BBBB;'>ℹ</span> Survival and hazard predictions are stored in the prediction list.
 <span style='color: #00BBBB;'>ℹ</span> The following plots have been printed.
-$Male
-$Male$surv_plots
-&#10;$Male$hazard_plots
-&#10;
-$Female
-$Female$surv_plots
-&#10;$Female$hazard_plots
 </code></pre>
-
-## Prefer the old easysurv?
-
-<div id="install-old" class="chunk">
-
-<div class="rcode">
-
-``` r
-# You can install a previous version of easysurv (version 1.1) with the following line of code.
-pak::pkg_install("Maple-Health-Group/easysurv@1.1")
-```
-
-</div>
-
-</div>

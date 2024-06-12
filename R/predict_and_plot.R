@@ -232,13 +232,20 @@ predict_and_plot <- function(fit_models,
 #' @noRd
 print.pred_plot <- function(x, ...) {
   cli::cli_alert_info(paste0(
-    "Survival and hazard predictions are stored in the prediction list."
+    "Survival and hazard predictions are stored in the prediction list. ",
+    "Plots have been printed."
   ))
 
-  cli::cli_alert_info("The following plots have been printed.")
-
   # Suppress warnings, mainly to do with hazard plots for Gompertz models.
-  suppressWarnings(print(x$plots))
+  for (tx in seq_along(x$plots)) {
+    # Print surv_plots together
+    suppressWarnings(print(x$plots[[tx]]$surv_plots))
+  }
+
+  for (tx in seq_along(x$plots)) {
+    # Print hazard_plots together
+    suppressWarnings(print(x$plots[[tx]]$hazard_plots))
+  }
 
   invisible(x)
 }
