@@ -76,7 +76,7 @@ Fits survival models to the provided data using the specified engine and
 returns various outputs including model parameters, predictions, and plots.
 }
 \examples{
-\dontrun{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 output_test <- fit_models(
   data = easysurv::easy_bc,
@@ -85,5 +85,5 @@ output_test <- fit_models(
   predict_by = "group",
   covariates = "group"
 )
-}
+\dontshow{\}) # examplesIf}
 }

@@ -9,3 +9,13 @@ theme_risktable_easysurv()
 \description{
 To be used with \code{ggsurvfit::add_risktable()}.
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+library(ggsurvfit)
+fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
+fit <- fit |> ggsurvfit() +
+  theme_easysurv() +
+  add_risktable(theme = theme_risktable_easysurv())
+fit
+\dontshow{\}) # examplesIf}
+}

@@ -57,8 +57,7 @@
 #' @importFrom tidyr nest
 #' @importFrom rlang arg_match
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf interactive()
 #'
 #' output_test <- fit_models(
 #'   data = easysurv::easy_bc,
@@ -67,7 +66,6 @@
 #'   predict_by = "group",
 #'   covariates = "group"
 #' )
-#' }
 fit_models <- function(data,
                        time,
                        event,

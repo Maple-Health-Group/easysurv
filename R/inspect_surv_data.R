@@ -12,6 +12,17 @@
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
 #' @importFrom survival Surv survfit
+#'
+#' @examples
+#'
+#' inspect_surv_data(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group"
+#' )
+#'
+#'
 inspect_surv_data <- function(data, time, event, group = NULL) {
   # Create visible binding for R CMD check.
   n <- factor_warning <- NULL

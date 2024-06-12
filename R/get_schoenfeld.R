@@ -22,13 +22,11 @@
 #' @importFrom tidyr pivot_longer
 #'
 #' @examples
-#' \dontrun{
+#'
 #' library(survival)
 #' test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 #' test_fit_zph <- survival::cox.zph(test_fit)
 #' get_schoenfeld(test_fit_zph)
-#' }
-#'
 get_schoenfeld <- function(fit_zph) {
   # Create visible binding for R CMD check.
   time <- NULL

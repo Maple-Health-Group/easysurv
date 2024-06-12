@@ -38,3 +38,16 @@ outputs for each plot. Default is \code{FALSE}.}
 \description{
 Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
+output_test <- fit_models(
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  predict_by = "group"
+)
+
+predict_and_plot(output_test, data = easysurv::easy_bc)
+\dontshow{\}) # examplesIf}
+}

@@ -8,7 +8,6 @@
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
 #'   to "easysurv_start.R".
-#'
 #' @param template_file_name Optional. The name of the R script to be sourced
 #'   as a template. Defaults to "quick_template_lung.R".
 #'

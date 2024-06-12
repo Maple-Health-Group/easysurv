@@ -37,8 +37,7 @@
 #' @importFrom stats as.formula
 #' @importFrom survival cox.zph coxph survdiff Surv
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf interactive()
 #'
 #' ph_results <- get_ph(
 #'   data = easysurv::easy_bc,
@@ -46,7 +45,6 @@
 #'   event = "censrec",
 #'   group = "group"
 #' )
-#' }
 test_ph <- function(data,
                     time,
                     event,

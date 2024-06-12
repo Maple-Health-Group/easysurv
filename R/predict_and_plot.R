@@ -18,6 +18,18 @@
 #'
 #' @importFrom dplyr all_of filter select slice
 #' @importFrom cli cli_abort
+#'
+#' @examplesIf interactive()
+#'
+#' output_test <- fit_models(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group"
+#' )
+#'
+#' predict_and_plot(output_test, data = easysurv::easy_bc)
+#'
 predict_and_plot <- function(fit_models,
                              eval_time = NULL,
                              data,
@@ -192,11 +204,9 @@ predict_and_plot <- function(fit_models,
     plotly <- plots
 
     for (i in seq_along(plots)) {
-
       plotly[[i]]$surv_plots <- plotly_surv(plots[[i]]$surv_plots)
 
       plotly[[i]]$hazard_plots <- plotly_hazards(plots[[i]]$hazard_plots)
-
     }
 
     names(plotly) <- names(plots)

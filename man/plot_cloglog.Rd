@@ -32,3 +32,11 @@ Generates a Cumulative Log Log survival curve plot using
 \code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
 This function provides sensible defaults while allowing for customisation.
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+
+library(ggsurvfit)
+fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
+plot_cloglog(fit)
+\dontshow{\}) # examplesIf}
+}

@@ -11,10 +11,21 @@
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' # To add
-#' }
+#' @examplesIf FALSE
+#'
+#' km_results <- get_km(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group"
+#' )
+#'
+#' wb <- openxlsx::createWorkbook()
+#' write_to_xl(wb, km_results)
+#'
+#' openxlsx::saveWorkbook(wb, "km_results.xlsx", overwrite = TRUE)
+#' openxlsx::openXL("km_results.xlsx")
+#'
 write_to_xl <- function(wb, object) {
   class_names <- c(
     "get_km",
@@ -305,10 +316,6 @@ write_to_xl <- function(wb, object) {
 #'
 #' @return Worksheet added (if required) to the wb object.
 #' @noRd
-#' @examples
-#' \dontrun{
-#' # To add
-#' }
 add_sheet <- function(wb, sheet_name) {
   # Check if the sheet already exists
   if (sheet_name %in% names(wb)) {

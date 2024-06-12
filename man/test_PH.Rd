@@ -45,7 +45,7 @@ Assesses the proportional hazards assumption for survival data using a
 Cox proportional hazards model and related tests.
 }
 \examples{
-\dontrun{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
 ph_results <- get_ph(
   data = easysurv::easy_bc,
@@ -53,5 +53,5 @@ ph_results <- get_ph(
   event = "censrec",
   group = "group"
 )
-}
+\dontshow{\}) # examplesIf}
 }

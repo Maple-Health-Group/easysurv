@@ -9,3 +9,10 @@ theme_easysurv()
 \description{
 Plot theme for easysurv
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+library(ggsurvfit)
+fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
+fit |> ggsurvfit() + theme_easysurv()
+\dontshow{\}) # examplesIf}
+}

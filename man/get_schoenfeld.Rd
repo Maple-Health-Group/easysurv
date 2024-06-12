@@ -26,11 +26,9 @@ This function extracts Schoenfeld residuals from a fitted \code{cox.zph} object
 and formats them into a tidy data frame.
 }
 \examples{
-\dontrun{
+
 library(survival)
 test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 test_fit_zph <- survival::cox.zph(test_fit)
 get_schoenfeld(test_fit_zph)
-}
-
 }

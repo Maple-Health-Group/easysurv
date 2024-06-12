@@ -28,8 +28,7 @@
 #' @importFrom stats as.formula
 #' @importFrom tidyr nest
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf interactive()
 #'
 #' km_results <- get_km(
 #'   data = easysurv::easy_bc,
@@ -37,7 +36,6 @@
 #'   event = "censrec",
 #'   group = "group"
 #' )
-#' }
 get_km <- function(data,
                    time,
                    event,
