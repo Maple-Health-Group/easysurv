@@ -130,8 +130,8 @@ pred_separate
 
 ## Excel Exports ---------------------------------------------------------------
 
-# Use different files for different models/prediction objects to avoid clashes
-# in Excel.
+# Use different workbooks if you have multiple fit_models or predict_and_plot
+# objects to avoid clashes in Excel.
 
 ### Separate fits --------------------------------------------------------------
 

@@ -1,19 +1,12 @@
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 ##
-##       ___  ____ ________  _________  ________   __
-##      / _ \/ __ `/ ___/ / / / ___/ / / / ___/ | / /
-##     /  __/ /_/ (__  ) /_/ (__  ) /_/ / /   | |/ /
-##     \___/\__,_/____/\__, /____/\__,_/_/    |___/
-##                    /____/
-##
 ## This script provides an example workflow for conducting "quick" survival
 ## analysis using the easysurv package.
 ##
-## It includes data import, assessment, filtering, model fitting, and Excel
+## It includes data import, assessment, model fitting, plotting and Excel
 ## export steps.
 ##
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
 
 # Initialize R -----------------------------------------------------------------
 
@@ -23,146 +16,96 @@ rm(list = ls())
 # Suppress scientific notation
 options(scipen = 999)
 
-# Attach the easysurv package
+# Attach the easysurv package and other packages for data manipulation / export
 library(easysurv)
-
-# Attach other packages you may require for data manipulation
 library(dplyr)
+library(openxlsx)
 
 
-# Data Import ------------------------------------------------------------------
+# Data Import and Assessment----------------------------------------------------
 
-surv_data <- easy_bc
-
-# Inspect the first few rows to check it looks as expected.
-head(surv_data, 6)
-
-# Toggle the next comment to see entire data.
-# View(surv_data)
-
-# Here are some packages & their functions you might use to import your data:
-# - haven::read_sas() for SAS (.sas7bdat) files
-# - haven::read_dta() for Stata (.dta) files
-# - haven::read_sav() for SPSS (.sav) files
-# - readxl::read_excel() for Excel (.xls & .xlsx) files
-# - readr::read_csv() for .csv files
-
-
-# Data Filtering ---------------------------------------------------------------
-
-# We recommend defining a "tibble" with the following variables:
+# We recommend defining surv_data with the following variables:
 # - "time"       [Numeric] Time of event/censor
 # - "event"      [Numeric] Status (0 = right censored, 1 = event)
-# - "strata"     [Factor]  The treatment arm / grouping.
+# - "group"      [Factor]  The treatment arm / grouping.
+# These names are not required, but are useful for this template.
 
+# Here we import a package data set for demonstration.
+surv_data <- easy_bc
+
+# Inspect the first few rows.
+head(surv_data, 6)
+
+# Manipulate the data as needed.
 surv_data <- surv_data |>
-  # dplyr::filter(PARAMCD == "PFS") |> # Filtering may be relevant for your data
   dplyr::mutate(
     time = recyrs,
     event = censrec,
-    strata = group
+    group = group
   ) |>
-  dplyr::mutate_at("strata", as.factor) |>
-  dplyr::as_tibble() |>
-  dplyr::select(time, event, strata) # Optional: Just keep variables of interest
+  dplyr::mutate_at("group", as.factor) |> # Convert to factor for plotting
+  dplyr::as_tibble() # Convert to tibble for easier viewing
 
-surv_data
+# Define levels of the group factor variable, for neater labeling.
+levels(surv_data$group)
 
-
-# Data Labeling ---------------------------------------------------------------
-
-# Overwrite any labels impacted by re-coding
-attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
-
-# See the levels of the strata
-surv_data |> count(strata)
-
-# Assign strata labels in a consistent order with the levels command
-levels(surv_data$strata) <- strata_labels <- c("Good", "Medium", "Poor")
-
-# Define an endpoint label which can be used in plots (if desired)
-endpoint_label <- "Overall Survival"
+# Overwrite time label for neater plotting (get_km and test_ph will use this).
+attr(surv_data$time, "label")
+attr(surv_data$time, "label") <- "Time (years)"
 
 
-# Data Assessment --------------------------------------------------------------
+# easysurv analysis ------------------------------------------------------------
 
-# Make sure the data appears as expected.
-# A tibble prints the first 10 rows by default
-surv_data
+## Data Summary ----------------------------------------------------------------
 
-# See sample sizes and censor/event counts
-surv_data |> count(strata)
-surv_data |> count(strata, event)
+# Get a quick summary of the data.
+surv_summary <- inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+surv_summary
 
-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-#-#-#-#-#-#-#-#-#   Data import and cleaning complete   -#-#-#-#-#-#-#-##-#-#-#-
-#-#-#-#-#-#-#-#-#-#   easysurv analyses start here   -#-#-#-#-#-#-#-#-##-#-#-#-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-
-# easysurv analysis -----------------------------------------------------------
 ## Kaplan Meier analysis -------------------------------------------------------
 
-# Toggle the comment on the next line to see more about quick_KM
-# ?quick_KM
-
-KM_check <- easysurv::quick_KM(
+# Get Kaplan Meier estimates for each group.
+km_check <- get_km(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "strata",
+  group = "group"
+)
+km_check
 
-  # Some of the optional arguments for easysurv...
-  strata_labels = strata_labels,
-  add_time_0 = TRUE,
+## Proportional Hazards Tests --------------------------------------------------
 
-  # Some of the optional arguments for ggsurvplot...
-  title = "Kaplan-Meier Plot",
-  subtitle = endpoint_label,
-  ylab = endpoint_label,
-  xlab = "Months",
-  xscale = "y_m", # display in months
-  break.x.by = 1   # 1 year breaks
-  )
-
-KM_check
-
-## Proportional Hazards Tests ------------------------------------------
-
-# Toggle the comment on the next line to see more about quick_PH
-# ?quick_PH
-
-PH_check <- easysurv::quick_PH(
+# Check the proportional hazards assumption.
+ph_check <- test_ph(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "strata",
-  strata_labels = strata_labels, # Optional
-  subtitle = endpoint_label # Optional
+  group = "group"
 )
+ph_check
 
-PH_check
+## Model Fitting ---------------------------------------------------------------
 
+# Choose the model fitting approach based on the results of above analyses.
+# Basic examples are provided below.
 
-## Choose Model Fit Approaches ---------------------------------------------
+### Separate fits --------------------------------------------------------------
 
-# After assessing the Kaplan Meier and Proportional Hazards outputs,
-# choose a set of analyses to perform.
-
-do_standard <- TRUE # TRUE: run standard parametric model fits (separate)
-do_joint <- FALSE # TRUE: run standard parametric model fits (joint)
-do_cure <- FALSE # TRUE: run mixture cure model fits
-do_splines <- FALSE # TRUE: run spline model fits
-
-dists_global <- c(
-  "exp",
-  "gamma",
-  "gengamma",
-  "gompertz",
-  "llogis",
-  "lnorm",
-  "weibull"
+# Fit separate models for each group.
+models_separate <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
 )
+models_separate
+
+## Predictions -----------------------------------------------------------------
 
 # Times over which to generate/plot extrapolations
 times <- seq(
@@ -171,148 +114,38 @@ times <- seq(
   length.out = 200
 )
 
-## Model Fitting ---------------------------------------------------------------
+### Separate fits --------------------------------------------------------------
+pred_separate <- predict_and_plot(
+  fit_models = models_separate,
+  eval_time = times,
+  data = surv_data
+)
+pred_separate
+
+
+## Excel Exports ---------------------------------------------------------------
+
+# Use different workbooks if you have multiple fit_models or predict_and_plot
+# objects to avoid clashes in Excel.
 
 ### Separate fits --------------------------------------------------------------
 
-if (do_standard) {
-  dists <- dists_global
+# Create workbook
+wb_separate <- openxlsx::createWorkbook()
 
-  # Toggle line below to see the function help
-  # ?quick_fit
+# Write easysurv objects to the workbook
+write_to_xl(wb_separate, km_check)
+write_to_xl(wb_separate, ph_check)
+write_to_xl(wb_separate, models_separate)
+write_to_xl(wb_separate, pred_separate)
 
-  # Fit models
-  fit_check <- easysurv::quick_fit(
-    data = surv_data,
-    time = "time",
-    event = "event",
-    strata = "strata",
-    dists = dists,
-    # Optional easysurv arguments
-    times = times,
-    strata_labels = strata_labels,
-    xlab = "Years",
-    add_interactive_plots = TRUE
-  )
-}
-
-
-### Joint fits -----------------------------------------------------------------
-
-if (do_joint) {
-  dists <- dists_global
-
-  # Toggle line below to see the function help
-  # ?quick_fit_joint
-
-  # Fit models
-  fit_check_joint <-
-    easysurv::quick_fit_joint(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Years",
-      add_interactive_plots = FALSE
-    )
-}
-
-
-### Mixture cure fits ----------------------------------------------------------
-
-if (do_cure) {
-  dists <- dists_global
-
-  # Toggle line below to see the function help
-  # ?quick_fit_cure
-
-  # Fit models
-  fit_check_cure <-
-    easysurv::quick_fit_cure(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Years",
-      add_interactive_plots = FALSE
-    )
-}
-
-### Spline fits ----------------------------------------------------------------
-
-if (do_splines) {
-  # Define distributions (splines require information on knots and scale)
-  spline_dists <- tibble(
-    "knots" = c(rep(1:3, 3)),
-    "scale" = c(
-      rep("odds", 3),
-      rep("hazard", 3),
-      rep("normal", 3)
-    )
-  )
-
-  # Toggle line below to see the function help
-  # ?quick_fit_splines
-
-  # Fit models
-  fit_check_splines <-
-    easysurv::quick_fit_splines(
-      data = surv_data,
-      time = "time",
-      event = "event",
-      strata = "strata",
-      dists = spline_dists,
-      # Optional easysurv arguments
-      times = times,
-      strata_labels = strata_labels,
-      xlab = "Years",
-      add_interactive_plots = FALSE
-    )
-}
-
-
-## See Outputs ------------------------------------------------------------------
-
-if (do_standard) fit_check
-if (do_joint) fit_check_joint
-if (do_cure) fit_check_cure
-if (do_splines) fit_check_splines
-
-
-## Excel Exports ----------------------------------------------------------------
-
-# Create a new workbook object
-wb <- openxlsx::createWorkbook()
-
-# The "quick_to_XL" function prepares easysurv outputs for Excel exporting.
-# Note that plots will be reproduced at a different DPI setting for Excel.
-# This may make them appear strange in R temporarily.
-
-quick_to_XL(wb = wb, quick_object = KM_check)
-quick_to_XL(wb = wb, quick_object = PH_check)
-
-if (do_standard) easysurv::quick_to_XL(wb = wb, quick_object = fit_check)
-if (do_joint) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_joint)
-if (do_cure) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_cure)
-if (do_splines) easysurv::quick_to_XL(wb = wb, quick_object = fit_check_splines)
-
-# Give the workbook a name ending in .xlsx
-output_name <- paste0(
-  "easysurv output - ",
+# Define file name, time-stamping can help to avoid accidental overwriting.
+name_separate <- paste0(
+  "easysurv output separate - ",
   format(Sys.time(), "%Y-%m-%d %H.%M"),
   ".xlsx"
 )
 
-# Save the workbook - you can choose a directory before this if desired.
-openxlsx::saveWorkbook(wb, file = output_name, overwrite = TRUE)
-
-# Open the workbook and assess contents.
-openxlsx::openXL(output_name)
+# Save and open the workbook
+openxlsx::saveWorkbook(wb_separate, file = name_separate, overwrite = TRUE)
+openxlsx::openXL(name_separate)
