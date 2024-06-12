@@ -6,7 +6,18 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include=FALSE}
-# For cli output
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = '',
+  fig.path = "man/figures/"
+)
+
+library(easysurv)
+library(cli)
+
+# The remaining code in this chunk is all to support cli output printing, 
+# and printing in a single code block.
 options(crayon.enabled = TRUE)
 
 ansi_aware_handler <- function(x, options) {
@@ -16,12 +27,6 @@ ansi_aware_handler <- function(x, options) {
     "</code></pre>"
   )
 }
-
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = '',
-  fig.path = "man/figures/"
-)
 
 # global store for output and messages
 asconsole_output <- NULL
@@ -39,7 +44,20 @@ knitr::knit_hooks$set(message = function(x, options) {
   
   knitr::hooks_html()$message(x, options)
 })
+
+# override output hook
+# if output option is 'asconsole', append output to global
+# otherwise let knitr do its thing
+knitr::knit_hooks$set(output = function(x, options) {
+  if(!is.null(options$output)) {
+    if(options$output == 'asconsole') {
+      asconsole_output <<- c(asconsole_output, x)
+      return(NULL)
+    }
+  }
   
+  knitr::hooks_html()$output(x, options)
+})
 
 # override chunk hook
 # if output option is 'asconsole', clear global and append formatted contents
@@ -58,17 +76,6 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   
   knitr::hooks_html()$chunk(x, options)
 })
-
-# knitr::knit_hooks$set(
-#   output = ansi_aware_handler,
-#   message = ansi_aware_handler,
-#   warning = ansi_aware_handler,
-#   error = ansi_aware_handler
-# )
-
-library(easysurv)
-library(cli)
-
 
 ```
 
@@ -94,7 +101,7 @@ If you haven't already, install [R](https://www.r-project.org) and consider usin
 # You will need to have the pak package installed.
 install.packages("pak")
 
-# Then, you can install easysurv with the following line of code.
+# Then, install easysurv with the following line of code.
 pak::pkg_install("Maple-Health-Group/easysurv")
 ```
 
@@ -133,6 +140,7 @@ surv_data <- surv_data |>
 levels(surv_data$group) <- c("Male", "Female")
 ```
 
+### Then enjoy the easysurv functions! 
 ### `get_km()`
 
 <!--
@@ -153,19 +161,59 @@ km_check <- get_km(
   group = "group"
 )
 
-km_check
-
-#print(km_check)
-
-#fansi::sgr_to_html(cli::cli_fmt(print(km_check)))
-
-# cli_fmt(print(km_check))
-
-# paste0(
-#     "<pre class=\"r-output\"><code>",
-#     fansi::sgr_to_html(cli::cli_fmt(print(km_check)), warn = FALSE, term.cap = "256"),
-#     "</code></pre>"
-#   )
+print(km_check)
 
 ```
 
+
+### `test_ph()`
+
+
+```{r test-PH, collapse = TRUE, output='asconsole', fig.width=6, fig.height=5}
+ph_check <- test_ph(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+print(ph_check)
+
+```
+
+
+### `fit_models()`
+
+
+```{r fit-models, collapse = TRUE, output='asconsole', fig.width=6, fig.height=5}
+separate_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
+)
+
+print(separate_models)
+
+```
+
+### `predict_and_plot()`
+
+
+```{r plot-models, collapse = TRUE, output='asconsole', fig.width=6, fig.height=5}
+plots <- predict_and_plot(
+  fit_models = separate_models,
+  data = surv_data
+)
+
+print(plots)
+
+```
+
+
+## Prefer the old easysurv?
+
+```{r install-old, eval = FALSE}
+# You can install a previous version of easysurv (version 1.1) with the following line of code.
+pak::pkg_install("Maple-Health-Group/easysurv@1.1")
+```
