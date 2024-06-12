@@ -252,7 +252,6 @@ plot_surv <- function(pred_data,
                       title = NULL,
                       subtitle = NULL,
                       plot_theme = theme_easysurv()) {
-
   # Create visible binding for R CMD check (pred_data)
   .eval_time <- model <- NULL
 
@@ -261,9 +260,9 @@ plot_surv <- function(pred_data,
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(pred_data,
-                                   cols = -".eval_time",
-                                   names_to = "model",
-                                   values_to = "surv"
+    cols = -".eval_time",
+    names_to = "model",
+    values_to = "surv"
   )
 
   # Use consistent column names to appease plotly later
@@ -306,8 +305,8 @@ plot_surv <- function(pred_data,
     x = "Time",
     y = "Survival",
     color = ifelse(length(unique(long_data$model)) == 1,
-                   legend_label,
-                   paste0(legend_label, "s")
+      legend_label,
+      paste0(legend_label, "s")
     )
   )
 
@@ -358,9 +357,9 @@ plot_hazards <- function(pred_data,
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(pred_data,
-                                   cols = -".eval_time",
-                                   names_to = "model",
-                                   values_to = "est"
+    cols = -".eval_time",
+    names_to = "model",
+    values_to = "est"
   )
 
   # Use consistent column names to appease plotly later
@@ -397,8 +396,8 @@ plot_hazards <- function(pred_data,
     x = "Time",
     y = "Hazards",
     color = ifelse(length(unique(long_data$model)) == 1,
-                   legend_label,
-                   paste0(legend_label, "s")
+      legend_label,
+      paste0(legend_label, "s")
     )
   )
 
@@ -426,7 +425,6 @@ plot_hazards <- function(pred_data,
 #' @importFrom ggplot2 aes
 #' @importFrom plotly ggplotly config layout
 plotly_surv <- function(surv_plot) {
-
   # Create visible binding for R CMD check
   model <- time <- surv <- NULL
 
@@ -437,23 +435,28 @@ plotly_surv <- function(surv_plot) {
     "</b>",
     " Time: ",
     format(time,
-           big.mark = ",",
-           digits = 2,
-           nsmall = 2,
-           trim = TRUE),
+      big.mark = ",",
+      digits = 2,
+      nsmall = 2,
+      trim = TRUE
+    ),
     " Surv: ",
     sprintf(surv, fmt = "%.3f")
   ), group = 1)
 
   out <- plotly::ggplotly(out, tooltip = c("text")) |>
-    plotly::config(modeBarButtonsToRemove = c('zoom',
-                                              'pan2d',
-                                              'zoomIn',
-                                              'zoomOut',
-                                              'autoScale',
-                                              'select2d',
-                                              'lasso2d'),
-                   displaylogo = FALSE) |>
+    plotly::config(
+      modeBarButtonsToRemove = c(
+        "zoom",
+        "pan2d",
+        "zoomIn",
+        "zoomOut",
+        "autoScale",
+        "select2d",
+        "lasso2d"
+      ),
+      displaylogo = FALSE
+    ) |>
     plotly::layout(hovermode = "x unified")
 
   for (i in seq_along(out$x$data)) {
@@ -470,7 +473,6 @@ plotly_surv <- function(surv_plot) {
 #' @importFrom ggplot2 aes
 #' @importFrom plotly ggplotly config layout
 plotly_hazards <- function(hazard_plot) {
-
   # Create visible binding for R CMD check
   model <- time <- est <- NULL
 
@@ -481,23 +483,28 @@ plotly_hazards <- function(hazard_plot) {
     "</b>",
     " Time: ",
     format(time,
-           big.mark = ",",
-           digits = 2,
-           nsmall = 2,
-           trim = TRUE),
+      big.mark = ",",
+      digits = 2,
+      nsmall = 2,
+      trim = TRUE
+    ),
     " Hazard: ",
     sprintf(est, fmt = "%.3f")
   ), group = 1)
 
   out <- plotly::ggplotly(out, tooltip = c("text")) |>
-    plotly::config(modeBarButtonsToRemove = c('zoom',
-                                              'pan2d',
-                                              'zoomIn',
-                                              'zoomOut',
-                                              'autoScale',
-                                              'select2d',
-                                              'lasso2d'),
-                   displaylogo = FALSE) |>
+    plotly::config(
+      modeBarButtonsToRemove = c(
+        "zoom",
+        "pan2d",
+        "zoomIn",
+        "zoomOut",
+        "autoScale",
+        "select2d",
+        "lasso2d"
+      ),
+      displaylogo = FALSE
+    ) |>
     plotly::layout(hovermode = "x unified")
 
   for (i in seq_along(out$x$data)) {

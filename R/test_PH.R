@@ -87,15 +87,6 @@ test_ph <- function(data,
     ") ~ ", group
   ))
 
-  # km_all <- do.call(survival::survfit,
-  #   args = list(
-  #     formula = ph_formula,
-  #     conf.int = 0.95,
-  #     data = data,
-  #     type = "kaplan-meier"
-  #   )
-  # )
-
   km_all <- ggsurvfit::survfit2(
     formula = ph_formula,
     conf.int = 0.95,
@@ -178,8 +169,8 @@ print.test_ph <- function(x, ...) {
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
   cli::cli_text(c(
-    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}")
-  )
+    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}"
+  ))
 
   if (x$survdiff$pvalue > 0.05) {
     cli::cli_alert_warning(c(
@@ -202,13 +193,13 @@ print.test_ph <- function(x, ...) {
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
   cli::cli_text(c(
-    "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}")
-  )
+    "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}"
+  ))
 
   if (global_p_val > 0.05) {
     cli::cli_alert_success(c(
       "This suggests the PH assumption {.strong may be} valid."
-      ))
+    ))
   } else {
     cli::cli_alert_warning(c(
       "This suggests the PH assumption {.strong may not be} valid."
