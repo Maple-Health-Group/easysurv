@@ -23,15 +23,53 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/"
 )
 
-knitr::knit_hooks$set(
-  output = ansi_aware_handler,
-  message = ansi_aware_handler,
-  warning = ansi_aware_handler,
-  error = ansi_aware_handler
-)
+# global store for output and messages
+asconsole_output <- NULL
+
+# override message hook
+# if output option is 'asconsole', append message to global
+# otherwise let knitr do its thing
+knitr::knit_hooks$set(message = function(x, options) {
+  if(!is.null(options$output)) {
+    if(options$output == 'asconsole') {
+      asconsole_output <<- c(asconsole_output, x)
+      return(NULL)
+    }
+  }
+  
+  knitr::hooks_html()$message(x, options)
+})
+  
+
+# override chunk hook
+# if output option is 'asconsole', clear global and append formatted contents
+# otherwise let knitr do its thing
+knitr::knit_hooks$set(chunk = function(x, options) {
+  if(!is.null(options$output)) {
+    if(options$output == 'asconsole') {
+      y <- paste(asconsole_output, collapse = "")
+      y <- ansi_aware_handler(y, options) # new line
+      #y <- knitr::hooks_html()$output(y, options)
+      asconsole_output <<- NULL
+      y <- paste(x, y, collapse = "")
+      return(y)
+    }
+  }
+  
+  knitr::hooks_html()$chunk(x, options)
+})
+
+# knitr::knit_hooks$set(
+#   output = ansi_aware_handler,
+#   message = ansi_aware_handler,
+#   warning = ansi_aware_handler,
+#   error = ansi_aware_handler
+# )
 
 library(easysurv)
 library(cli)
+
+
 ```
 
 # <b>easysurv</b> <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
@@ -97,7 +135,17 @@ levels(surv_data$group) <- c("Male", "Female")
 
 ### `get_km()`
 
-```{r get-KM, collapse = TRUE, fig.width=6, fig.height=5}
+<!--
+```{css collapse_cli, echo = FALSE}
+pre.r-output {
+ margin-bottom: 0 !important;
+ padding: 0px 16px;
+}
+
+```
+-->
+
+```{r get-KM, collapse = TRUE, output='asconsole', fig.width=6, fig.height=5}
 km_check <- get_km(
   data = surv_data,
   time = "time",
@@ -106,4 +154,18 @@ km_check <- get_km(
 )
 
 km_check
+
+#print(km_check)
+
+#fansi::sgr_to_html(cli::cli_fmt(print(km_check)))
+
+# cli_fmt(print(km_check))
+
+# paste0(
+#     "<pre class=\"r-output\"><code>",
+#     fansi::sgr_to_html(cli::cli_fmt(print(km_check)), warn = FALSE, term.cap = "256"),
+#     "</code></pre>"
+#   )
+
 ```
+
