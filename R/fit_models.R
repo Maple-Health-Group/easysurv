@@ -319,7 +319,7 @@ fit_models <- function(data,
 #' @param ... Additional arguments
 #' @export
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
-#' @importFrom cli cli_ul cli_li cli_div cli_end
+#' @importFrom cli cli_ul cli_li cli_div cli_end cli_par
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 #' @importFrom dplyr select filter pull
@@ -367,7 +367,9 @@ print.fit_models <- function(x, ...) {
   cli::cli_end()
 
   # Distributions
-  cli::cat_line()
+  cli::cli_par() # to add space, cat_line didn't seem to work after cli_end
+  cli::cli_end()
+
   cli::cli_text(c(
     "{.strong Distributions attempted:} ",
     "{.val {x$info$distributions[[1]]$dists_attempted}}."

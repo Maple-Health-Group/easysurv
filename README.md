@@ -162,10 +162,11 @@ print(ph_check)
 #> 
 #> ── <span style='font-weight: bold;'>Cox Proportional Hazards Model</span> ──
 #> 
-#> The coefficients from `survival::coxph()` are:
+#> `survival::coxph()` output:
 #> 
 #>                   coef exp(coef)  se(coef)         z    Pr(>|z|)
 #> groupFemale -0.5310235 0.5880028 0.1671786 -3.176385 0.001491229
+#> 
 #> The exp(coef) column shows the hazard ratio was <span style='color: #0000BB;'>0.588</span>.
 #> 
 #> ── <span style='font-weight: bold;'>Test Survival Curve Differences</span> ──
@@ -210,6 +211,7 @@ print(separate_models)
 #> • The <span style='color: #00BB00;'>predict_by</span> argument was set to <span style='color: #0000BB;'>"group"</span>, which was not a <span style='color: #00BB00;'>covariate</span>.
 #> • Therefore, models were fit for each level of <span style='color: #0000BB;'>"group"</span>.
 #> • This is sometimes referred to as <span style='color: #0000BB;'>"separate fits"</span>.
+#> 
 #> <span style='font-weight: bold;'>Distributions attempted:</span> <span style='color: #0000BB;'>"exp"</span>, <span style='color: #0000BB;'>"gamma"</span>, <span style='color: #0000BB;'>"gengamma"</span>, <span style='color: #0000BB;'>"gompertz"</span>, <span style='color: #0000BB;'>"llogis"</span>,
 #> <span style='color: #0000BB;'>"lnorm"</span>, and <span style='color: #0000BB;'>"weibull"</span>.
 #> 

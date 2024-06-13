@@ -140,7 +140,7 @@ test_ph <- function(data,
 #' @export
 #' @noRd
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
-#' @importFrom cli cli_ul cli_li cli_div cli_end
+#' @importFrom cli cli_ul cli_li cli_div cli_end cli_par
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 print.test_ph <- function(x, ...) {
@@ -148,13 +148,15 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_h2("Cox Proportional Hazards Model")
 
-  cli::cli_text("The coefficients from {.fn survival::coxph} are:")
+  cli::cli_text("{.fn survival::coxph} output:")
   cli::cat_line()
 
   coeff_table <- as.data.frame(x$coxph_model$coefficients)
 
   print(coeff_table)
-  cli::cat_line()
+
+  cli::cli_par() # to add space, cat_line didn't seem to work here.
+  cli::cli_end()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
   cli::cli_text(c(
@@ -174,12 +176,12 @@ print.test_ph <- function(x, ...) {
 
   if (x$survdiff$pvalue > 0.05) {
     cli::cli_alert_warning(c(
-      "This suggests survival differences between groups are ",
+      "suggests survival differences between groups are ",
       "{.strong NOT} statistically significant."
     ))
   } else {
     cli::cli_alert_success(c(
-      "This suggests survival differences between groups are ",
+      "suggests survival differences between groups are ",
       "statistically significant."
     ))
   }
@@ -198,11 +200,11 @@ print.test_ph <- function(x, ...) {
 
   if (global_p_val > 0.05) {
     cli::cli_alert_success(c(
-      "This suggests the PH assumption {.strong may be} valid."
+      "suggests the PH assumption {.strong may be} valid."
     ))
   } else {
     cli::cli_alert_warning(c(
-      "This suggests the PH assumption {.strong may not be} valid."
+      "suggests the PH assumption {.strong may not be} valid."
     ))
   }
   cli::cli_end(divid)
