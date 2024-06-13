@@ -11,3 +11,5 @@
 ^SECURITY.md
 ^LICENSE.md
 ^data-raw$
+
+vignettes/

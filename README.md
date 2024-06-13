@@ -225,7 +225,7 @@ plots <- predict_and_plot(
 )
 
 print(plots)
-  ℹ Survival and hazard predictions are stored in the prediction list. Plots have been printed.
+  ℹ Survival and hazard plots have been printed.
 ```
 
 ![](man/figures/plot-models-1.png)<!-- -->![](man/figures/plot-models-2.png)<!-- -->![](man/figures/plot-models-3.png)<!-- -->![](man/figures/plot-models-4.png)<!-- -->
