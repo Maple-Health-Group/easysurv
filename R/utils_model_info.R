@@ -244,6 +244,7 @@ get_fit_averages_summary <- function(models,
                                      get_median = TRUE,
                                      get_rmst = FALSE,
                                      get_mean = FALSE) {
+
   out <- lapply(models,
     get_fit_averages,
     get_median = get_median,
@@ -284,6 +285,7 @@ get_goodness_of_fit <- function(mod) {
 #' @importFrom utils tail
 #' @noRd
 get_surv_parameters <- function(models) {
+
   # Initialize an empty list to store results
   out <- list()
 
@@ -305,11 +307,15 @@ get_surv_parameters <- function(models) {
         tibble::rownames_to_column(var = "parameter")
 
       # Get vcov matrix
-      get_vcov <- models[[i]]$fit$cov |>
-        as.data.frame()
+      get_vcov <- models[[i]]$fit$cov
 
       # Make the column names consistent between models (v1, v2, v3, ...)
-      colnames(get_vcov) <- paste0("v", seq_along(models[[i]]$fit$coefficients))
+      # vcov can be logical=NA if model has struggled to fit but still returned
+      if (!is.logical(get_vcov)) {
+        get_vcov <- as.data.frame(get_vcov)
+        colnames(get_vcov) <- paste0("v",
+                                     seq_along(models[[i]]$fit$coefficients))
+      }
 
       # Combine all results
       combined_results <- cbind(distribution, get_parameters, get_vcov)
@@ -375,6 +381,9 @@ get_surv_parameters <- function(models) {
     # Variance-covariance matrices
     out[[i]] <- combined_results
   }
+
+  # All failed models
+  if (length(models) == 0) return(out)
 
   # Start the tibble with distribution, parameter and covariate_marker columns.
   out <- dplyr::bind_rows(out) |>

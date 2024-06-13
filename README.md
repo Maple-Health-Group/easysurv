@@ -28,10 +28,6 @@ If you haven’t already, install [R](https://www.r-project.org) and
 consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
 your integrated development environment (IDE).
 
-<div id="install" class="chunk">
-
-<div class="rcode">
-
 ``` r
 # You will need to have the pak package installed.
 install.packages("pak")
@@ -40,15 +36,7 @@ install.packages("pak")
 pak::pkg_install("Maple-Health-Group/easysurv")
 ```
 
-</div>
-
-</div>
-
 ## Getting started
-
-<div id="getting-started" class="chunk">
-
-<div class="rcode">
 
 ``` r
 # Attach the easysurv library
@@ -63,17 +51,9 @@ quick_start()
 help(package = "easysurv")
 ```
 
-</div>
-
-</div>
-
 ## Examples
 
 ### Start by tidying your data
-
-<div id="tidy-data" class="chunk">
-
-<div class="rcode">
 
 ``` r
 # Load the easy_lung data from the easysurv package
@@ -91,22 +71,17 @@ surv_data <- surv_data |>
 levels(surv_data$group) <- c("Male", "Female")
 ```
 
-</div>
-
-</div>
-
 ### Then enjoy the easysurv functions!
 
 ### `get_km()`
 
 <!--
-<div class="chunk" id="collapse_cli"><div class="rcode"><style type="text/css">
+<style type="text/css">
 pre.r-output {
  margin-bottom: 0 !important;
  padding: 0px 16px;
 }
 &#10;</style>
-</div></div>
 -->
 
 ``` r
@@ -118,28 +93,29 @@ km_check <- get_km(
 )
 
 print(km_check)
+  
+  ── Kaplan-Meier Data ───────────────────────────────────────────────────────────
+  The get_km function has produced the following outputs:
+  • km: A `survival::survfit()` object for Kaplan-Meier estimates.
+  • km_for_excel: A list of stepped Kaplan-Meier data for external plotting.
+  • km_per_group: A list of Kaplan-Meier estimates for each group.
+  • km_plot: A Kaplan-Meier plot.
+  • km_summary: A summary table of the Kaplan-Meier estimates.
+  
+  ── km Summary ──
+  
+          group records events    rmean se(rmean)    median   0.95LCL  0.95UCL
+  Male     Male     138    112 10.71324 0.7527413  8.870637  6.965092 10.18480
+  Female Female      90     53 15.13420 1.1397075 13.995893 11.433265 18.06982
+         Median follow-up
+  Male           27.59754
+  Female         17.37988
+  ────────────────────────────────────────────────────────────────────────────────
+  The km_plot has been printed.
+  → For more information, run `View()` on saved get_km output.
 ```
 
 ![](man/figures/get-KM-1.png)<!-- -->
-<pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Kaplan-Meier Data</span> <span style='color: #00BBBB;'>───────────────────────────────────────────────────────────</span>
-The get_km function has produced the following outputs:
-• <span style='font-weight: bold;'>km</span>: A `survival::survfit()` object for Kaplan-Meier estimates.
-• <span style='font-weight: bold;'>km_for_excel</span>: A list of stepped Kaplan-Meier data for external plotting.
-• <span style='font-weight: bold;'>km_per_group</span>: A list of Kaplan-Meier estimates for each group.
-• <span style='font-weight: bold;'>km_plot</span>: A Kaplan-Meier plot.
-• <span style='font-weight: bold;'>km_summary</span>: A summary table of the Kaplan-Meier estimates.
-&#10;── <span style='font-weight: bold;'>km Summary</span> ──
-&#10;        group records events    rmean se(rmean)    median   0.95LCL  0.95UCL
-Male     Male     138    112 10.71324 0.7527413  8.870637  6.965092 10.18480
-Female Female      90     53 15.13420 1.1397075 13.995893 11.433265 18.06982
-       Median follow-up
-Male           27.59754
-Female         17.37988
-────────────────────────────────────────────────────────────────────────────────
-The km_plot has been printed.
-→ For more information, run `View()` on saved get_km output.
-</code></pre>
 
 ### `test_ph()`
 
@@ -152,31 +128,43 @@ ph_check <- test_ph(
 )
 
 print(ph_check)
+  
+  ── Proportional Hazards Assumption Testing ─────────────────────────────────────
+  
+  ── Cox Proportional Hazards Model ──
+  
+  The coefficients from `survival::coxph()` are:
+  
+                    coef exp(coef)  se(coef)         z    Pr(>|z|)
+  groupFemale -0.5310235 0.5880028 0.1671786 -3.176385 0.001491229
+  The exp(coef) column shows the hazard ratio was 0.588.
+  
+  ── Test Survival Curve Differences ──
+  
+  `survival::survdiff()` found a p-value of 0.001
+  ✔ This suggests survival differences between groups are statistically significant.
+  
+  ── Test the Proportional Hazards Assumption of a Cox Regression ──
+  
+  `survival::cox.zph()` found a p-value of 0.091
+  ✔ This suggests the PH assumption may be valid.
+  
+                  p
+  group  0.09062506
+  GLOBAL 0.09062506
+  
+  ── Plots ──
+  
 ```
 
-![](man/figures/test-PH-1.png)<!-- -->![](man/figures/test-PH-2.png)<!-- -->
-<pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Proportional Hazards Assumption Testing</span> <span style='color: #00BBBB;'>─────────────────────────────────────</span>
-&#10;── <span style='font-weight: bold;'>Cox Proportional Hazards Model</span> ──
-&#10;The coefficients from `survival::coxph()` are:
-&#10;                  coef exp(coef)  se(coef)         z    Pr(>|z|)
-groupFemale -0.5310235 0.5880028 0.1671786 -3.176385 0.001491229
-The exp(coef) column shows the hazard ratio was <span style='color: #0000BB;'>0.588</span>.
-&#10;── <span style='font-weight: bold;'>Test Survival Curve Differences</span> ──
-&#10;`survival::survdiff()` found a p-value of <span style='color: #0000BB;'>0.001</span>
-<span style='color: #00BB00;'>✔</span> This suggests survival differences between groups are statistically significant.
-&#10;── <span style='font-weight: bold;'>Test the Proportional Hazards Assumption of a Cox Regression</span> ──
-&#10;`survival::cox.zph()` found a p-value of <span style='color: #0000BB;'>0.091</span>
-<span style='color: #00BB00;'>✔</span> This suggests the PH assumption <span style='font-weight: bold;'>may be</span> valid.
-&#10;                p
-group  0.09062506
-GLOBAL 0.09062506
-&#10;── <span style='font-weight: bold;'>Plots</span> ──
-&#10;The Schoenfeld residuals and log cumulative hazard plots have been printed.
-────────────────────────────────────────────────────────────────────────────────
-<span style='color: #00BBBB;'>ℹ</span> PH tests may not always agree, so consider the results of all tests and plots.
-<span style='color: #00BBBB;'>ℹ</span> Run `View()` on saved test_ph output to see more.
-</code></pre>
+![](man/figures/test-PH-1.png)<!-- -->
+
+      The Schoenfeld residuals and log cumulative hazard plots have been printed.
+      ────────────────────────────────────────────────────────────────────────────────
+      ℹ PH tests may not always agree, so consider the results of all tests and plots.
+      ℹ Run `View()` on saved test_ph output to see more.
+
+![](man/figures/test-PH-2.png)<!-- -->
 
 ### `fit_models()`
 
@@ -189,43 +177,44 @@ separate_models <- fit_models(
 )
 
 print(separate_models)
+  
+  ── Fit Models Summary ──────────────────────────────────────────────────────────
+  Engine: flexsurv.
+  Approach: predict_by_other.
+  • The predict_by argument was set to "group", which was not a covariate.
+  • Therefore, models were fit for each level of "group".
+  • This is sometimes referred to as "separate fits".
+  Distributions attempted: "exp", "gamma", "gengamma", "gompertz", "llogis",
+  "lnorm", and "weibull".
+  
+  ── Median survival estimates ──
+  
+  ── Group: "Male"
+        dist aic_rank median_est
+  1      exp        5   7.947301
+  2    gamma        2   8.505316
+  3 gengamma        3   8.713519
+  4 gompertz        4   8.797670
+  5   llogis        6   8.213242
+  6    lnorm        7   7.663142
+  7  weibull        1   8.693753
+  ℹ For comparison, the KM median survival time was 8.871.
+  ℹ The distribution with the best (lowest) AIC was "weibull".
+  
+  ── Group: "Female"
+        dist aic_rank median_est
+  1      exp        6   13.10811
+  2    gamma        3   13.28173
+  3 gengamma        4   13.83206
+  4 gompertz        2   14.33790
+  5   llogis        5   13.16945
+  6    lnorm        7   13.09486
+  7  weibull        1   13.54648
+  ℹ For comparison, the KM median survival time was 13.996.
+  ℹ The distribution with the best (lowest) AIC was "weibull".
+  ────────────────────────────────────────────────────────────────────────────────
+  → For more information, run `View()` on the fit_models output.
 ```
-
-<pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Fit Models Summary</span> <span style='color: #00BBBB;'>──────────────────────────────────────────────────────────</span>
-<span style='font-weight: bold;'>Engine:</span> <span style='color: #00BB00;'>flexsurv</span>.
-<span style='font-weight: bold;'>Approach:</span> <span style='color: #00BB00;'>predict_by_other</span>.
-• The <span style='color: #00BB00;'>predict_by</span> argument was set to <span style='color: #0000BB;'>"group"</span>, which was not a <span style='color: #00BB00;'>covariate</span>.
-• Therefore, models were fit for each level of <span style='color: #0000BB;'>"group"</span>.
-• This is sometimes referred to as <span style='color: #0000BB;'>"separate fits"</span>.
-<span style='font-weight: bold;'>Distributions attempted:</span> <span style='color: #0000BB;'>"exp"</span>, <span style='color: #0000BB;'>"gamma"</span>, <span style='color: #0000BB;'>"gengamma"</span>, <span style='color: #0000BB;'>"gompertz"</span>, <span style='color: #0000BB;'>"llogis"</span>,
-<span style='color: #0000BB;'>"lnorm"</span>, and <span style='color: #0000BB;'>"weibull"</span>.
-&#10;── <span style='font-weight: bold;'>Median survival estimates</span> ──
-&#10;── Group: <span style='color: #0000BB;'>"Male"</span> 
-      dist aic_rank median_est
-1      exp        5   7.947301
-2    gamma        2   8.505316
-3 gengamma        3   8.713519
-4 gompertz        4   8.797670
-5   llogis        6   8.213242
-6    lnorm        7   7.663142
-7  weibull        1   8.693753
-<span style='color: #00BBBB;'>ℹ</span> For comparison, the KM median survival time was <span style='color: #0000BB;'>8.871</span>.
-<span style='color: #00BBBB;'>ℹ</span> The distribution with the best (lowest) AIC was <span style='color: #0000BB;'>"weibull"</span>.
-&#10;── Group: <span style='color: #0000BB;'>"Female"</span> 
-      dist aic_rank median_est
-1      exp        6   13.10811
-2    gamma        3   13.28173
-3 gengamma        4   13.83206
-4 gompertz        2   14.33790
-5   llogis        5   13.16945
-6    lnorm        7   13.09486
-7  weibull        1   13.54648
-<span style='color: #00BBBB;'>ℹ</span> For comparison, the KM median survival time was <span style='color: #0000BB;'>13.996</span>.
-<span style='color: #00BBBB;'>ℹ</span> The distribution with the best (lowest) AIC was <span style='color: #0000BB;'>"weibull"</span>.
-────────────────────────────────────────────────────────────────────────────────
-→ For more information, run `View()` on the fit_models output.
-</code></pre>
 
 ### `predict_and_plot()`
 
@@ -236,9 +225,7 @@ plots <- predict_and_plot(
 )
 
 print(plots)
+  ℹ Survival and hazard predictions are stored in the prediction list. Plots have been printed.
 ```
 
 ![](man/figures/plot-models-1.png)<!-- -->![](man/figures/plot-models-2.png)<!-- -->![](man/figures/plot-models-3.png)<!-- -->![](man/figures/plot-models-4.png)<!-- -->
-<pre class="r-output"><code><span style='color: #00BBBB;'>ℹ</span> Survival and hazard predictions are stored in the prediction list.
-<span style='color: #00BBBB;'>ℹ</span> The following plots have been printed.
-</code></pre>

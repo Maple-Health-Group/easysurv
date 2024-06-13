@@ -51,6 +51,7 @@
 #' @importFrom cli cli_abort
 #' @importFrom dplyr arrange select
 #' @importFrom purrr discard
+#' @importFrom rlang sym
 #' @importFrom stats as.formula
 #' @importFrom survival survfit survfit0
 #' @importFrom tibble rownames_to_column
@@ -143,8 +144,13 @@ fit_models <- function(data,
     }
 
     nested <- data |>
-      dplyr::arrange(factor(predict_by, levels = levels(predict_by))) |>
       tidyr::nest(.by = predict_by)
+
+    # arrange outside of the pipe to ensure it actually sorts.
+    nested <- dplyr::arrange(nested, !!rlang::sym(predict_by))
+
+    # arrange data for things like print out of fit averages
+    data <- dplyr::arrange(data, !!rlang::sym(predict_by))
 
     predict_list <- levels(droplevels(as.factor(data[[predict_by]])))
     approach <- if (predict_by %in% covariates) {
