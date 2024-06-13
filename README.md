@@ -172,12 +172,12 @@ print(ph_check)
 #> ── <span style='font-weight: bold;'>Test Survival Curve Differences</span> ──
 #> 
 #> `survival::survdiff()` found a p-value of <span style='color: #0000BB;'>0.001</span>
-#> <span style='color: #00BB00;'>✔</span> This suggests survival differences between groups are statistically significant.
+#> <span style='color: #00BB00;'>✔</span> suggests survival differences between groups are statistically significant.
 #> 
 #> ── <span style='font-weight: bold;'>Test the Proportional Hazards Assumption of a Cox Regression</span> ──
 #> 
 #> `survival::cox.zph()` found a p-value of <span style='color: #0000BB;'>0.091</span>
-#> <span style='color: #00BB00;'>✔</span> This suggests the PH assumption <span style='font-weight: bold;'>may be</span> valid.
+#> <span style='color: #00BB00;'>✔</span> suggests the PH assumption <span style='font-weight: bold;'>may be</span> valid.
 #> 
 #>                 p
 #> group  0.09062506
