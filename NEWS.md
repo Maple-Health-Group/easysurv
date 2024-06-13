@@ -6,20 +6,19 @@
     * The `tidymodels` framework is a collection of R packages for modeling and machine learning using `tidyverse` principles. From the `tidymodels` framework, we take advantage of the `parsnip` and `censored` packages to specify models and predict survival outputs.
     * The `parsnip` package provides an interface to many different modeling packages, allowing for a consistent syntax for fitting models and making predictions. 
     * The `censored` package is a `parsnip` extension that provides engines for various models to handle censored data in survival analysis.
-* `inspect_surv_data()` allows quick inspection of survival data. 
-* `get_km()` replaces `quick_KM()` as the function to fit Kaplan-Meier curves.
-* `test_ph()` replaces `quick_PH()` as the function to test the proportional hazards assumption.
-* `fit_models()` allows for additional covariates to be specified in model fitting.
-* `predict_and_plot()` separates the generation of predictions and associated plots from the main model fitting function.
+* New functions!
+    * `inspect_surv_data()` allows quick inspection of survival data. 
+    * `get_km()` replaces `quick_KM()` as the function to fit Kaplan-Meier curves.
+    * `test_ph()` replaces `quick_PH()` as the function to test the proportional hazards assumption.
+    * `fit_models()` allows for additional covariates to be specified in model fitting.
+    * `predict_and_plot()` separates the generation of predictions and associated plots from the main model fitting function.
 
 ## Other improvements and bug fixes
 
-* No longer requires font installation at start-up.
-* Introduced print methods for key functions to simplify and summarise outputs.
+* No longer requires any additional font installation.
+* Introduced print methods with the `cli` package for key functions to simplify and summarise outputs.
 * Changed primary plotting package from `ggsurvplot` to `ggsurvfit`. `ggsurvplot` generates warning messages when median survival lines are added and generates misaligned risk tables as of `ggplot2` version 3.5.0, while `ggsurvfit` is being actively maintained.
 * To facilitate interpretation of Schoenfeld residual plots, scaled Schoenfeld residuals are now used, and facets are no longer produced per strata. 
-* Addressed issue in model fitting whereby nested data per strata/group was not ordered by the factor levels before analysis.
-
 
 
 # easysurv 1.1.0

@@ -3,7 +3,7 @@
 ###########
 
 # nolint start
-#' Example clinical trial data from `ggsurvfit`
+#' Formatted Copy of `ggsurvfit::adtte`
 #'
 #' Background
 #' The example simulated data set is based on large phase III clinical trials in

@@ -15,7 +15,7 @@ to "easysurv_start.R"  within a helper function.}
 This function launches an example script for starting survival analysis
 using the easysurv package. The script uses simulated phase III breast
 cancer trial data provided from the authors of the ggsurvfit package.
-The code is inspired by usethis::use_template
+The code is inspired by \code{usethis::use_template()}
 but modified to work outside the context of an .RProj or package.
 }
 \examples{

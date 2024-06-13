@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict_and_plot.R
 \name{predict_and_plot}
 \alias{predict_and_plot}
-\title{Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.}
+\title{Predict and Plot Fitted Models}
 \usage{
 predict_and_plot(
   fit_models,

@@ -1,4 +1,4 @@
-#' Predict and plot \code{fit_models} on \code{data} at \code{eval_time}.
+#' Predict and Plot Fitted Models
 #'
 #' This function generates survival and hazard predictions and plots for each
 #' model in a \code{fit_models} object. Optionally, interactive \code{plotly}

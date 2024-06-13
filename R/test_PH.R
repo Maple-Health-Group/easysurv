@@ -212,8 +212,6 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_h2("Plots")
 
-  print(x$schoenfeld_plot)
-  print(x$cloglog_plot)
   cli::cli_text(c(
     "The Schoenfeld residuals and log cumulative hazard plots ",
     "have been printed."
@@ -227,6 +225,10 @@ print.test_ph <- function(x, ...) {
   cli::cli_alert_info(c(
     "Run {.code View()} on saved test_ph output to see more."
   ))
+
+  # Actually print at the end to avoid cli being too fast.
+  print(x$schoenfeld_plot)
+  print(x$cloglog_plot)
 
   invisible(x)
 }

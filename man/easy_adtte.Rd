@@ -3,7 +3,7 @@
 \docType{data}
 \name{easy_adtte}
 \alias{easy_adtte}
-\title{Example clinical trial data from \code{ggsurvfit}}
+\title{Formatted Copy of \code{ggsurvfit::adtte}}
 \format{
 The data set contains the following variables:
 

@@ -1,4 +1,4 @@
-#' Inspect survival data
+#' Inspect Survival Data
 #'
 #' Quickly inspect the survival data to ensure it is in the correct format.
 #'

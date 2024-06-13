@@ -2,7 +2,7 @@
 % Please edit documentation in R/inspect_surv_data.R
 \name{inspect_surv_data}
 \alias{inspect_surv_data}
-\title{Inspect survival data}
+\title{Inspect Survival Data}
 \usage{
 inspect_surv_data(data, time, event, group = NULL)
 }

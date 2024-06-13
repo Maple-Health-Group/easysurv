@@ -358,4 +358,4 @@ Note: if you have multiple `fit_models` or `predict_and_plot` objects, you shoul
 
 And with that, we have a set of standard parametric model outputs in both R and Excel! 
 
-If you encounter any bugs or issues, please reach out to the authors.
+We hope you enjoy using the package!
