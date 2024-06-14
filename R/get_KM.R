@@ -237,7 +237,7 @@ print.get_km <- function(x, ...) {
   cli::cat_line()
   cli::cli_rule()
   print(x$km_plot)
-  cli::cli_text("The km_plot has been printed.")
+  cli::cli_text("km_plot has been printed.")
   cli::cli_alert(c(
     "For more information, run {.code View()} ",
     "on saved get_km output."

@@ -215,7 +215,7 @@ print.test_ph <- function(x, ...) {
   cli::cli_h2("Plots")
 
   cli::cli_text(c(
-    "The Schoenfeld residuals and log cumulative hazard plots ",
+    "Schoenfeld residuals and log cumulative hazard plots ",
     "have been printed."
   ))
 
