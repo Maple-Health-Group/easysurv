@@ -14,7 +14,8 @@ fit_models(
   engine = "flexsurv",
   k = c(1, 2, 3),
   scale = c("hazard"),
-  add_time_0 = TRUE
+  add_time_0 = TRUE,
+  ...
 )
 }
 \arguments{
@@ -66,6 +67,8 @@ Default is \code{"hazard"}.}
 \item{add_time_0}{Optional. Uses \code{survival::survfit0()} to add a starting
 time of 0 to the KM survfit object. This may be useful for plotting the KM
 at a subsequent stage (in surv_plots). Default is TRUE.}
+
+\item{...}{Additional arguments just to catch them and avoid errors.}
 }
 \value{
 A list containing various outputs including model distributions,

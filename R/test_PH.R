@@ -144,7 +144,6 @@ test_ph <- function(data,
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 print.test_ph <- function(x, ...) {
-
   cli::cli_h1("Testing Survival Curve Differences")
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
@@ -215,7 +214,10 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_alert_info(c(
     "Schoenfeld residuals and log cumulative hazard plots ",
-    "have been printed. \n",
+    "have been printed."
+  ))
+
+  cli::cli_alert_info(c(
     "PH tests may not always agree, so ",
     "consider the results of all tests and plots in totality."
   ))

@@ -43,6 +43,7 @@
 #' @param add_time_0 Optional. Uses `survival::survfit0()` to add a starting
 #'   time of 0 to the KM survfit object. This may be useful for plotting the KM
 #'   at a subsequent stage (in surv_plots). Default is TRUE.
+#' @param ... Additional arguments just to catch them and avoid errors.
 #'
 #' @return A list containing various outputs including model distributions,
 #' parameters, predictions, plots, and summary statistics.
@@ -84,7 +85,8 @@ fit_models <- function(data,
                        engine = "flexsurv",
                        k = c(1, 2, 3),
                        scale = c("hazard"),
-                       add_time_0 = TRUE) {
+                       add_time_0 = TRUE,
+                       ...) {
   # Create key objects ----
   distributions <- list()
   models <- list()
@@ -120,16 +122,49 @@ fit_models <- function(data,
     )
   }
 
-  # ...
+  ## Check engine ----
+  rlang::arg_match(engine,
+    c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
+    multiple = FALSE
+  )
 
-  ## Check time ----
-  # ...
+  ## Check dists ----
+  if (engine == "flexsurv") {
+    rlang::arg_match(dists,
+      values = c(
+        "exp", "exponential", "gamma", "genf", "genf.orig", "gengamma",
+        "gengamma.orig", "gompertz", "llogis", "lnorm", "lognormal", "weibull",
+        "weibullPH"
+      ),
+      multiple = TRUE
+    )
+  } else if (engine == "flexsurvcure") {
+    rlang::arg_match(dists,
+      values = c(
+        "exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm",
+        "weibull"
+      ),
+      multiple = TRUE
+    )
+  } else if (engine == "survival") {
+    rlang::arg_match(dists,
+      values = c(
+        "exponential", "extreme", "gaussian", "loggaussian", "logistic",
+        "lognormal", "rayleigh", "weibull"
+      ),
+      multiple = TRUE
+    )
+  }
 
-  ## Check event ----
-  # ...
-
-
-
+  # Check for extra arguments
+  extra_args <- names(list(...))
+  if ("group" %in% extra_args) {
+    cli::cli_abort(c(paste0(
+      "You've provided a {.field group} argument, which is not accepted",
+      " by {.fn fit_models}."),
+      "x" = "Did you mean to use {.field predict_by} instead?"
+    ))
+  }
 
   ## Check covariate approach ----
 
@@ -164,40 +199,6 @@ fit_models <- function(data,
     paste(covariates, collapse = " + ")
   } else {
     1
-  }
-
-  ## Check engine ----
-  rlang::arg_match(engine,
-    c("flexsurv", "flexsurvcure", "flexsurvspline", "survival"),
-    multiple = FALSE
-  )
-
-  ## Check dists ----
-  if (engine == "flexsurv") {
-    rlang::arg_match(dists,
-      values = c(
-        "exp", "exponential", "gamma", "genf", "genf.orig", "gengamma",
-        "gengamma.orig", "gompertz", "llogis", "lnorm", "lognormal", "weibull",
-        "weibullPH"
-      ),
-      multiple = TRUE
-    )
-  } else if (engine == "flexsurvcure") {
-    rlang::arg_match(dists,
-      values = c(
-        "exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm",
-        "weibull"
-      ),
-      multiple = TRUE
-    )
-  } else if (engine == "survival") {
-    rlang::arg_match(dists,
-      values = c(
-        "exponential", "extreme", "gaussian", "loggaussian", "logistic",
-        "lognormal", "rayleigh", "weibull"
-      ),
-      multiple = TRUE
-    )
   }
 
 
