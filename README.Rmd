@@ -31,69 +31,6 @@ asciicast::init_knitr_engine(
   echo_input = FALSE
 )
 
-# The remaining code in this chunk is all to support cli output printing,
-# and printing in a single code block. It preserves some of the colour lost by
-# a github_document output.
-
-# options(crayon.enabled = TRUE)
-# 
-# ansi_aware_handler <- function(x, options) {
-#   paste0(
-#     "<pre class=\"r-output\"><code>",
-#     fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
-#     "</code></pre>"
-#   )
-# }
-# 
-# # global store for output and messages
-# asconsole_output <- NULL
-# 
-# # override message hook
-# # if output option is 'asconsole', append message to global
-# # otherwise let knitr do its thing
-# knitr::knit_hooks$set(message = function(x, options) {
-#   if(!is.null(options$output)) {
-#     if(options$output == 'asconsole') {
-#       asconsole_output <<- c(asconsole_output, x)
-#       return(NULL)
-#     }
-#   }
-# 
-#   knitr::hooks_html()$message(x, options)
-# })
-# 
-# # override output hook
-# # if output option is 'asconsole', append output to global
-# # otherwise let knitr do its thing
-# knitr::knit_hooks$set(output = function(x, options) {
-#   if(!is.null(options$output)) {
-#     if(options$output == 'asconsole') {
-#       asconsole_output <<- c(asconsole_output, x)
-#       return(NULL)
-#     }
-#   }
-# 
-#   knitr::hooks_html()$output(x, options)
-# })
-# 
-# # override chunk hook
-# # if output option is 'asconsole', clear global and append formatted contents
-# # otherwise let knitr do its thing
-# knitr::knit_hooks$set(chunk = function(x, options) {
-#   if(!is.null(options$output)) {
-#     if(options$output == 'asconsole') {
-#       y <- paste(asconsole_output, collapse = "")
-#       y <- ansi_aware_handler(y, options) # new line
-#       #y <- knitr::hooks_html()$output(y, options)
-#       asconsole_output <<- NULL
-#       y <- paste(x, y, collapse = "")
-#       return(y)
-#     }
-#   }
-# 
-#   knitr::hooks_html()$chunk(x, options)
-# })
-
 ```
 
 # easysurv <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>

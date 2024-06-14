@@ -149,7 +149,7 @@ print.test_ph <- function(x, ...) {
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
-  cli::cli_text(c(
+  cli::cli_alert_info(c(
     "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}."
   ))
 
@@ -191,11 +191,12 @@ print.test_ph <- function(x, ...) {
   p_vals <- as.data.frame(x$coxph_test$table)[3]
   global_p_val <- p_vals[nrow(p_vals), ]
 
-  cli::cat_line()
+  cli::cli_par() # to add space, cat_line didn't seem to work here.
+  cli::cli_end()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
-  cli::cli_text(c(
+  cli::cli_alert_info(c(
     "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}."
   ))
 
@@ -212,12 +213,9 @@ print.test_ph <- function(x, ...) {
 
   cli::cli_h2("Plots")
 
-  cli::cli_text(c(
-    "Schoenfeld residuals and log cumulative hazard plots ",
-    "have been printed."
-  ))
-
   cli::cli_alert_info(c(
+    "Schoenfeld residuals and log cumulative hazard plots ",
+    "have been printed. \n",
     "PH tests may not always agree, so ",
     "consider the results of all tests and plots in totality."
   ))
