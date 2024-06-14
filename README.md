@@ -62,8 +62,9 @@ surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,
     event = status - 1,
-    group = sex
-  )
+    group = sex,
+    .after = time) |>
+  dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
 
 # Make the group variable a factor and assign level labels.
 surv_data <- surv_data |>

@@ -78,15 +78,16 @@ help(package = "easysurv")
 ## Examples
 ### Start by tidying your data...
 
-```{r tidy-data-r, cache = TRUE, echo = TRUE}
+```{r tidy-data-r, cache = FALSE, echo = TRUE}
 # Load the easy_lung data from the easysurv package
 # Recode the "status" variable to create an event indicator (0/1)
 surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,
     event = status - 1,
-    group = sex
-  )
+    group = sex,
+    .after = time) |>
+  dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
 
 # Make the group variable a factor and assign level labels.
 surv_data <- surv_data |>
@@ -98,7 +99,7 @@ levels(surv_data$group) <- c("Male", "Female")
 
 ### `inspect_surv_data()`
 
-```{r inspect-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE}
+```{r inspect-r, cache = FALSE, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE}
 inspect_surv_data(
   data = surv_data,
   time = "time",
@@ -113,8 +114,9 @@ surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,
     event = status - 1,
-    group = sex
-  ) |>
+    group = sex,
+    .after = time) |>
+  dplyr::select(-c(inst, ph.karno, pat.karno)) |>
   dplyr::mutate_at("group", as.factor)
 levels(surv_data$group) <- c("Male", "Female")
 
