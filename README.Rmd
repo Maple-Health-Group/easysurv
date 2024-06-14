@@ -170,7 +170,7 @@ inspect_surv_data(
 )
 ```
 
-```{asciicast inspect-a, echo = FALSE}
+```{asciicast inspect-a, echo = FALSE, cache = FALSE}
 # Since asciicast doesn't remember information between chunks.
 surv_data <- easy_lung |>
   dplyr::mutate(
@@ -202,7 +202,7 @@ km_check <- get_km(
 print(km_check)
 ```
 
-```{asciicast get-KM-a, echo = FALSE}
+```{asciicast get-KM-a, echo = FALSE, cache = FALSE}
 # Since asciicast doesn't remember information between chunks.
 surv_data <- easy_lung |>
   dplyr::mutate(
@@ -237,7 +237,7 @@ ph_check <- test_ph(
 print(ph_check)
 ```
 
-```{asciicast test-PH-a, echo = FALSE}
+```{asciicast test-PH-a, echo = FALSE, cache = FALSE}
 surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,
@@ -272,7 +272,7 @@ separate_models <- fit_models(
 print(separate_models)
 ```
 
-```{asciicast fit-models-a, echo = FALSE}
+```{asciicast fit-models-a, echo = FALSE, cache = FALSE}
 surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,
@@ -303,7 +303,7 @@ plots <- predict_and_plot(
 print(plots)
 ```
 
-```{asciicast plot-models-a, echo = FALSE}
+```{asciicast plot-models-a, echo = FALSE, cache = FALSE}
 surv_data <- easy_lung |>
   dplyr::mutate(
     time = time,

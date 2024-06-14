@@ -47,7 +47,7 @@ Cox proportional hazards model and related tests.
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
-ph_results <- get_ph(
+ph_results <- test_ph(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",

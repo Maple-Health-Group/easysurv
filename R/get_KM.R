@@ -240,7 +240,7 @@ print.get_km <- function(x, ...) {
   cli::cli_text("{.val km_plot} has been printed.")
   cli::cli_alert(c(
     "For more information, run {.code View()} ",
-    "on saved get_km output."
+    "on saved {.fn get_km} output."
   ))
 
   invisible(x)

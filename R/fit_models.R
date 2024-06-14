@@ -499,7 +499,7 @@ print.fit_models <- function(x, ...) {
   cli::cli_rule()
   cli::cli_alert(c(
     "For more information, run {.code View()} ",
-    "on the fit_models output."
+    "on saved {.fn fit_models} output."
   ))
 
   invisible(x)

@@ -150,7 +150,7 @@ print.test_ph <- function(x, ...) {
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
   cli::cli_text(c(
-    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}"
+    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}."
   ))
 
   if (x$survdiff$pvalue > 0.05) {
@@ -196,7 +196,7 @@ print.test_ph <- function(x, ...) {
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 
   cli::cli_text(c(
-    "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}"
+    "{.fn survival::cox.zph} found a p-value of {.val {global_p_val}}."
   ))
 
   if (global_p_val > 0.05) {
@@ -217,13 +217,16 @@ print.test_ph <- function(x, ...) {
     "have been printed."
   ))
 
-  cli::cli_rule()
   cli::cli_alert_info(c(
     "PH tests may not always agree, so ",
-    "consider the results of all tests and plots."
+    "consider the results of all tests and plots in totality."
   ))
-  cli::cli_alert_info(c(
-    "Run {.code View()} on saved test_ph output to see more."
+
+  cli::cli_rule()
+
+  cli::cli_alert(c(
+    "For more information, run {.code View()} ",
+    "on saved {.fn test_ph} output."
   ))
 
   # Actually print at the end to avoid cli being too fast.
