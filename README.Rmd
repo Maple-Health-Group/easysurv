@@ -13,8 +13,7 @@ knitr::opts_chunk$set(
   comment = '#>',
   fig.path = "man/figures/",
   out.width = "100%",
-  fig.width = 6, 
-  fig.height = 5,
+  dpi = 300,
   cache = TRUE,
   asciicast_theme = if (Sys.getenv("IN_PKGDOWN") == "true") "pkgdown" else "readme"
 )
@@ -31,7 +30,6 @@ asciicast::init_knitr_engine(
   echo = FALSE,
   echo_input = FALSE
 )
-
 
 # The remaining code in this chunk is all to support cli output printing,
 # and printing in a single code block. It preserves some of the colour lost by
@@ -98,7 +96,7 @@ asciicast::init_knitr_engine(
 
 ```
 
-<b>easysurv</b> <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
+# easysurv <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml)
@@ -193,7 +191,7 @@ inspect_surv_data(
 
 ### `get_km()`
 
-```{r get-KM-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE}
+```{r get-KM-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5}
 km_check <- get_km(
   data = surv_data,
   time = "time",
@@ -228,7 +226,7 @@ print(km_check)
 
 ### `test_ph()`
 
-``` {r test-PH-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE}
+``` {r test-PH-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5}
 ph_check <- test_ph(
   data = surv_data,
   time = "time",
@@ -263,7 +261,7 @@ print(ph_check)
 ### `fit_models()`
 
 
-``` {r fit-models-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE}
+``` {r fit-models-r, echo = TRUE, results = FALSE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5}
 separate_models <- fit_models(
   data = surv_data,
   time = "time",
@@ -296,7 +294,7 @@ print(separate_models)
 
 ### `predict_and_plot()`
 
-``` {r plot-models-r, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
+``` {r plot-models-r, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5}
 plots <- predict_and_plot(
   fit_models = separate_models,
   data = surv_data
