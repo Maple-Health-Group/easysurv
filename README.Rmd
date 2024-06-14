@@ -1,6 +1,7 @@
 ---
 output: 
   github_document:
+always_allow_html: yes
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -143,17 +144,23 @@ levels(surv_data$group) <- c("Male", "Female")
 ```
 
 ### ... then enjoy the easysurv functions! 
+
+### `inspect_surv_data()`
+
+```{r inspect, collapse = TRUE, output = "asconsole"}
+inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+```
+
 ### `get_km()`
 
-<!--
-```{css collapse_cli, echo = FALSE}
-pre.r-output {
- margin-bottom: 0 !important;
- padding: 0px 16px;
-}
+Note that GitHub README files strip the colour from the console output. 
 
-```
--->
+To see the fully formatted output of the following functions, run the code in your R console.
 
 ```{r get-KM, collapse = TRUE, output = "asconsole", fig.width=6, fig.height=5}
 km_check <- get_km(

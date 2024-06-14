@@ -97,17 +97,59 @@ levels(surv_data$group) <- c("Male", "Female")
 
 ### … then enjoy the easysurv functions!
 
+### `inspect_surv_data()`
+
+``` r
+inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+```
+
+<pre class="r-output"><code>#> <span style='color: #555555;'># A tibble: 6 × 12</span>
+#>    inst  time status   age   sex ph.ecog ph.karno pat.karno meal.cal wt.loss
+#>   <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>  <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>   <span style='color: #555555; font-style: italic;'><dbl></span>    <span style='color: #555555; font-style: italic;'><dbl></span>     <span style='color: #555555; font-style: italic;'><dbl></span>    <span style='color: #555555; font-style: italic;'><dbl></span>   <span style='color: #555555; font-style: italic;'><dbl></span>
+#> <span style='color: #555555;'>1</span>     3 10.1       2    74     1       1       90       100     <span style='text-decoration: underline;'>1</span>175      <span style='color: #BB0000;'>NA</span>
+#> <span style='color: #555555;'>2</span>     3 14.9       2    68     1       0       90        90     <span style='text-decoration: underline;'>1</span>225      15
+#> <span style='color: #555555;'>3</span>     3 33.2       1    56     1       0       90        90       <span style='color: #BB0000;'>NA</span>      15
+#> <span style='color: #555555;'>4</span>     5  6.90      2    57     1       1       90        60     <span style='text-decoration: underline;'>1</span>150      11
+#> <span style='color: #555555;'>5</span>     1 29.0       2    60     1       0      100        90       <span style='color: #BB0000;'>NA</span>       0
+#> <span style='color: #555555;'>6</span>    12 33.6       1    74     1       1       50        80      513       0
+#>   event group
+#>   <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><fct></span>
+#> <span style='color: #555555;'>1</span>     1 Male 
+#> <span style='color: #555555;'>2</span>     1 Male 
+#> <span style='color: #555555;'>3</span>     0 Male 
+#> <span style='color: #555555;'>4</span>     1 Male 
+#> <span style='color: #555555;'>5</span>     1 Male 
+#> <span style='color: #555555;'>6</span>     0 Male 
+#> <span style='color: #555555;'># A tibble: 2 × 2</span>
+#>   group      n
+#>   <span style='color: #555555; font-style: italic;'><fct></span>  <span style='color: #555555; font-style: italic;'><int></span>
+#> <span style='color: #555555;'>1</span> Male     138
+#> <span style='color: #555555;'>2</span> Female    90
+#> <span style='color: #555555;'># A tibble: 4 × 4</span>
+#>   group  event     n percent
+#>   <span style='color: #555555; font-style: italic;'><fct></span>  <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><int></span>   <span style='color: #555555; font-style: italic;'><dbl></span>
+#> <span style='color: #555555;'>1</span> Male       0    26   0.188
+#> <span style='color: #555555;'>2</span> Male       1   112   0.812
+#> <span style='color: #555555;'>3</span> Female     0    37   0.411
+#> <span style='color: #555555;'>4</span> Female     1    53   0.589
+#> <span style='color: #555555;'># A tibble: 2 × 9</span>
+#>   records n.max n.start events rmean `se(rmean)` median `0.95LCL` `0.95UCL`
+#>     <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>   <span style='color: #555555; font-style: italic;'><dbl></span>  <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>       <span style='color: #555555; font-style: italic;'><dbl></span>  <span style='color: #555555; font-style: italic;'><dbl></span>     <span style='color: #555555; font-style: italic;'><dbl></span>     <span style='color: #555555; font-style: italic;'><dbl></span>
+#> <span style='color: #555555;'>1</span>     138   138     138    112  10.7       0.753   8.87      6.97      10.2
+#> <span style='color: #555555;'>2</span>      90    90      90     53  15.1       1.14   14.0      11.4       18.1
+</code></pre>
+
 ### `get_km()`
 
-<!--
-<div class="chunk" id="collapse_cli"><div class="rcode"><style type="text/css">
-pre.r-output {
- margin-bottom: 0 !important;
- padding: 0px 16px;
-}
-&#10;</style>
-</div></div>
--->
+Note that GitHub README files strip the colour from the console output.
+
+To see the fully formatted output of the following functions, run the
+code in your R console.
 
 ``` r
 km_check <- get_km(
@@ -139,7 +181,7 @@ print(km_check)
 #> Male           27.59754
 #> Female         17.37988
 #> ────────────────────────────────────────────────────────────────────────────────
-#> The km_plot has been printed.
+#> km_plot has been printed.
 #> → For more information, run `View()` on saved get_km output.
 </code></pre>
 
@@ -185,7 +227,7 @@ print(ph_check)
 #> 
 #> ── <span style='font-weight: bold;'>Plots</span> ──
 #> 
-#> The Schoenfeld residuals and log cumulative hazard plots have been printed.
+#> Schoenfeld residuals and log cumulative hazard plots have been printed.
 #> ────────────────────────────────────────────────────────────────────────────────
 #> <span style='color: #00BBBB;'>ℹ</span> PH tests may not always agree, so consider the results of all tests and plots.
 #> <span style='color: #00BBBB;'>ℹ</span> Run `View()` on saved test_ph output to see more.
