@@ -39,7 +39,7 @@
 #'
 #' @examplesIf interactive()
 #'
-#' ph_results <- get_ph(
+#' ph_results <- test_ph(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
@@ -144,7 +144,29 @@ test_ph <- function(data,
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 print.test_ph <- function(x, ...) {
-  cli::cli_h1("Proportional Hazards Assumption Testing")
+
+  cli::cli_h1("Testing Survival Curve Differences")
+
+  divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
+
+  cli::cli_text(c(
+    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}"
+  ))
+
+  if (x$survdiff$pvalue > 0.05) {
+    cli::cli_alert_warning(c(
+      "suggests survival differences between groups are ",
+      "{.strong NOT} statistically significant."
+    ))
+  } else {
+    cli::cli_alert_success(c(
+      "suggests survival differences between groups are ",
+      "statistically significant."
+    ))
+  }
+  cli::cli_end(divid)
+
+  cli::cli_h1("Testing Proportional Hazards Assumption")
 
   cli::cli_h2("Cox Proportional Hazards Model")
 
@@ -166,31 +188,10 @@ print.test_ph <- function(x, ...) {
   ))
   cli::cli_end(divid)
 
-  cli::cli_h2("Test Survival Curve Differences")
-
-  divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
-
-  cli::cli_text(c(
-    "{.fn survival::survdiff} found a p-value of {.val {x$survdiff$pvalue}}"
-  ))
-
-  if (x$survdiff$pvalue > 0.05) {
-    cli::cli_alert_warning(c(
-      "suggests survival differences between groups are ",
-      "{.strong NOT} statistically significant."
-    ))
-  } else {
-    cli::cli_alert_success(c(
-      "suggests survival differences between groups are ",
-      "statistically significant."
-    ))
-  }
-  cli::cli_end(divid)
-
-  cli::cli_h2("Test the Proportional Hazards Assumption of a Cox Regression")
-
   p_vals <- as.data.frame(x$coxph_test$table)[3]
   global_p_val <- p_vals[nrow(p_vals), ]
+
+  cli::cat_line()
 
   divid <- cli::cli_div(theme = list(.val = list(digits = 3)))
 

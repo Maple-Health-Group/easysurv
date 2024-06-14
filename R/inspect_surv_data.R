@@ -102,17 +102,28 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
 #' @param ... Additional arguments
 #' @export
 #' @noRd
-#' @importFrom cli cli_alert_warning cat_line
+#' @importFrom cli cli_alert_warning cat_line cli_h1 cli_h2
 print.inspect_surv_data <- function(x, ...) {
-  # Show all columns in each tibble.
-  lapply(x, function(element) {
-    if (inherits(element, "tbl_df")) {
-      print(element, width = Inf, ...)
-      cli::cat_line()
-    }
-  })
+
+  cli::cli_h1("Inspect Survival Data")
+
+  cli::cli_h2("First Few Rows")
+  print(x$first_few_rows, width = Inf, ...)
+  cli::cat_line()
+
+  cli::cli_h2("Sample Sizes")
+  print(x$sample_sizes, ...)
+  cli::cat_line()
+
+  cli::cli_h2("Events Summary")
+  print(x$events_summary, ...)
+  cli::cat_line()
+
+  cli::cli_h2("Survival Summary")
+  print(x$survival_summary, width = Inf, ...)
 
   if (!is.null(x$group_is_factor) && !x$group_is_factor) {
+    cli::cat_line()
     cli::cli_alert_warning(c(
       "{.field group} column is not a factor variable. \n",
       "It is recommended to convert it to a factor for other easysurv ",
