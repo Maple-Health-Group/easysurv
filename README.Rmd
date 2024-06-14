@@ -158,7 +158,7 @@ inspect_surv_data(
 
 ### `get_km()`
 
-Note that GitHub README files strip the colour from the console output. 
+Note that GitHub README files strip most of the colour and formatting from the console output. 
 
 To see the fully formatted output of the following functions, run the code in your R console.
 
@@ -171,7 +171,6 @@ km_check <- get_km(
 )
 
 print(km_check)
-
 ```
 
 
@@ -187,7 +186,6 @@ ph_check <- test_ph(
 )
 
 print(ph_check)
-
 ```
 
 
@@ -203,7 +201,6 @@ separate_models <- fit_models(
 )
 
 print(separate_models)
-
 ```
 
 ### `predict_and_plot()`
@@ -216,5 +213,4 @@ plots <- predict_and_plot(
 )
 
 print(plots)
-
 ```

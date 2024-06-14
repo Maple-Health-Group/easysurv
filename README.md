@@ -146,7 +146,8 @@ inspect_surv_data(
 
 ### `get_km()`
 
-Note that GitHub README files strip the colour from the console output.
+Note that GitHub README files strip most of the colour and formatting
+from the console output.
 
 To see the fully formatted output of the following functions, run the
 code in your R console.
