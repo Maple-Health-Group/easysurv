@@ -125,11 +125,13 @@ inspect_surv_data(
 #> <span style='color: #555555;'>4</span>     1 Male 
 #> <span style='color: #555555;'>5</span>     1 Male 
 #> <span style='color: #555555;'>6</span>     0 Male 
+#> 
 #> <span style='color: #555555;'># A tibble: 2 × 2</span>
 #>   group      n
 #>   <span style='color: #555555; font-style: italic;'><fct></span>  <span style='color: #555555; font-style: italic;'><int></span>
 #> <span style='color: #555555;'>1</span> Male     138
 #> <span style='color: #555555;'>2</span> Female    90
+#> 
 #> <span style='color: #555555;'># A tibble: 4 × 4</span>
 #>   group  event     n percent
 #>   <span style='color: #555555; font-style: italic;'><fct></span>  <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><int></span>   <span style='color: #555555; font-style: italic;'><dbl></span>
@@ -137,6 +139,7 @@ inspect_surv_data(
 #> <span style='color: #555555;'>2</span> Male       1   112   0.812
 #> <span style='color: #555555;'>3</span> Female     0    37   0.411
 #> <span style='color: #555555;'>4</span> Female     1    53   0.589
+#> 
 #> <span style='color: #555555;'># A tibble: 2 × 9</span>
 #>   records n.max n.start events rmean `se(rmean)` median `0.95LCL` `0.95UCL`
 #>     <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>   <span style='color: #555555; font-style: italic;'><dbl></span>  <span style='color: #555555; font-style: italic;'><dbl></span> <span style='color: #555555; font-style: italic;'><dbl></span>       <span style='color: #555555; font-style: italic;'><dbl></span>  <span style='color: #555555; font-style: italic;'><dbl></span>     <span style='color: #555555; font-style: italic;'><dbl></span>     <span style='color: #555555; font-style: italic;'><dbl></span>

@@ -209,9 +209,6 @@ print.test_ph <- function(x, ...) {
   }
   cli::cli_end(divid)
 
-  cli::cat_line()
-  print(p_vals)
-
   cli::cli_h2("Plots")
 
   cli::cli_text(c(

@@ -102,12 +102,13 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
 #' @param ... Additional arguments
 #' @export
 #' @noRd
-#' @importFrom cli cli_alert_warning
+#' @importFrom cli cli_alert_warning cat_line
 print.inspect_surv_data <- function(x, ...) {
   # Show all columns in each tibble.
   lapply(x, function(element) {
     if (inherits(element, "tbl_df")) {
       print(element, width = Inf, ...)
+      cli::cat_line()
     }
   })
 

@@ -28,5 +28,4 @@ inspect_surv_data(
   group = "group"
 )
 
-
 }
