@@ -1,3 +1,32 @@
+#' Plot method for \code{fit_models}
+#' @param x An object of class \code{fit_models}
+#' @param eval_time Time points at which to evaluate the survival function.
+#'   Default is \code{NULL}.
+#' @param km_include Logical value indicating whether to include Kaplan-Meier
+#'   survival data. Default is \code{TRUE}.
+#' @param subtitle_include Logical value indicating whether to include a
+#'   subtitle in the plot. Default is \code{TRUE}.
+#' @param add_plotly Logical value indicating whether to add plotly
+#'   interactivity. Default is \code{FALSE}.
+#' @param ... Additional arguments
+#' @export
+plot.fit_models <- function(x,
+                            eval_time = NULL,
+                            km_include = TRUE,
+                            subtitle_include = TRUE,
+                            add_plotly = FALSE,
+                            ...) {
+  predict_and_plot(
+    fit_models = x,
+    eval_time = eval_time,
+    km_include = km_include,
+    subtitle_include = subtitle_include,
+    add_plotly = add_plotly,
+    ...
+  )
+}
+
+
 #' Plot Kaplan-Meier Data
 #'
 #' Generates a Kaplan-Meier survival curve plot using
@@ -354,13 +383,13 @@ plot_hazards <- function(pred_data,
   .eval_time <- model <- NULL
 
   # Create visible binding for R CMD check (obs_data)
-  time <- est <- lcl <- ucl <- NULL
+  time <- hazard <- lcl <- ucl <- NULL
 
   # Pivot_longer so that ggplot2 is happy (requires data frame)
   long_data <- tidyr::pivot_longer(pred_data,
     cols = -".eval_time",
     names_to = "model",
-    values_to = "est"
+    values_to = "hazard"
   )
 
   # Use consistent column names to appease plotly later
@@ -373,7 +402,7 @@ plot_hazards <- function(pred_data,
     # Observed hazards as first layer
     p <- p + ggplot2::geom_line(
       data = obs_data,
-      ggplot2::aes(x = time, y = est),
+      ggplot2::aes(x = time, y = hazard),
       color = "black"
     )
     p <- p + ggplot2::geom_ribbon(data = obs_data, ggplot2::aes(
@@ -388,7 +417,7 @@ plot_hazards <- function(pred_data,
     data = long_data,
     ggplot2::aes(
       x = time,
-      y = est,
+      y = hazard,
       color = model,
       group = model
     )

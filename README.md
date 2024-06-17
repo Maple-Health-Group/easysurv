@@ -63,7 +63,8 @@ surv_data <- easy_lung |>
     time = time,
     event = status - 1,
     group = sex,
-    .after = time) |>
+    .after = time
+  ) |>
   dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
 
 # Make the group variable a factor and assign level labels.
@@ -147,10 +148,8 @@ print(separate_models)
 ### `predict_and_plot()`
 
 ``` r
-plots <- predict_and_plot(
-  fit_models = separate_models,
-  data = surv_data
-)
+
+plots <- predict_and_plot(fit_models = separate_models)
 
 print(plots)
 ```

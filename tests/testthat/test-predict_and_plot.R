@@ -8,8 +8,7 @@ test_that("separate models work in predict_and_plot()", {
 
   expect_no_error(
     predict_and_plot(
-      fit_models = separate_models,
-      data = easy_lung
+      fit_models = separate_models
     )
   )
 })
@@ -29,8 +28,7 @@ test_that("joint models work in predict_and_plot()", {
 
   expect_no_error(
     predict_and_plot(
-      fit_models = joint_models,
-      data = test_data
+      fit_models = joint_models
     )
   )
 })
@@ -55,8 +53,7 @@ test_that("separate models work with survival engine in predict_and_plot()", {
 
   expect_no_error(
     predict_and_plot(
-      fit_models = surv_models,
-      data = easy_lung
+      fit_models = surv_models
     )
   )
 })

@@ -321,9 +321,7 @@ If you don't provide a `times` argument, the function will predict up to 5 times
 
 ``` {r predict-and-plot, eval=TRUE, fig.width=6, fig.height=5}
 # With the "models" object from above...
-preds_and_plots <- predict_and_plot(models,
-  data = surv_data
-)
+preds_and_plots <- predict_and_plot(models)
 
 preds_and_plots
 ```

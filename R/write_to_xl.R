@@ -238,26 +238,26 @@ write_to_xl <- function(wb, object) {
       sheet_name <- paste0("Predictions", tx)
       add_sheet(wb, sheet_name)
 
-      if (is.list(object$predictions[[tx]]$table_pred_surv[[1]])) {
+      if (is.list(object$predictions[[tx]]$predicted_surv[[1]])) {
         # There are profiles
-        for (profile in seq_along(object$predictions[[tx]]$table_pred_surv)) {
+        for (profile in seq_along(object$predictions[[tx]]$predicted_surv)) {
           # Profile names
           openxlsx::writeData(
             wb = wb,
-            x = names(object$predictions[[tx]]$table_pred_surv[profile]),
+            x = names(object$predictions[[tx]]$predicted_surv[profile]),
             sheet = sheet_name,
             startCol = 2 + (profile - 1) *
-              (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
+              (1 + ncol(object$predictions[[tx]]$predicted_surv[[profile]])),
             startRow = 2
           )
 
           # Profile dataframe
           openxlsx::writeData(
             wb = wb,
-            x = object$predictions[[tx]]$table_pred_surv[[profile]],
+            x = object$predictions[[tx]]$predicted_surv[[profile]],
             sheet = sheet_name,
             startCol = 2 + (profile - 1) *
-              (1 + ncol(object$predictions[[tx]]$table_pred_surv[[profile]])),
+              (1 + ncol(object$predictions[[tx]]$predicted_surv[[profile]])),
             startRow = 3
           )
         }
@@ -273,7 +273,7 @@ write_to_xl <- function(wb, object) {
 
         openxlsx::writeData(
           wb = wb,
-          x = object$predictions[[tx]]$table_pred_surv,
+          x = object$predictions[[tx]]$predicted_surv,
           sheet = sheet_name,
           startCol = 2,
           startRow = 3
@@ -282,18 +282,60 @@ write_to_xl <- function(wb, object) {
     }
 
     for (tx in seq_along(object$plots)) {
-      sheet_name <- paste0("Plots", tx)
+      sheet_name <- paste0("Surv Plots", tx)
       add_sheet(wb, sheet_name)
 
-      for (plot in seq_along(object$plots[[tx]])) {
+      if (!inherits(object$plots[[tx]]$surv_plots, "ggplot")) {
+        # There are profiles
+        for (profile in seq_along(object$plots[[tx]]$surv_plots)) {
+          suppressWarnings(print(object$plots[[tx]]$surv_plots[[profile]]))
 
-        suppressWarnings(print(object$plots[[tx]][[plot]]))
+          openxlsx::insertPlot(wb, sheet_name,
+            width = 8,
+            height = 6,
+            startRow = 2,
+            startCol = 2 + (profile - 1) * 10,
+            fileType = "png", units = "in"
+          )
+        }
+      } else {
+        suppressWarnings(print(object$plots[[tx]]$surv_plots))
 
         openxlsx::insertPlot(wb, sheet_name,
           width = 8,
           height = 6,
           startRow = 2,
-          startCol = 2 + (plot - 1) * 10,
+          startCol = 2,
+          fileType = "png", units = "in"
+        )
+      }
+    }
+
+    for (tx in seq_along(object$plots)) {
+      sheet_name <- paste0("Hazard Plots", tx)
+      add_sheet(wb, sheet_name)
+
+      if (!inherits(object$plots[[tx]]$hazard_plots, "ggplot")) {
+        # There are profiles
+        for (profile in seq_along(object$plots[[tx]]$hazard_plots)) {
+          suppressWarnings(print(object$plots[[tx]]$hazard_plots[[profile]]))
+
+          openxlsx::insertPlot(wb, sheet_name,
+            width = 8,
+            height = 6,
+            startRow = 2,
+            startCol = 2 + (profile - 1) * 10,
+            fileType = "png", units = "in"
+          )
+        }
+      } else {
+        suppressWarnings(print(object$plots[[tx]]$hazard_plots))
+
+        openxlsx::insertPlot(wb, sheet_name,
+          width = 8,
+          height = 6,
+          startRow = 2,
+          startCol = 2,
           fileType = "png", units = "in"
         )
       }

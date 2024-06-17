@@ -126,7 +126,7 @@ get_km <- function(data,
 
     nested <- data |>
       dplyr::arrange(factor(group, levels = levels(group))) |>
-      tidyr::nest(.by = group)
+      tidyr::nest(.by = all_of(group))
 
     km_per_group <- lapply(
       purrr::set_names(nested$data, group_list),

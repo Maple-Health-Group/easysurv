@@ -208,8 +208,7 @@ print(separate_models)
 
 ```{r plot-models, collapse = TRUE, output = "asconsole", fig.width=6, fig.height=5}
 plots <- predict_and_plot(
-  fit_models = separate_models,
-  data = surv_data
+  fit_models = separate_models
 )
 
 print(plots)

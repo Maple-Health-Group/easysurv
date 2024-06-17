@@ -66,6 +66,7 @@ get_cure_fractions <- function(mod) {
 #' @importFrom cli cli_abort
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr rename_with
+#' @importFrom stats predict
 #' @noRd
 get_fit_averages <- function(mod,
                              get_median = TRUE,
@@ -201,7 +202,7 @@ get_fit_averages <- function(mod,
         # in fact need to remain as "newdata".)
         median_est[[i]] <- data.frame(
           strata = mod$fit$xlevels[[1]][i],
-          median_est = predict(mod$fit,
+          median_est = stats::predict(mod$fit,
             newdata = new_data,
             type = "quantile",
             p = c(0.5),
@@ -224,7 +225,7 @@ get_fit_averages <- function(mod,
       }
 
       # Get the median (newdata does not matter)
-      median_est <- predict(mod$fit,
+      median_est <- stats::predict(mod$fit,
         newdata = new_data,
         type = "quantile",
         p = c(0.5)
@@ -244,7 +245,6 @@ get_fit_averages_summary <- function(models,
                                      get_median = TRUE,
                                      get_rmst = FALSE,
                                      get_mean = FALSE) {
-
   out <- lapply(models,
     get_fit_averages,
     get_median = get_median,
@@ -285,7 +285,6 @@ get_goodness_of_fit <- function(mod) {
 #' @importFrom utils tail
 #' @noRd
 get_surv_parameters <- function(models) {
-
   # Initialize an empty list to store results
   out <- list()
 
@@ -313,8 +312,10 @@ get_surv_parameters <- function(models) {
       # vcov can be logical=NA if model has struggled to fit but still returned
       if (!is.logical(get_vcov)) {
         get_vcov <- as.data.frame(get_vcov)
-        colnames(get_vcov) <- paste0("v",
-                                     seq_along(models[[i]]$fit$coefficients))
+        colnames(get_vcov) <- paste0(
+          "v",
+          seq_along(models[[i]]$fit$coefficients)
+        )
       }
 
       # Combine all results
@@ -383,7 +384,9 @@ get_surv_parameters <- function(models) {
   }
 
   # All failed models
-  if (length(models) == 0) return(out)
+  if (length(models) == 0) {
+    return(out)
+  }
 
   # Start the tibble with distribution, parameter and covariate_marker columns.
   out <- dplyr::bind_rows(out) |>
@@ -391,237 +394,4 @@ get_surv_parameters <- function(models) {
     tibble::as_tibble()
 
   out
-}
-
-#' @importFrom bshazard bshazard
-#' @importFrom dplyr slice
-#' @importFrom purrr map
-#' @importFrom rlang .data
-#' @importFrom stats predict
-#' @importFrom tibble as_tibble
-#' @importFrom tidyr unnest
-#' @noRd
-tidy_predict_surv <- function(fit_models,
-                              tx_index = 1,
-                              model_index = 1,
-                              new_data,
-                              eval_time,
-                              interval = "none",
-                              special_profiles = FALSE) {
-  models <- fit_models$models[[model_index]]
-
-  if (is.null(fit_models$info$nested)) {
-    bs_data <- fit_models$info$data[[1]]
-  } else {
-    bs_data <- fit_models$info$nested[["data"]][[tx_index]]
-  }
-
-  #  Calculate smoothed estimate of hazards based on B-splines (bshazard)
-  hazard_formula <- stats::as.formula(
-    paste0(
-      "survival::Surv(time = ",
-      fit_models$info$time,
-      ", event = ",
-      fit_models$info$event,
-      ") ~ 1"
-    )
-  )
-
-  table_bshazard <- with(
-    bshazard::bshazard(hazard_formula,
-      data = bs_data,
-      verbose = FALSE
-    ),
-    data.frame(time, hazard, lower.ci, upper.ci)
-  ) |>
-    dplyr::rename(
-      est = .data$hazard,
-      lcl = .data$lower.ci,
-      ucl = .data$upper.ci
-    )
-
-  # Start with NULLs to make dropping them easy with c()
-  list_pred_surv <-
-    list_pred_hazard <-
-    table_pred_surv <-
-    table_pred_surv_lower <-
-    table_pred_surv_upper <-
-    table_pred_hazard <- NULL
-
-  # inner function to extract predictions into a table
-  extract_predictions <- function(pred_list, col_name) {
-    Reduce(
-      function(x, y) merge(x, y, by = ".eval_time", all = TRUE),
-      (lapply(names(pred_list), function(model) {
-        df <- pred_list[[model]][, c(".eval_time", col_name)]
-        colnames(df)[2] <- model
-        return(df)
-      }))
-    ) |> tibble::as_tibble()
-  }
-
-  profiles <- nrow(new_data)
-
-  if (profiles == 1) {
-    # make the predictions (survival)
-    list_pred_surv <- lapply(models,
-      stats::predict,
-      new_data = new_data,
-      type = "survival",
-      eval_time = eval_time,
-      interval = interval
-    ) |>
-      purrr::map(~ .x |> tidyr::unnest(col = .pred))
-
-    # Extract to summary tables
-    table_pred_surv <- extract_predictions(list_pred_surv, ".pred_survival")
-
-    # Label the columns
-    table_pred_surv <- label_table(table_pred_surv)
-
-    if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
-      table_pred_surv_lower <- extract_predictions(
-        list_pred_surv,
-        ".pred_lower"
-      )
-      table_pred_surv_upper <- extract_predictions(
-        list_pred_surv,
-        ".pred_upper"
-      )
-
-      # Label the columns
-      table_pred_surv_lower <- label_table(table_pred_surv_lower)
-      table_pred_surv_upper <- label_table(table_pred_surv_upper)
-    }
-
-    # make the predictions (hazard)
-    list_pred_hazard <- lapply(models,
-      stats::predict,
-      new_data = new_data,
-      type = "hazard",
-      eval_time = eval_time,
-      interval = interval
-    ) |>
-      purrr::map(~ .x |> tidyr::unnest(col = .pred))
-
-    table_pred_hazard <- extract_predictions(list_pred_hazard, ".pred_hazard")
-
-    # Label columns
-    table_pred_hazard <- label_table(table_pred_hazard)
-  }
-
-  if (profiles > 1) {
-    for (i in seq_len(profiles)) {
-      # make the predictions (survival)
-      list_pred_surv[[i]] <- lapply(models,
-        stats::predict,
-        new_data = dplyr::slice(new_data, i),
-        type = "survival",
-        eval_time = eval_time,
-        interval = interval
-      ) |> purrr::map(~ .x |> tidyr::unnest(col = .pred))
-
-      # Extract to summary tables
-      table_pred_surv[[i]] <-
-        extract_predictions(list_pred_surv[[i]], ".pred_survival")
-      if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
-        table_pred_surv_lower[[i]] <- extract_predictions(
-          list_pred_surv[[i]],
-          ".pred_lower"
-        )
-        table_pred_surv_upper[[i]] <- extract_predictions(
-          list_pred_surv[[i]],
-          ".pred_upper"
-        )
-      }
-
-
-      # make the predictions (hazard)
-      list_pred_hazard[[i]] <- lapply(models,
-        stats::predict,
-        new_data = dplyr::slice(new_data, i),
-        type = "hazard",
-        eval_time = eval_time,
-        interval = interval
-      ) |> purrr::map(~ .x |> tidyr::unnest(col = .pred))
-
-      table_pred_hazard[[i]] <- extract_predictions(
-        list_pred_hazard[[i]],
-        ".pred_hazard"
-      )
-    }
-
-    names(list_pred_surv) <-
-      names(list_pred_hazard) <-
-      names(table_pred_surv) <-
-      names(table_pred_hazard) <-
-      new_data$profile
-
-    if (interval == "confidence" && models[[1]]$spec$engine != "survival") {
-      names(table_pred_surv_lower) <-
-        names(table_pred_surv_upper) <-
-        new_data$profile
-    }
-  }
-
-  out <- c(
-    if (special_profiles) list(profiles = new_data),
-    list(list_pred_surv = list_pred_surv),
-    list(table_pred_surv = table_pred_surv),
-    list(table_pred_surv_lower = table_pred_surv_lower),
-    list(table_pred_surv_upper = table_pred_surv_upper),
-    list(list_pred_hazard = list_pred_hazard),
-    list(table_pred_hazard = table_pred_hazard),
-    list(table_bshazard = table_bshazard)
-  )
-
-  out
-}
-
-# Helper functions
-
-label_table <- function(df) {
-  # Human readable label
-  dist_labels <- c(
-    "exp" = "Exponential",
-    "exponential" = "Exponential",
-    "gamma" = "Gamma",
-    "genf" = "Gen. F",
-    "genf.orig" = "Gen. F (orig parametrisation)",
-    "gengamma" = "Gen. Gamma",
-    "gengamma.orig" = "Gen. Gamma (orig parametrisation)",
-    "gom" = "Gompertz",
-    "gompertz" = "Gompertz",
-    "llogis" = "log-Logistic",
-    "lnorm" = "log-Normal",
-    "lognormal" = "log-Normal",
-    "weibull" = "Weibull (AFT)",
-    "weibullPH" = "Weibull (PH)",
-    "extreme" = "Extreme",
-    "gaussian" = "Gaussian",
-    "loggaussian" = "Log-Gaussian",
-    "logistic" = "Logistic",
-    "lognormal" = "Log-Normal",
-    "rayleigh" = "Rayleigh"
-  )
-
-  # Get the current column names
-  current_names <- colnames(df)
-
-  # Map current names to readable labels using the lookup table
-  new_names <- unname(sapply(
-    current_names,
-    function(x) {
-      ifelse(x %in% names(dist_labels),
-        dist_labels[x],
-        x
-      )
-    }
-  ))
-
-
-  # Set the new column names
-  colnames(df) <- new_names
-
-  df
 }

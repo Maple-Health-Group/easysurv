@@ -159,9 +159,11 @@ fit_models <- function(data,
   # Check for extra arguments
   extra_args <- names(list(...))
   if ("group" %in% extra_args) {
-    cli::cli_abort(c(paste0(
-      "You've provided a {.field group} argument, which is not accepted",
-      " by {.fn fit_models}."),
+    cli::cli_abort(c(
+      paste0(
+        "You've provided a {.field group} argument, which is not accepted",
+        " by {.fn fit_models}."
+      ),
       "x" = "Did you mean to use {.field predict_by} instead?"
     ))
   }
@@ -173,13 +175,12 @@ fit_models <- function(data,
     predict_list <- NULL
     approach <- "predict_by_none"
   } else {
-
     if (!is.factor(data[[predict_by]])) {
       data[[predict_by]] <- as.factor(data[[predict_by]])
     }
 
     nested <- data |>
-      tidyr::nest(.by = predict_by)
+      tidyr::nest(.by = all_of(predict_by))
 
     # arrange outside of the pipe to ensure it actually sorts.
     nested <- dplyr::arrange(nested, !!rlang::sym(predict_by))
@@ -286,7 +287,8 @@ fit_models <- function(data,
     distributions = distributions,
     km = km,
     km_summary = km_summary,
-    data = data_sets,
+    data = data,
+    data_sets = data_sets,
     nested = nested
   )
 

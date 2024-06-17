@@ -7,14 +7,13 @@ always_allow_html: yes
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include = FALSE}
-
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = '#>',
+  comment = "#>",
   fig.path = "man/figures/",
   out.width = "100%",
   dpi = 300,
-  cache = TRUE,
+  cache = FALSE,
   asciicast_theme = if (Sys.getenv("IN_PKGDOWN") == "true") "pkgdown" else "readme"
 )
 
@@ -25,12 +24,11 @@ asciicast::init_knitr_engine(
   startup = quote({
     library(cli)
     library(easysurv)
-}),
+  }),
   same_process = TRUE, # doesn't seem to work.
   echo = FALSE,
   echo_input = FALSE
 )
-
 ```
 
 # easysurv <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
@@ -86,7 +84,8 @@ surv_data <- easy_lung |>
     time = time,
     event = status - 1,
     group = sex,
-    .after = time) |>
+    .after = time
+  ) |>
   dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
 
 # Make the group variable a factor and assign level labels.
@@ -233,11 +232,9 @@ print(separate_models)
 
 ### `predict_and_plot()`
 
-``` {r plot-models-r, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5}
-plots <- predict_and_plot(
-  fit_models = separate_models,
-  data = surv_data
-)
+``` {r plot-models-r, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5, cache = FALSE}
+
+plots <- predict_and_plot(fit_models = separate_models)
 
 print(plots)
 ```
@@ -260,8 +257,7 @@ separate_models <- fit_models(
 )
 
 plots <- predict_and_plot(
-  fit_models = separate_models,
-  data = surv_data
+  fit_models = separate_models
 )
 
 print(plots)

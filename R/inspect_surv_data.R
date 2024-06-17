@@ -104,7 +104,6 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
 #' @noRd
 #' @importFrom cli cli_alert_warning cat_line cli_h1 cli_h2
 print.inspect_surv_data <- function(x, ...) {
-
   cli::cli_h1("Inspect Survival Data")
 
   cli::cli_h2("First Few Rows")
