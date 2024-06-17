@@ -134,16 +134,14 @@ times <- seq(
 ### Separate fits --------------------------------------------------------------
 pred_separate <- predict_and_plot(
   fit_models = models_separate,
-  eval_time = times,
-  data = surv_data
+  eval_time = times
 )
 pred_separate
 
 ### Joint fits -----------------------------------------------------------------
 pred_joint <- predict_and_plot(
   fit_models = models_joint,
-  eval_time = times,
-  data = surv_data
+  eval_time = times
 )
 pred_joint
 

@@ -108,7 +108,7 @@ quick_start2 <- function(output_file_name = NULL) {
   # Run the quick_start selection function
   quick_start_select(
     output_file_name = output_file_name,
-    template_file_name = "quick_template_msbc.R"
+    template_file_name = "quick_template_bc.R"
   )
 }
 
@@ -134,6 +134,6 @@ quick_start3 <- function(output_file_name = NULL) {
   # Run the quick_start selection function
   quick_start_select(
     output_file_name = output_file_name,
-    template_file_name = "quick_template_msadtte.R"
+    template_file_name = "quick_template_adtte.R"
   )
 }
