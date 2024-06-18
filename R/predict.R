@@ -492,8 +492,8 @@ get_bshazard <- function(fit_models, tx_index = 1) {
     data.frame(time, hazard, lower.ci, upper.ci)
   ) |>
     dplyr::rename(
-      lcl = .data$lower.ci,
-      ucl = .data$upper.ci
+      lcl = "lower.ci",
+      ucl = "upper.ci"
     )
 
   table_bshazard
