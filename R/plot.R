@@ -37,7 +37,7 @@ plot.fit_models <- function(x,
 #'   survival data.
 #' @param risktable Logical value indicating whether to include a risk table
 #'   below the plot. Default is \code{TRUE}.
-#' @param risktable_circles Logical value indicating whether to include circles
+#' @param risktable_symbols Logical value indicating whether to include symbols
 #'   instead of text to label risk table strata. Default is \code{TRUE}.
 #' @param median_line Logical value indicating whether to include a line
 #'   representing the median survival time. Default is \code{TRUE}.
@@ -64,7 +64,7 @@ plot.fit_models <- function(x,
 #'
 plot_km <- function(fit,
                     risktable = TRUE,
-                    risktable_circles = TRUE,
+                    risktable_symbols = TRUE,
                     median_line = TRUE,
                     legend_position = "top",
                     plot_theme = theme_easysurv(),
@@ -85,9 +85,10 @@ plot_km <- function(fit,
       theme = risktable_theme
     )
 
-    if (risktable_circles) {
+    if (risktable_symbols) {
       out <- out + ggsurvfit::add_risktable_strata_symbol(
-        symbol = "\U25CF",
+        #symbol = enc2utf8("\U25CF"), # caused an issue with R CMD check
+        symbol = enc2utf8("\U25A0"),
         size = 10
       )
     }

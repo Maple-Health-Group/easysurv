@@ -153,9 +153,9 @@ km <- get_km(
 km
 ```
 
-This function uses `plot_km()` to generate the KM curves. You can also use `plot_km()` directly, or pass additional arguments to `get_km()`, to customize the plot.
+This function uses easysurv's `plot_km()` to generate the KM curves. You can also use `plot_km()` directly, or pass additional arguments to `get_km()`, to customize the plot.
 
-For example, by default, shapes are used in place of group names in the risk table beneath the plot to save space. You can change this by setting `risktable_circles = FALSE`.
+For example, by default, shapes are used in place of group names in the risk table beneath the plot to save space. You can change this by setting `risktable_symbols = FALSE`.
 
 ```{r km-names, eval=TRUE, fig.width=6, fig.height=5}
 km_with_names <- get_km(
@@ -163,7 +163,7 @@ km_with_names <- get_km(
   time = "time",
   event = "event",
   group = "group",
-  risktable_circles = FALSE
+  risktable_symbols = FALSE
 )
 
 km_with_names$km_plot
@@ -202,7 +202,7 @@ ph
 
 Under the hood, `easysurv` builds upon the `parsnip` package. Through `fit_models()`, we make a key update to this approach to handle errors in the model fitting process.
 
-`purrr::possibly()` is leveraged to help code can run smoothly even if the model fitting process fails. This is particularly useful when testing multiple distributions, as the best distribution is not known *a priori*.
+`purrr::possibly()` is leveraged to help code run smoothly even if the model fitting process fails. This is particularly useful when testing multiple distributions, as the best distribution is not known *a priori*.
 
 ``` {r parsnip, eval=FALSE}
 # We created a function to return NULL if issues arise in model fitting.

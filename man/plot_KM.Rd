@@ -7,7 +7,7 @@
 plot_km(
   fit,
   risktable = TRUE,
-  risktable_circles = TRUE,
+  risktable_symbols = TRUE,
   median_line = TRUE,
   legend_position = "top",
   plot_theme = theme_easysurv(),
@@ -21,7 +21,7 @@ survival data.}
 \item{risktable}{Logical value indicating whether to include a risk table
 below the plot. Default is \code{TRUE}.}
 
-\item{risktable_circles}{Logical value indicating whether to include circles
+\item{risktable_symbols}{Logical value indicating whether to include symbols
 instead of text to label risk table strata. Default is \code{TRUE}.}
 
 \item{median_line}{Logical value indicating whether to include a line

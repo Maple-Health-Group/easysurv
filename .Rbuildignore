@@ -12,6 +12,6 @@
 ^LICENSE.md
 ^data-raw$
 
-vignettes/
+
 
 ^.*_cache$

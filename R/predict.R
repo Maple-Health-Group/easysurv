@@ -155,7 +155,6 @@ predict_and_plot <- function(fit_models,
   # If eval_time is missing, create a sequence from 0 to 5* the maximum time
   if (is.null(eval_time)) {
     max_time <- max(fit_models$info$data[[fit_models$info$time]], na.rm = TRUE)
-    #return(max_time)
     eval_time <- seq(0,
       ceiling(max_time * 5),
       length.out = 100
@@ -329,17 +328,25 @@ predict_and_plot <- function(fit_models,
 #' @noRd
 print.pred_plot <- function(x, ...) {
 
+  # Print messages at the beginning, since printing during was not respecting
+  # the order of the code.
+  if (!is.null(x$plots[[1]]$surv_plots)) {
+    cli::cli_alert_info(paste0(
+      "Survival plots have been printed."
+    ))
+  }
+
+  if (!is.null(x$plots[[1]]$hazard_plots)) {
+    cli::cli_alert_info(paste0(
+      "Hazard plots have been printed."
+    ))
+  }
+
   # Suppress warnings, mainly to do with hazard plots for Gompertz models.
   for (tx in seq_along(x$plots)) {
     # Print surv_plots together
     if (!is.null(x$plots[[tx]]$surv_plots)) {
       suppressWarnings(print(x$plots[[tx]]$surv_plots))
-
-      if (tx == length(x$plots)) {
-        cli::cli_alert_info(paste0(
-          "Survival plots have been printed."
-        ))
-      }
     }
   }
 
@@ -348,12 +355,6 @@ print.pred_plot <- function(x, ...) {
     # Print hazard_plots together
     if (!is.null(x$plots[[tx]]$hazard_plots)) {
       suppressWarnings(print(x$plots[[tx]]$hazard_plots))
-
-      if (tx == length(x$plots)) {
-        cli::cli_alert_info(paste0(
-          "Hazard plots have been printed."
-        ))
-      }
     }
   }
 
