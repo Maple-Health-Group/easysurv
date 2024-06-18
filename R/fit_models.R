@@ -288,7 +288,6 @@ fit_models <- function(data,
     km = km,
     km_summary = km_summary,
     data = data,
-    data_sets = data_sets,
     nested = nested
   )
 

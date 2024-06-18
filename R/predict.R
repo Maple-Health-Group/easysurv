@@ -468,7 +468,7 @@ get_predict_table <- function(models, new_data, eval_time, type) {
 #' @noRd
 get_bshazard <- function(fit_models, tx_index = 1) {
   if (is.null(fit_models$info$nested)) {
-    bs_data <- fit_models$info$data_sets[[1]]
+    bs_data <- fit_models$info$data
   } else {
     bs_data <- fit_models$info$nested[["data"]][[tx_index]]
   }
