@@ -30,6 +30,8 @@ reference:
   - test_ph
   - fit_models
   - predict_and_plot
+  - predict.fit_models
+  - plot.fit_models
 
 - title: Individual plot functions
   desc: >
