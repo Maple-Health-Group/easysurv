@@ -148,7 +148,6 @@ print(separate_models)
 ### `predict_and_plot()`
 
 ``` r
-
 plots <- predict_and_plot(fit_models = separate_models)
 
 print(plots)
