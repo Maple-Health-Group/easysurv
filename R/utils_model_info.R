@@ -37,8 +37,8 @@ get_schoenfeld <- function(fit_zph) {
       transform = fit_zph$transform
     ) |>
     tidyr::pivot_longer(c(-time, -transform),
-                        names_to = "variable",
-                        values_to = "residual"
+      names_to = "variable",
+      values_to = "residual"
     )
 
   out

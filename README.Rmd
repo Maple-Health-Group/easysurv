@@ -233,7 +233,6 @@ print(separate_models)
 ### `predict_and_plot()`
 
 ``` {r plot-models-r, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 5, cache = FALSE}
-
 plots <- predict_and_plot(fit_models = separate_models)
 
 print(plots)

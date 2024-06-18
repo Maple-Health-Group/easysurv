@@ -59,7 +59,10 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
     if (is.null(group)) "1" else group
   ))
 
-  survival_summary <- summary(survival::survfit(surv_formula, data = data))$table
+  survival_summary <- summary(survival::survfit(
+    surv_formula,
+    data = data
+  ))$table
 
   if (is.null(group)) {
     sample_sizes <- data |> dplyr::count()

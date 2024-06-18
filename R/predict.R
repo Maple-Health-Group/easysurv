@@ -327,7 +327,6 @@ predict_and_plot <- function(fit_models,
 #' @importFrom cli cli_alert_info
 #' @noRd
 print.pred_plot <- function(x, ...) {
-
   # Print messages at the beginning, since printing during was not respecting
   # the order of the code.
   if (!is.null(x$plots[[1]]$surv_plots)) {

@@ -87,7 +87,7 @@ plot_km <- function(fit,
 
     if (risktable_symbols) {
       out <- out + ggsurvfit::add_risktable_strata_symbol(
-        #symbol = enc2utf8("\U25CF"), # caused an issue with R CMD check
+        # symbol = enc2utf8("\U25CF"), # caused an issue with R CMD check
         symbol = enc2utf8("\U25A0"),
         size = 10
       )
