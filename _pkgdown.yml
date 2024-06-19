@@ -33,6 +33,16 @@ reference:
   - predict.fit_models
   - plot.fit_models
 
+- title: Print functions
+  desc: >
+    These functions are used to print various stages of survival analysis.
+  contents:
+  - print.inspect_surv_data
+  - print.get_km
+  - print.test_ph
+  - print.fit_models
+  - print.predict_and_plot
+
 - title: Individual plot functions
   desc: >
     These functions are used to plot various stages of survival analysis.

@@ -34,15 +34,12 @@ model in a \code{fit_models} object. Optionally, interactive \code{plotly}
 outputs can be added for each plot.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-
-output_test <- fit_models(
+models <- fit_models(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
   predict_by = "group"
 )
 
-predict_and_plot(output_test)
-\dontshow{\}) # examplesIf}
+predict_and_plot(models)
 }

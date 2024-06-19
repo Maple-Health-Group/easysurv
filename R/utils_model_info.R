@@ -7,8 +7,8 @@
 #'   function, representing the Schoenfeld residuals of a Cox proportional
 #'   hazards model.
 #'
-#' @return A tibble with the Schoenfeld residuals in long format, containing the
-#' columns:
+#' @returns A tibble with the Schoenfeld residuals in long format, containing
+#' the columns:
 #' \item{time}{The time variable from the Cox model.}
 #' \item{transform}{The transformation applied to the time variable.}
 #' \item{variable}{The variable names from the Cox model for which residuals
@@ -22,7 +22,6 @@
 #' @importFrom tidyr pivot_longer
 #'
 #' @examples
-#'
 #' library(survival)
 #' test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 #' test_fit_zph <- survival::cox.zph(test_fit)
@@ -48,6 +47,7 @@ get_schoenfeld <- function(fit_zph) {
 # Non-exported helper functions ----
 
 #' @importFrom dplyr everything select mutate row_number
+#'
 #' @noRd
 create_newdata <- function(data) {
   # Create visible binding for R CMD check.
@@ -90,6 +90,7 @@ create_newdata <- function(data) {
 }
 
 #' @importFrom stats pnorm
+#'
 #' @noRd
 get_cure_fractions <- function(mod) {
   # Define the link function
@@ -114,6 +115,7 @@ get_cure_fractions <- function(mod) {
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr rename_with
 #' @importFrom stats predict
+#'
 #' @noRd
 get_fit_averages <- function(mod,
                              get_median = TRUE,
@@ -287,6 +289,7 @@ get_fit_averages <- function(mod,
 
 #' @importFrom data.table rbindlist
 #' @importFrom tibble as_tibble
+#'
 #' @noRd
 get_fit_averages_summary <- function(models,
                                      get_median = TRUE,
@@ -306,6 +309,7 @@ get_fit_averages_summary <- function(models,
 
 #' @importFrom stats AIC BIC
 #' @importFrom tibble tibble
+#'
 #' @noRd
 get_goodness_of_fit <- function(mod) {
   # Get AIC and BIC values using stats:: because engine=survival
@@ -330,6 +334,7 @@ get_goodness_of_fit <- function(mod) {
 #' @importFrom dplyr bind_rows relocate
 #' @importFrom tibble as_tibble rownames_to_column
 #' @importFrom utils tail
+#'
 #' @noRd
 get_surv_parameters <- function(models) {
   # Initialize an empty list to store results

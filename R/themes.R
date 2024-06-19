@@ -1,7 +1,10 @@
-#' Plot theme for easysurv
-#' @export
+#' Plot Theme for easysurv Survival and Hazard Plots
+#'
 #' @importFrom ggplot2 element_blank element_line theme theme_bw
-#' @examplesIf interactive()
+#'
+#' @export
+#'
+#' @examples
 #' library(ggsurvfit)
 #' fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
 #' fit |> ggsurvfit() + theme_easysurv()
@@ -14,14 +17,16 @@ theme_easysurv <- function() {
   out
 }
 
-#' Plot theme for easysurv risk tables
+#' Plot Theme for easysurv Risk Tables
 #'
 #' To be used with `ggsurvfit::add_risktable()`.
 #'
-#' @export
 #' @importFrom ggsurvfit theme_risktable_default
 #' @importFrom ggplot2 element_blank element_line theme
-#' @examplesIf interactive()
+#'
+#' @export
+#'
+#' @examples
 #' library(ggsurvfit)
 #' fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
 #' fit <- fit |> ggsurvfit() +

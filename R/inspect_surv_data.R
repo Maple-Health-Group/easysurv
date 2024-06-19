@@ -15,14 +15,12 @@
 #' @importFrom tibble as_tibble
 #'
 #' @examples
-#'
 #' inspect_surv_data(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   group = "group"
 #' )
-#'
 inspect_surv_data <- function(data, time, event, group = NULL) {
   # Create visible binding for R CMD check.
   n <- group_is_factor <- NULL
@@ -82,6 +80,7 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
       dplyr::mutate(percent = n / sum(n))
   }
 
+  # Return ----
   out <- list(
     first_few_rows = first_few_rows,
     sample_sizes = sample_sizes,
@@ -101,11 +100,15 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
 }
 
 #' Print methods for \code{inspect_surv_data}
+#'
 #' @param x An object of class \code{inspect_surv_data}
 #' @param ... Additional arguments
-#' @export
-#' @noRd
+#'
 #' @importFrom cli cli_alert_warning cat_line cli_h1 cli_h2
+#'
+#' @returns A print summary of the \code{inspect_surv_data} object.
+#'
+#' @export
 print.inspect_surv_data <- function(x, ...) {
   cli::cli_h1("Inspect Survival Data")
 

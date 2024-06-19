@@ -18,6 +18,21 @@ generate. Default is \code{c("survival", "hazard")}.}
 
 \item{...}{Additional arguments}
 }
+\value{
+A list of predictions for each model in the
+\code{fit_models} object.
+}
 \description{
 Predict method for \code{fit_models}
+}
+\examples{
+models <- fit_models(
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  predict_by = "group",
+  covariates = "group"
+)
+
+predict(models)
 }

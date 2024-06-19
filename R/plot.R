@@ -1,4 +1,5 @@
 #' Plot method for \code{fit_models}
+#'
 #' @param x An object of class \code{fit_models}
 #' @param eval_time Time points at which to evaluate the survival function.
 #'   Default is \code{NULL}.
@@ -9,7 +10,22 @@
 #' @param add_plotly Logical value indicating whether to add plotly
 #'   interactivity. Default is \code{FALSE}.
 #' @param ... Additional arguments
+#'
+#' @returns A list containing predictions and plots for the survival and hazards
+#'   of models in a \code{fit_models} object.
+#'
 #' @export
+#'
+#' @examples
+#' models <- fit_models(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group",
+#'   covariates = "group"
+#' )
+#'
+#' plot(models)
 plot.fit_models <- function(x,
                             eval_time = NULL,
                             km_include = TRUE,
@@ -47,7 +63,7 @@ plot.fit_models <- function(x,
 #'   \code{theme_easysurv()}.
 #' @param risktable_theme ggplot2 theme for the risk table. Default is
 #'   \code{theme_risktable_easysurv()}.
-#' @return A ggplot object representing the Kaplan-Meier survival curve plot.
+#' @returns A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
 #'
@@ -56,12 +72,10 @@ plot.fit_models <- function(x,
 #' @importFrom ggsurvfit add_risktable add_risktable_strata_symbol
 #' @importFrom ggsurvfit ggsurvfit scale_ggsurvfit
 #'
-#' @examplesIf interactive()
-#'
+#' @examples
 #' library(ggsurvfit)
 #' fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
-#' plot_km(fit)
-#'
+#' plot_km(fit, risktable_symbols = FALSE)
 plot_km <- function(fit,
                     risktable = TRUE,
                     risktable_symbols = TRUE,
@@ -115,16 +129,16 @@ plot_km <- function(fit,
 #'   "top".
 #' @param plot_theme ggplot2 theme for the plot. Default is
 #'   \code{theme_easysurv()}.
-#' @return A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
-#' @export
+#' @returns A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed
 #' @importFrom scales pseudo_log_trans
 #'
-#' @examplesIf interactive()
+#' @export
 #'
+#' @examples
 #' library(ggsurvfit)
 #' fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
 #' plot_cloglog(fit)
@@ -190,14 +204,14 @@ plot_cloglog <- function(fit,
 #' @param plot_theme A ggplot2 theme for the plot. Default is
 #' `ggplot2::theme_bw()`.
 #'
-#' @return A ggplot object representing the plot of Schoenfeld residuals.
-#'
-#' @export
+#' @returns A ggplot object representing the plot of Schoenfeld residuals.
 #'
 #' @importFrom ggplot2 geom_point geom_hline geom_smooth
 #' @importFrom ggplot2 facet_wrap xlab ylab theme_bw
 #'
-#' @examplesIf interactive()
+#' @export
+#'
+#' @examples
 #' library(survival)
 #' test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 #' test_fit_zph <- survival::cox.zph(test_fit)
@@ -272,10 +286,12 @@ plot_schoenfeld <- function(residuals,
 #' @param plot_theme ggplot2 theme for the plot. Default is
 #'   \code{theme_easysurv()}.
 #'
-#' @return A ggplot2 object.
-#' @noRd
+#' @returns A ggplot2 object to display survival.
+#'
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
+#'
+#' @noRd
 plot_surv <- function(pred_data,
                       km_data = NULL,
                       km_include = TRUE,
@@ -370,10 +386,12 @@ plot_surv <- function(pred_data,
 #' @param plot_theme ggplot2 theme for the plot. Default is
 #'   \code{theme_easysurv()}.
 #'
-#' @return A ggplot2 object.
-#' @noRd
+#' @returns A ggplot2 object to display hazards.
+#'
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
+#'
+#' @noRd
 plot_hazards <- function(pred_data,
                          obs_data = NULL,
                          legend_label = "Model",
@@ -454,9 +472,12 @@ plot_hazards <- function(pred_data,
   p
 }
 
-#' @noRd
+#' Create plotly equivalent of survival plot
+#'
 #' @importFrom ggplot2 aes
 #' @importFrom plotly ggplotly config layout
+#'
+#' @noRd
 plotly_surv <- function(surv_plot) {
   # Create visible binding for R CMD check
   model <- time <- surv <- NULL
@@ -502,9 +523,12 @@ plotly_surv <- function(surv_plot) {
   out
 }
 
-#' @noRd
+#' Create plotly equivalent of hazard plot
+#'
 #' @importFrom ggplot2 aes
 #' @importFrom plotly ggplotly config layout
+#'
+#' @noRd
 plotly_hazards <- function(hazard_plot) {
   # Create visible binding for R CMD check
   model <- time <- est <- NULL

@@ -30,6 +30,21 @@ interactivity. Default is \code{FALSE}.}
 
 \item{...}{Additional arguments}
 }
+\value{
+A list containing predictions and plots for the survival and hazards
+of models in a \code{fit_models} object.
+}
 \description{
 Plot method for \code{fit_models}
+}
+\examples{
+models <- fit_models(
+  data = easysurv::easy_bc,
+  time = "recyrs",
+  event = "censrec",
+  predict_by = "group",
+  covariates = "group"
+)
+
+plot(models)
 }

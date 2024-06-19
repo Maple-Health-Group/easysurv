@@ -12,7 +12,7 @@
 #'   variable.
 #' @param plot_theme The theme to be used for the plots.
 #'
-#' @return A list containing plots and test results related to the assessment
+#' @returns A list containing plots and test results related to the assessment
 #'   of the proportional hazards assumption.
 #'
 #'   \item{cloglog_plot}{A plot of the log cumulative hazard function. If the
@@ -37,14 +37,15 @@
 #' @importFrom stats as.formula
 #' @importFrom survival cox.zph coxph survdiff Surv
 #'
-#' @examplesIf interactive()
-#'
+#' @examples
 #' ph_results <- test_ph(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   group = "group"
 #' )
+#'
+#' ph_results
 test_ph <- function(data,
                     time,
                     event,
@@ -135,14 +136,28 @@ test_ph <- function(data,
 
 
 #' Print methods for \code{test_ph}
+#'
 #' @param x An object of class \code{test_ph}
 #' @param ... Additional arguments
-#' @export
-#' @noRd
+#'
+#' @returns A print summary of the \code{test_ph} object.
+#'
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
 #' @importFrom cli cli_ul cli_li cli_div cli_end cli_par
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
+#'
+#' @export
+#'
+#' @examples
+#' ph_results <- test_ph(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group"
+#' )
+#'
+#' ph_results
 print.test_ph <- function(x, ...) {
   cli::cli_h1("Testing Survival Curve Differences")
 

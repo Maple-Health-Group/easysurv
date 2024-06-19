@@ -81,10 +81,8 @@ It allows for customization of the plot, including the addition of horizontal
 and smoothed lines, and styling of points and plot elements.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(survival)
 test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 test_fit_zph <- survival::cox.zph(test_fit)
 plot_schoenfeld(get_schoenfeld(test_fit_zph))
-\dontshow{\}) # examplesIf}
 }

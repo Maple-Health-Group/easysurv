@@ -1,5 +1,8 @@
-# Non-exported helper functions.
+# Non-exported helper functions, amended from `parsnip` package examples, to
+# implement flexsurvcure.
 
+#' @importFrom dplyr mutate rename rowwise ungroup
+#'
 #' @noRd
 flexsurvcure_rename_time <- function(pred) {
   # Create visible binding for R CMD check.
@@ -18,6 +21,10 @@ flexsurvcure_rename_time <- function(pred) {
   }
 }
 
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr nest
+#' @importFrom utils packageVersion
+#'
 #' @noRd
 flexsurvcure_post <- function(pred, object) {
   # Even though this function is for flexsurvcure, I suspect that the flexsurv
@@ -37,6 +44,11 @@ flexsurvcure_post <- function(pred, object) {
   pred
 }
 
+#' @importFrom parsnip set_model_engine set_dependency set_model_arg set_fit
+#' @importFrom parsnip set_encoding set_pred
+#' @importFrom rlang expr
+#'
+#'
 #' @noRd
 make_survival_reg_flexsurvcure <- function() {
   # Create visible binding for R CMD check.

@@ -17,7 +17,7 @@
 #'   returned. Default is \code{FALSE}.
 #' @param ... (Optional) Parameters to pass to ggsurvfit.
 #'
-#' @return A list containing Kaplan-Meier estimates, summary statistics, plots,
+#' @returns A list containing Kaplan-Meier estimates, summary statistics, plots,
 #' and additional outputs.
 #'
 #' @export
@@ -29,8 +29,7 @@
 #' @importFrom stats as.formula
 #' @importFrom tidyr nest
 #'
-#' @examplesIf interactive()
-#'
+#' @examples
 #' km_results <- get_km(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
@@ -184,6 +183,7 @@ get_km <- function(data,
 
   if (!is.null(group)) rownames(km_summary) <- group_list
 
+  # Return ----
   out <- list(
     km = km,
     km_for_excel = km_for_excel,
@@ -200,14 +200,29 @@ get_km <- function(data,
 
 
 #' Print methods for \code{get_km}
+#'
 #' @param x An object of class \code{get_km}
 #' @param ... Additional arguments
-#' @export
-#' @noRd
+#'
+#' @returns The summary of the Kaplan-Meier estimates, printed via the console.
+#'
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
 #' @importFrom cli cli_ul cli_li cli_div cli_end
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
+#'
+#' @export
+#'
+#' @examples
+#' km_results <- get_km(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   group = "group",
+#'   risktable_symbols = FALSE
+#' )
+#'
+#' print(km_results)
 print.get_km <- function(x, ...) {
   cli::cli_h1("Kaplan-Meier Data")
   cli::cli_text("The get_km function has produced the following outputs:")
@@ -262,17 +277,14 @@ print.get_km <- function(x, ...) {
 #' @param event The name of the event variable in data
 #' @param group The name of the group variable in data
 #'
+#' @returns A data.frame containing median follow-up times.
+#'
 #' @importFrom ggsurvfit survfit2
 #' @importFrom survival Surv
 #' @importFrom stats quantile
 #' @importFrom stats as.formula
 #'
 #' @noRd
-#'
-#' @examples
-#' \dontrun{
-#'
-#' }
 get_median_fu <- function(data,
                           time,
                           event,
@@ -327,29 +339,15 @@ get_median_fu <- function(data,
 #'  The `km` object should be of class "survfit" and should represent a
 #'  single-arm survival analysis (e.g. \code{Surv(time, status) ~ 1}).
 #'
-#' @importFrom survival survfit0
-#' @importFrom tibble tibble
-#'
-#' @noRd
-#'
-#' @return A data frame containing the 'stepped' tabulated survival data
+#' @returns A data frame containing the 'stepped' tabulated survival data
 #' suitable for external plotting or further analysis.
 #' The table includes information about the time points, number at risk,
 #' survival probability, and the number of events for each time point.
 #'
-#' @examples
-#' \dontrun{
-#' library(survival)
+#' @importFrom survival survfit0
+#' @importFrom tibble tibble
 #'
-#' # Example usage with lung data
-#' fit <- survfit(Surv(time, status) ~ 1, data = lung)
-#'
-#' stepped_km <- step_km(fit)
-#'
-#' # Send to Excel
-#' write.csv(stepped_km, "survival_data.csv")
-#' }
-#'
+#' @noRd
 step_km <- function(km) {
   # add the first 1 , 0.
   km <- survival::survfit0(km, start.time = 0)
@@ -391,24 +389,15 @@ step_km <- function(km) {
 #' @param strata_labels Optional parameter to rename the group column
 #'   (if multiple strata)
 #'
-#' @importFrom tibble rownames_to_column
-#' @importFrom dplyr select
-#'
-#' @noRd
-#'
-#' @return A data frame summarizing the data in the survival object. The table
+#' @returns A data frame summarizing the data in the survival object. The table
 #' includes information about the strata, number of observations,
 #' number of events, restricted mean survival times, median survival times,
 #' and corresponding confidence intervals.
 #'
-#' @examples
-#' \dontrun{
-#' library(survival)
+#' @importFrom tibble rownames_to_column
+#' @importFrom dplyr select
 #'
-#' # Example usage with lung data
-#' fit <- survfit(Surv(time, status) ~ as.factor(sex), data = lung)
-#' summarise_km(fit)
-#' }
+#' @noRd
 summarise_km <- function(fit, strata_labels = NULL) {
   if ("strata" %in% names(fit)) {
     out <- as.data.frame(summary(fit)$table) |>

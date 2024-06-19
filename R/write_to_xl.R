@@ -3,6 +3,8 @@
 #' @param wb A Workbook object containing a worksheet
 #' @param object The output of an easysurv command
 #'
+#' @returns An Excel workbook with the easysurv output.
+#'
 #' @importFrom cli cli_abort cli_alert_info
 #' @importFrom openxlsx addWorksheet
 #' @importFrom openxlsx writeData
@@ -12,7 +14,6 @@
 #' @export
 #'
 #' @examplesIf FALSE
-#'
 #' km_results <- get_km(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
@@ -25,16 +26,16 @@
 #'
 #' openxlsx::saveWorkbook(wb, "km_results.xlsx", overwrite = TRUE)
 #' openxlsx::openXL("km_results.xlsx")
-#'
 write_to_xl <- function(wb, object) {
   class_names <- c(
     "get_km",
     "test_ph",
     "fit_models",
-    "pred_plot"
+    "predict_and_plot"
   )
 
   if (!inherits(object, class_names)) {
+    # Ignore lintr check - this is used by glue.
     valid_functions <- c(
       "get_km",
       "test_ph",
@@ -220,7 +221,7 @@ write_to_xl <- function(wb, object) {
   }
 
   # Predictions and Plots----
-  if (class_name == "pred_plot") {
+  if (class_name == "predict_and_plot") {
     if (!is.null(object$profiles)) {
       sheet_name <- "Prediction Profiles"
       add_sheet(wb, sheet_name)
@@ -354,9 +355,10 @@ write_to_xl <- function(wb, object) {
 #' @param wb A Workbook object containing a worksheet
 #' @param sheet_name The desired worksheet name
 #'
+#' @returns Worksheet added (if required) to the wb object.
+#'
 #' @importFrom openxlsx addWorksheet
 #'
-#' @return Worksheet added (if required) to the wb object.
 #' @noRd
 add_sheet <- function(wb, sheet_name) {
   # Check if the sheet already exists

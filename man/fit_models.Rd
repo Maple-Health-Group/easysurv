@@ -71,22 +71,22 @@ at a subsequent stage (in surv_plots). Default is TRUE.}
 \item{...}{Additional arguments just to catch them and avoid errors.}
 }
 \value{
-A list containing various outputs including model distributions,
-parameters, predictions, plots, and summary statistics.
+A list containing information about the fit_models() call, the
+distributions attempted, goodness of fit, fit averages, and cure fractions
+(if applicable).
 }
 \description{
 Fits survival models to the provided data using the specified engine and
 returns various outputs including model parameters, predictions, and plots.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-
-output_test <- fit_models(
+models <- fit_models(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
   predict_by = "group",
   covariates = "group"
 )
-\dontshow{\}) # examplesIf}
+
+models
 }

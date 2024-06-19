@@ -44,13 +44,10 @@ Calculates Kaplan-Meier estimates for survival data and returns summary
 statistics, plots, and additional outputs.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-
 km_results <- get_km(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
   group = "group"
 )
-\dontshow{\}) # examplesIf}
 }

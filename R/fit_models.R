@@ -45,9 +45,9 @@
 #'   at a subsequent stage (in surv_plots). Default is TRUE.
 #' @param ... Additional arguments just to catch them and avoid errors.
 #'
-#' @return A list containing various outputs including model distributions,
-#' parameters, predictions, plots, and summary statistics.
-#' @export
+#' @returns A list containing information about the fit_models() call, the
+#' distributions attempted, goodness of fit, fit averages, and cure fractions
+#' (if applicable).
 #'
 #' @importFrom cli cli_abort
 #' @importFrom dplyr arrange select
@@ -59,15 +59,18 @@
 #' @importFrom tidyr nest
 #' @importFrom rlang arg_match
 #'
-#' @examplesIf interactive()
+#' @export
 #'
-#' output_test <- fit_models(
+#' @examples
+#' models <- fit_models(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   predict_by = "group",
 #'   covariates = "group"
 #' )
+#'
+#' models
 fit_models <- function(data,
                        time,
                        event,
@@ -317,16 +320,31 @@ fit_models <- function(data,
 }
 
 #' Print methods for \code{fit_models}
+#'
 #' @param x An object of class \code{fit_models}
 #' @param ... Additional arguments
-#' @export
+#'
 #' @importFrom cli cli_h1 cli_h2 cli_h3 cli_text
 #' @importFrom cli cli_ul cli_li cli_div cli_end cli_par
 #' @importFrom cli cli_alert cli_alert_info cli_alert_warning cli_rule
 #' @importFrom cli cat_line qty
 #' @importFrom dplyr select filter pull
 #' @importFrom tidyr pivot_wider
-#' @noRd
+#'
+#' @returns A print summary of the \code{fit_models} object.
+#'
+#' @export
+#'
+#' @examples
+#' models <- fit_models(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group",
+#'   covariates = "group"
+#' )
+#'
+#' models
 print.fit_models <- function(x, ...) {
   # Create visible binding for R CMD check.
   distribution <- strata <- dist <- aic_rank <- NULL

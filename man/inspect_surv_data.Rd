@@ -20,12 +20,10 @@ indicator data.}
 Quickly inspect the survival data to ensure it is in the correct format.
 }
 \examples{
-
 inspect_surv_data(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
   group = "group"
 )
-
 }

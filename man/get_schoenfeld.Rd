@@ -12,8 +12,8 @@ function, representing the Schoenfeld residuals of a Cox proportional
 hazards model.}
 }
 \value{
-A tibble with the Schoenfeld residuals in long format, containing the
-columns:
+A tibble with the Schoenfeld residuals in long format, containing
+the columns:
 \item{time}{The time variable from the Cox model.}
 \item{transform}{The transformation applied to the time variable.}
 \item{variable}{The variable names from the Cox model for which residuals
@@ -26,7 +26,6 @@ This function extracts Schoenfeld residuals from a fitted \code{cox.zph} object
 and formats them into a tidy data frame.
 }
 \examples{
-
 library(survival)
 test_fit <- survival::coxph(survival::Surv(time, status) ~ sex, data = lung)
 test_fit_zph <- survival::cox.zph(test_fit)

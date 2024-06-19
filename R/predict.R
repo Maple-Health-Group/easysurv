@@ -1,4 +1,5 @@
 #' Predict method for \code{fit_models}
+#'
 #' @param object An object of class \code{fit_models}
 #' @param eval_time (Optional) A vector of evaluation time points for generating
 #'   predictions. Default is \code{NULL}, which if left as NULL, generates a
@@ -6,8 +7,24 @@
 #' @param type A character vector indicating the type of predictions to
 #'   generate. Default is \code{c("survival", "hazard")}.
 #' @param ... Additional arguments
-#' @export
+#'
+#' @returns A list of predictions for each model in the
+#'   \code{fit_models} object.
+#'
 #' @importFrom dplyr all_of filter slice
+#'
+#' @export
+#'
+#' @examples
+#' models <- fit_models(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group",
+#'   covariates = "group"
+#' )
+#'
+#' predict(models)
 predict.fit_models <- function(object,
                                eval_time = NULL,
                                type = c("survival", "hazard"),
@@ -123,16 +140,15 @@ predict.fit_models <- function(object,
 #' @importFrom dplyr all_of filter select slice
 #' @importFrom cli cli_abort
 #'
-#' @examplesIf interactive()
-#'
-#' output_test <- fit_models(
+#' @examples
+#' models <- fit_models(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
 #'   predict_by = "group"
 #' )
 #'
-#' predict_and_plot(output_test)
+#' predict_and_plot(models)
 predict_and_plot <- function(fit_models,
                              eval_time = NULL,
                              km_include = TRUE,
@@ -314,19 +330,33 @@ predict_and_plot <- function(fit_models,
     out$plotly <- plotly
   }
 
-  class(out) <- c(class(out), "pred_plot")
+  class(out) <- c(class(out), "predict_and_plot")
 
   out
 }
 
 
-#' Print methods for \code{pred_plot}
-#' @param x An object of class \code{pred_plot}
+#' Print methods for \code{predict_and_plot}
+#'
+#' @param x An object of class \code{predict_and_plot}
 #' @param ... Additional arguments
-#' @export
+#'
+#' @returns A print summary of the \code{predict_and_plot} object.
+#'
 #' @importFrom cli cli_alert_info
-#' @noRd
-print.pred_plot <- function(x, ...) {
+#'
+#' @export
+#'
+#' @examples
+#' models <- fit_models(
+#'   data = easysurv::easy_bc,
+#'   time = "recyrs",
+#'   event = "censrec",
+#'   predict_by = "group"
+#' )
+#'
+#' predict_and_plot(models)
+print.predict_and_plot <- function(x, ...) {
   # Print messages at the beginning, since printing during was not respecting
   # the order of the code.
   if (!is.null(x$plots[[1]]$surv_plots)) {
@@ -360,7 +390,11 @@ print.pred_plot <- function(x, ...) {
   invisible(x)
 }
 
+# Helper functions ----
 
+#' Helper function to generate predictions
+#'
+#' @noRd
 predict_helper <- function(models, new_data, eval_time,
                            type = c("survival", "hazard"),
                            special_profiles = FALSE) {
@@ -435,6 +469,7 @@ predict_helper <- function(models, new_data, eval_time,
 #' @importFrom stats predict
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr unnest
+#'
 #' @noRd
 get_predict_table <- function(models, new_data, eval_time, type) {
   predict_list <- lapply(models, stats::predict,
@@ -465,6 +500,7 @@ get_predict_table <- function(models, new_data, eval_time, type) {
 #' @importFrom bshazard bshazard
 #' @importFrom dplyr rename
 #' @importFrom stats as.formula
+#'
 #' @noRd
 get_bshazard <- function(fit_models, tx_index = 1) {
   if (is.null(fit_models$info$nested)) {
@@ -499,10 +535,8 @@ get_bshazard <- function(fit_models, tx_index = 1) {
   table_bshazard
 }
 
-
-# Helper functions
-
 #' Help Label Distributions
+#'
 #' @noRd
 label_table <- function(df) {
   # Human readable label

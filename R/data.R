@@ -1,7 +1,3 @@
-###########
-# This file has NOT been updated for the new easysurv release.
-###########
-
 # nolint start
 #' Formatted Copy of `ggsurvfit::adtte`
 #'
@@ -90,8 +86,6 @@
 #'
 #' @source `survival::lung`
 "easy_lung"
-
-
 
 #' Formatted Copy of `flexsurv::bc`
 #'

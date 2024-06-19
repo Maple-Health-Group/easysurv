@@ -2,14 +2,16 @@
 % Please edit documentation in R/quick_starts.R
 \name{quick_start3}
 \alias{quick_start3}
-\title{Launch an Example Script to Start Your Survival Analysis using simulated
-clinical trial data}
+\title{Launch Example Survival Analysis Script using the easy_adtte Data Set}
 \usage{
 quick_start3(output_file_name = NULL)
 }
 \arguments{
 \item{output_file_name}{Optional. A file name to use for the script. Defaults
 to "easysurv_start.R"  within a helper function.}
+}
+\value{
+A new R script file with example code.
 }
 \description{
 This function launches an example script for starting survival analysis
@@ -19,7 +21,7 @@ The code is inspired by \code{usethis::use_template()}
 but modified to work outside the context of an .RProj or package.
 }
 \examples{
-\dontrun{
+\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 quick_start3()
-}
+\dontshow{\}) # examplesIf}
 }

@@ -11,12 +11,14 @@ write_to_xl(wb, object)
 
 \item{object}{The output of an easysurv command}
 }
+\value{
+An Excel workbook with the easysurv output.
+}
 \description{
 Export easysurv output to Excel via \code{openxlsx}
 }
 \examples{
 \dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-
 km_results <- get_km(
   data = easysurv::easy_bc,
   time = "recyrs",

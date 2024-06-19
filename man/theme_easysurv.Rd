@@ -2,17 +2,15 @@
 % Please edit documentation in R/themes.R
 \name{theme_easysurv}
 \alias{theme_easysurv}
-\title{Plot theme for easysurv}
+\title{Plot Theme for easysurv Survival and Hazard Plots}
 \usage{
 theme_easysurv()
 }
 \description{
-Plot theme for easysurv
+Plot Theme for easysurv Survival and Hazard Plots
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(ggsurvfit)
 fit <- survfit2(Surv(time, status) ~ surg, data = df_colon)
 fit |> ggsurvfit() + theme_easysurv()
-\dontshow{\}) # examplesIf}
 }
