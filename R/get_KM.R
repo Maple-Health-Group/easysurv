@@ -17,8 +17,8 @@
 #'   returned. Default is \code{FALSE}.
 #' @param ... (Optional) Parameters to pass to ggsurvfit.
 #'
-#' @returns A list containing Kaplan-Meier estimates, summary statistics, plots,
-#' and additional outputs.
+#' @returns A list containing Kaplan-Meier estimates, summary statistics, and
+#'   plots.
 #'
 #' @export
 #'

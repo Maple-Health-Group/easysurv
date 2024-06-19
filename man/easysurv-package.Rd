@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools to inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. For fitting survival models, the package provides a simple interface to the 'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
+Inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. A simple interface for fitting survival models using the 'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
 }
 \seealso{
 Useful links:

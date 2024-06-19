@@ -36,8 +36,8 @@ returned. Default is \code{FALSE}.}
 \item{...}{(Optional) Parameters to pass to ggsurvfit.}
 }
 \value{
-A list containing Kaplan-Meier estimates, summary statistics, plots,
-and additional outputs.
+A list containing Kaplan-Meier estimates, summary statistics, and
+plots.
 }
 \description{
 Calculates Kaplan-Meier estimates for survival data and returns summary

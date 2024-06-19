@@ -7,11 +7,11 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-9447-0825")),
     person("Brad", "Kievit", , "brad.kievit@maplehealthgroup.com", role = "aut")
   )
-Description: Tools to inspect survival data, plot Kaplan-Meier curves, 
+Description: Inspect survival data, plot Kaplan-Meier curves, 
     assess the proportional hazards assumption, fit parametric survival models, 
     predict and plot survival and hazards, and export the outputs to Excel. 
-    For fitting survival models, the package provides a simple interface to the
-    'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
+    A simple interface for fitting survival models using the 'flexsurv', 
+    'flexsurvspline', 'flexsurvcure', and 'survival' packages.
 License: MIT + file LICENSE
 URL: https://github.com/Maple-Health-Group/easysurv,
     https://maple-health-group.github.io/easysurv/
