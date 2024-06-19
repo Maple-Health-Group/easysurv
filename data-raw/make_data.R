@@ -35,15 +35,22 @@ attr(easy_bc$recyrs, "label") <- "Time of censoring or death in years"
 # ADTTE DATA -------------------------------------------------------------------
 # With thanks to the authors of the ggsurvfit package!
 # Original source data:
+# nolint start
 # https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08
+# nolint end
 
 adtte <-
-  readr::read_csv('data-raw/ggsurvfit-adtte.csv',
-                  show_col_types = FALSE) |>
+  readr::read_csv("data-raw/ggsurvfit-adtte.csv",
+    show_col_types = FALSE
+  ) |>
   tibble::as_tibble() |>
   dplyr::mutate(
     AVAL = AVAL / 365.25,
-    PARAM = gsub(PARAM, pattern = "(days)", replacement = "(years)", fixed = TRUE)
+    PARAM = gsub(PARAM,
+      pattern = "(days)",
+      replacement = "(years)",
+      fixed = TRUE
+    )
   )
 
 # Attach labels
@@ -57,7 +64,8 @@ attr(adtte$STR02, "label") <- "Prior Radiotherapy at randomization"
 attr(adtte$STR02N, "label") <- "Prior Radiotherapy at randomization (Numeric)"
 attr(adtte$STR02L, "label") <- "Prior Radiotherapy at randomization"
 attr(adtte$TRT01P, "label") <- "Planned treatment"
-attr(adtte$TRT01PN, "label") <- "Planned treatment group assigned at randomization (Numeric)"
+attr(adtte$TRT01PN, "label") <-
+  "Planned treatment group assigned at randomization (Numeric)"
 attr(adtte$PARAM, "label") <- "Progression free survival"
 attr(adtte$PARAMCD, "label") <- "PFS"
 attr(adtte$AVAL, "label") <- "Follow-up time, years"
@@ -69,6 +77,7 @@ attr(adtte$DCTREAS, "label") <- "Discontinuation from study reason"
 easy_adtte <- adtte
 
 usethis::use_data(easy_adtte,
-                  easy_lung,
-                  easy_bc,
-                  overwrite = TRUE, internal = FALSE)
+  easy_lung,
+  easy_bc,
+  overwrite = TRUE, internal = FALSE
+)

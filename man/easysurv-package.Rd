@@ -2,14 +2,13 @@
 % Please edit documentation in R/easysurv-package.R
 \docType{package}
 \name{easysurv-package}
-\alias{easysurv-package}
-\alias{_PACKAGE}
 \alias{easysurv}
-\title{easysurv: Estimate and inspect parametric survival models}
+\alias{easysurv-package}
+\title{easysurv: Simplify Survival Data Analysis and Model Fitting}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Functions to streamline the process of fitting parametric models to extrapolate survival data. easysurv can fit data via simple parametric modelling, mixture cure modelling and spline modelling.
+Inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. A simple interface for fitting survival models using the 'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
 }
 \seealso{
 Useful links:
@@ -21,12 +20,17 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com}
+\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID})
 
 Authors:
 \itemize{
   \item Brad Kievit \email{brad.kievit@maplehealthgroup.com}
 }
 
+Other contributors:
+\itemize{
+  \item Maple Health Group, LLC [copyright holder, funder]
 }
-\keyword{package}
+
+}
+\keyword{internal}

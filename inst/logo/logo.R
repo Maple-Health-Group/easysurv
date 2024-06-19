@@ -1,6 +1,4 @@
-surv_data <- easysurv::easy_lung[1:100,]
-
-surv_data <- surv_data |>
+surv_data <- easysurv::easy_lung[1:100, ] |>
   dplyr::mutate(
     time = time,
     event = status - 1,
@@ -9,13 +7,8 @@ surv_data <- surv_data |>
   dplyr::mutate_at("strata", as.factor)
 
 dists <- c("exp",
-  #"gamma",
-  #"gengamma",
-  "gompertz",
-  #"llogis",
-  "lnorm"
-  #"weibull"
-)
+           "gompertz",
+           "lnorm")
 
 times <- seq(
   from = 0,
@@ -23,16 +16,21 @@ times <- seq(
   length.out = 200
 )
 
-fit_check <- easysurv::quick_fit(
+models <- easysurv::fit_models(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "strata",
-  dists = dists,
-  times = times
+  predict_by = "strata",
+  dists = dists
 )
 
-p <- fit_check[["fit_plots"]][[1]]
+fit_plots <- easysurv::predict_and_plot(
+  fit_models = models,
+  data = surv_data,
+  eval_time = times
+)
+
+p <- fit_plots[["plots"]][["1"]][["surv_plots"]]
 p <- p +
   ggplot2::labs(title = NULL, subtitle = NULL, color = NULL) +
   ggplot2::guides(color = "none")
@@ -45,10 +43,8 @@ p <- p + ggplot2::theme(axis.text = ggplot2::element_blank(),
 p <- p + ggpubr::theme_transparent()
 p
 
-sysfonts::font_add_google("Roboto Condensed")
-
 s <- hexSticker::sticker(p,
-                         package="easysurv",
+                         package = "easysurv",
                          p_size = 25,
                          s_x = 1,
                          s_y = 0.9,
@@ -56,10 +52,9 @@ s <- hexSticker::sticker(p,
                          s_height = 1.1,
                          p_color = "#93100E",
                          h_fill = "#F2F2F2",
-                         h_color = '#4E8098',
+                         h_color = "#4E8098",
                          h_size = 1.2,
-                         p_family = "Roboto Condensed",
-                         filename = "man/figures/logo.png",
+                         filename = "man/figures/logo2.png",
                          dpi = 300)
 
 plot(s)

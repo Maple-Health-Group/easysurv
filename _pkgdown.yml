@@ -3,3 +3,64 @@ url: https://maple-health-group.github.io/easysurv/
 template:
   bootstrap: 5
   bootswatch: flatly
+
+reference:
+- title: Quick Start
+  desc: >
+    These functions launch template scripts to help you get started.
+  contents:
+  - quick_start
+  - quick_start2
+  - quick_start3
+
+- title: Example data sets
+  desc: >
+    These example data sets are provided to help you explore package functionality.
+  contents:
+  - easy_adtte
+  - easy_bc
+  - easy_lung
+
+- title: Main functions
+  desc: >
+    These functions are used to perform survival analysis.
+  contents:
+  - inspect_surv_data
+  - get_km
+  - test_ph
+  - fit_models
+  - predict_and_plot
+  - predict.fit_models
+  - plot.fit_models
+
+- title: Print functions
+  desc: >
+    These functions are used to print various stages of survival analysis.
+  contents:
+  - print.inspect_surv_data
+  - print.get_km
+  - print.test_ph
+  - print.fit_models
+  - print.predict_and_plot
+
+- title: Individual plot functions
+  desc: >
+    These functions are used to plot various stages of survival analysis.
+  contents:
+  - plot_cloglog
+  - plot_km
+  - plot_schoenfeld
+
+- title: Themes
+  desc: >
+    These functions are used to apply themes to plots.
+  contents:
+  - theme_easysurv
+  - theme_risktable_easysurv
+
+- title: Other functions
+  desc: >
+    These functions are used to perform other tasks.
+  contents:
+  - get_schoenfeld
+  - write_to_xl

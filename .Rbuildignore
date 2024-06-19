@@ -6,3 +6,10 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^README.Rmd
+^SECURITY.md
+^LICENSE.md
+^data-raw$
+^.*_cache$
+^cran-comments\.md$
+^LICENSE\.md$

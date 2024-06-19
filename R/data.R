@@ -1,4 +1,5 @@
-#' Example clinical trial data from `ggsurvfit`
+# nolint start
+#' Formatted Copy of `ggsurvfit::adtte`
 #'
 #' Background
 #' The example simulated data set is based on large phase III clinical trials in
@@ -33,6 +34,7 @@
 #' ADTTE time to event data model here
 #' \url{https://www.cdisc.org/standards/foundational/adam/adam-basic-data-structure-bds-time-event-tte-analyses-v1-0}.
 #'
+#'
 #' @format The data set contains the following variables:
 #'
 #' \describe{
@@ -59,7 +61,7 @@
 #'
 #' @source \url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
 "easy_adtte"
-
+# nolint end
 
 #' Formatted Copy of `survival::lung`
 #'
@@ -85,8 +87,6 @@
 #' @source `survival::lung`
 "easy_lung"
 
-
-
 #' Formatted Copy of `flexsurv::bc`
 #'
 #' This is a copy of the bc data set exported by the flexsurv
@@ -103,4 +103,3 @@
 #'
 #' @source `flexsurv::bc`
 "easy_bc"
-

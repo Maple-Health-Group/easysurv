@@ -1,18 +1,26 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# <b>easysurv</b> <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
+# easysurv <a href="https://maple-health-group.github.io/easysurv/"><img src="man/figures/logo.png" align="right" height="139" alt="easysurv website" /></a>
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml)
+[![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml)
+
 <!-- badges: end -->
 
-The *easysurv* R package provides tools to estimate and inspect
-parametric survival models.
+The *easysurv* R package provides tools to simplify survival data
+analysis and model fitting.
 
-The package is built upon the *flexsurv* engine, and aims to provide a
+This includes tools to inspect survival data, plot Kaplan-Meier curves,
+assess the proportional hazards assumption, fit parametric survival
+models, predict and plot survival and hazards, and export the outputs to
+Excel. For fitting survival models, the package provides a simple
+interface to the `flexsurv`, `flexsurvspline`, `flexsurvcure`, and
+`survival` packages.
+
+By default, the package uses the `flexsurv` engine and provides a
 helpful starting point to explore survival extrapolations across
 frequently used distributions (such as exponential, generalized gamma,
 gamma, Gompertz, log-logistic, log-normal and Weibull).
@@ -20,21 +28,24 @@ gamma, Gompertz, log-logistic, log-normal and Weibull).
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
-consider using [RStudio](https://www.rstudio.com/) as your integrated
-development environment (IDE).
+consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
+your integrated development environment (IDE).
 
 ``` r
 # You will need to have the pak package installed.
 install.packages("pak")
 
-# Then, you can install easysurv with the following line of code.
+# Then, install easysurv either from GitHub for the latest version:
 pak::pkg_install("Maple-Health-Group/easysurv")
+
+# Or from CRAN for the latest stable version:
+pak::pkg_install("easysurv")
 ```
 
 ## Getting started
 
 ``` r
-# Load the easysurv library
+# Attach the easysurv library
 library(easysurv)
 
 # Open an example script
@@ -44,100 +55,112 @@ quick_start()
 
 # Access help files
 help(package = "easysurv")
-
-# Access a detailed vignette
-browseVignettes("easysurv")
 ```
 
 ## Examples
 
-### `quick_KM()`
-
-The `quick_KM()` function can generate themed KM plots, accompanied by
-pertinent statistics such as numbers at risk over time.
+### Start by tidying your data…
 
 ``` r
-# Format the pre-loaded "lung" dataset so that the "status" (1/2) variable can serve as an event indicator (0/1)
+# Load the easy_lung data from the easysurv package
+# Recode the "status" variable to create an event indicator (0/1)
 surv_data <- easy_lung |>
-  dplyr::mutate(event = status - 1)
+  dplyr::mutate(
+    time = time,
+    event = status - 1,
+    group = sex,
+    .after = time
+  ) |>
+  dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
 
-# Run "quick_KM()" on this formatted dataset
-KM_quick <- easysurv::quick_KM(
+# Make the group variable a factor and assign level labels.
+surv_data <- surv_data |>
+  dplyr::mutate_at("group", as.factor)
+levels(surv_data$group) <- c("Male", "Female")
+```
+
+### … then enjoy the easysurv functions!
+
+### `inspect_surv_data()`
+
+``` r
+inspect_surv_data(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "sex",
-  strata_labels = c("Male", "Female"))
-
-# Print the newly created KM plot
-KM_quick[["KM_plot"]]
+  group = "group"
+)
 ```
 
-![](man/figures/quick-KM-1.png)<!-- -->
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures//inspect-a-dark.svg">
+<img src="man/figures//inspect-a.svg" width="100%" /> </picture>
 
-### `quick_fit()`
-
-For a user-defined set of distributions, the `quick_fit()` function can
-check distribution convergence, generate plots for extrapolations and
-smoothed hazards, create survival parameter tables, show goodness-of-fit
-statistics, and calculate average survival times.
+### `get_km()`
 
 ``` r
-# Run "quick_fit()" on the formatted "lung" dataset, examining the effect of the "sex" variable
-fit_quick <- easysurv::quick_fit(
+km_check <- get_km(
   data = surv_data,
   time = "time",
   event = "event",
-  strata = "sex",
-  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
-  strata_labels = c("Male", "Female"),
-  add_interactive_plots = TRUE)
+  group = "group"
+)
 
-# Print the hazard and fitted survival plots
-fit_quick[["hazard_plots"]][["Male"]]
+print(km_check)
 ```
 
-![](man/figures/quick-fit-1.png)<!-- -->
+<img src="man/figures/get-KM-r-1.png" width="100%" />
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures//get-KM-a-dark.svg">
+<img src="man/figures//get-KM-a.svg" width="100%" /> </picture>
+
+### `test_ph()`
 
 ``` r
-fit_quick[["fit_plots"]][["Male"]]
+ph_check <- test_ph(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+print(ph_check)
 ```
 
-![](man/figures/quick-fit-2.png)<!-- -->
+<img src="man/figures/test-PH-r-1.png" width="100%" /><img src="man/figures/test-PH-r-2.png" width="100%" />
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures//test-PH-a-dark.svg">
+<img src="man/figures//test-PH-a.svg" width="100%" /> </picture>
+
+### `fit_models()`
 
 ``` r
-# Print the AIC/BIC scores and their relative ranking
-fit_quick[["goodness_of_fit"]][["Male"]]
-#>           model      AIC      BIC AIC_rank BIC_rank
-#> 1   Exponential 772.4134 775.3406        5        3
-#> 2         Gamma 767.6859 773.5404        2        2
-#> 3    Gen. Gamma 769.2226 778.0044        3        5
-#> 4      Gompertz 769.7047 775.5592        4        4
-#> 5  log-Logistic 776.5899 782.4444        6        6
-#> 6    log-Normal 784.6606 790.5151        7        7
-#> 7 Weibull (AFT) 767.2281 773.0826        1        1
+separate_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
+)
+
+print(separate_models)
 ```
 
-## Known issues
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures//fit-models-a-dark.svg">
+<img src="man/figures//fit-models-a.svg" width="100%" /> </picture>
 
-#### Fonts
+### `predict_and_plot()`
 
-The standard plots produced in *easysurv* use the Roboto Condensed font.
-R attempts to load the font when calling `library(easysurv)`. If the
-font does not display correctly, we recommend calling
-`library(easysurv)` again. You should see the following initialization
-plot at start-up:
+``` r
+plots <- predict_and_plot(fit_models = separate_models)
 
-![](man/figures/font-issue-1.png)<!-- -->
+print(plots)
+```
 
-If the font displays as expected, disregard font-related warnings R may
-display. If you want to show easysurv plots in an R Markdown file,
-consider adding `fig.showtext = TRUE` to the code chunk options to fix
-the font size.
+<img src="man/figures/plot-models-r-1.png" width="100%" /><img src="man/figures/plot-models-r-2.png" width="100%" /><img src="man/figures/plot-models-r-3.png" width="100%" /><img src="man/figures/plot-models-r-4.png" width="100%" />
 
-## Future plans
-
-- Expand test framework with increased coverage.
-- Expand diagnostic test capabilities with additional outputs and plots.
-- Create additional vignettes for other workflows (e.g., mixture cure
-  analysis, spline analysis).
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures//plot-models-a-dark.svg">
+<img src="man/figures//plot-models-a.svg" width="100%" /> </picture>

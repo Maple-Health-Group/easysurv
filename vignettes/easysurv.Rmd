@@ -1,0 +1,362 @@
+---
+title: "Explore easysurv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Explore easysurv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+
+library(easysurv)
+library(cli)
+```
+
+Welcome to `easysurv`, an R package developed by the Maple Health Group to support basic survival analysis.
+
+This vignette will guide you through the basic functionalities of the package.
+
+# Installation
+
+```{r installation, eval=FALSE}
+# First install 'pak' if you haven't already.
+install.packages("pak")
+
+# Then, install easysurv either from GitHub for the latest version:
+pak::pkg_install("Maple-Health-Group/easysurv")
+
+# Or from CRAN for the latest stable version:
+pak::pkg_install("easysurv")
+```
+
+# Loading the package
+
+```{r initiate-session, eval = FALSE}
+# Start from a clean environment
+rm(list = ls())
+
+# Attach the easysurv package
+library(easysurv)
+
+# (Optional) load an easysurv analysis template
+quick_start()
+```
+
+`quick_start()` creates a new .R script, pre-loaded with code for survival analysis using the `easy_lung` data set. `easy_lung` is a formatted copy of the `lung` data set from the `survival` package.
+
+`quick_start2()` and `quick_start3()` create similar .R scripts based on other data sets. These include `easy_bc` ("bc" from the `flexsurv` package) and `easy_adtte` ("adtte" from the `ggsurvfit` package). 
+
+The choice of starting data introduces some variations in code structure and function calls.
+
+
+# Preparing your data
+
+Below, we advise some practices to ensure that `easysurv` can handle your data.
+
+## Data import
+
+`easysurv` is designed to work with data frames.
+
+Here are some packages & their functions you might use to import your survival data:
+
+* `haven::read_sas()` for SAS (.sas7bdat) files
+* `haven::read_dta()` for Stata (.dta) files
+* `haven::read_sav()` for SPSS (.sav) files
+* `readxl::read_excel()` for Excel (.xls & .xlsx) files
+* `readr::read_csv()` for .csv files
+
+We're going to use `easy_adtte` as an example data set. Since it's a package that comes loaded with `easysurv`, we don't need any of the above functions.
+
+```{r data-import, eval=TRUE}
+surv_data <- easy_adtte
+
+surv_data
+```
+
+## Data structure
+
+`easysurv` expects your data to have the following structure:
+
+* A column for `time` (time to event or censoring).
+* A column for `event` status (1 for event, 0 for censored). 
+    * Be mindful that the event indicator in ADTTE data sets is named "CNSR" and is coded in the opposite way that R survival packages expect.
+    * Therefore, you may need to recode the event indicator in ADTTE data sets.
+* An optional column for `group` (for stratified analysis).
+
+`easysurv` does not require you to use certain column names, although consistency is encouraged.
+
+```{r data-structure, eval=TRUE}
+surv_data <- surv_data |>
+  dplyr::filter(PARAMCD == "PFS") |> # Filtering may be relevant for your data
+  dplyr::mutate(
+    time = AVAL,
+    event = 1 - CNSR, # Recode status to 0 = censored, 1 = event
+    group = TRT01P
+  ) |>
+  dplyr::mutate_at("group", as.factor) |> # Convert to factor for easier stratification
+  dplyr::as_tibble() # Convert to tibble for easier viewing
+
+surv_data
+```
+
+## Data labelling
+
+`easysurv` can handle data with or without labels. However, labelled data is easier to interpret.
+
+```{r data-labelling, eval=TRUE}
+# Check labels impacted by re-coding
+attr(surv_data$event, "label")
+# Check levels of the group factor variable
+levels(surv_data$group)
+# Overwrite the attributes with new labels
+attr(surv_data$event, "label") <- "0 = Censored, 1 = Event"
+levels(surv_data$group) <- c("Tab+Vis", "Tab->Vis", "Tab", "Vis")
+```
+
+# Exploratory data analysis
+
+`easysurv` provides a simple function, `inspect_surv_data()` to help you explore your data.
+
+From this, we can see the first few rows of our data, the number of events and censored observations, sample sizes, and median survival estimates.
+
+This helps us to understand the structure of our data and to identify any potential issues.
+
+
+```{r inspect, eval=TRUE}
+inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+```
+
+# Kaplan-Meier survival curves
+
+The Kaplan-Meier (KM) estimator is a non-parametric method used to estimate the survival function from time-to-event data.
+
+`easysurv` provides a simple function, `get_km()` to generate KM curves alongside a summary.
+
+```{r km, eval=TRUE, fig.width=6, fig.height=5}
+km <- get_km(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+km
+```
+
+This function uses easysurv's `plot_km()` to generate the KM curves. You can also use `plot_km()` directly, or pass additional arguments to `get_km()`, to customize the plot.
+
+For example, by default, shapes are used in place of group names in the risk table beneath the plot to save space. You can change this by setting `risktable_symbols = FALSE`.
+
+```{r km-names, eval=TRUE, fig.width=6, fig.height=5}
+km_with_names <- get_km(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group",
+  risktable_symbols = FALSE
+)
+
+km_with_names$km_plot
+```
+
+# Testing proportional hazards
+
+The Cox proportional hazards model is a popular method for estimating the effect of covariates on survival time. The model assumes that the hazard ratio for a given covariate is constant over time.
+
+`easysurv` provides a simple function, `test_ph()` to support testing the proportional hazards assumption.
+
+The output reports the hazard ratios between groups, the 95% confidence intervals, p-values for the test of survival differences and proportional hazards.
+
+In this example, the `survival::cox.zph()` found a global p-value of 0.021, suggesting that the proportional hazards assumption is violated (p < 0.05).
+
+This is supported by a Schoenfeld residual plot, which shows a clear pattern of non-proportionality; and a log cumulative hazard plot in which the lines are not parallel.
+
+However, it is not always clear cut, so a reminder is printed that the results should be interpreted in totality and with caution.
+
+```{r ph, eval=TRUE, fig.width=6, fig.height=5}
+ph <- test_ph(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+ph
+```
+
+# Fitting survival models
+
+`easysurv` provides a simple function, `fit_models()` to fit survival models. This function can fit multiple distributions at once, and returns a summary of all distributions attempted.
+
+## Aside: handling failure
+
+Under the hood, `easysurv` builds upon the `parsnip` package. Through `fit_models()`, we make a key update to this approach to handle errors in the model fitting process.
+
+`purrr::possibly()` is leveraged to help code run smoothly even if the model fitting process fails. This is particularly useful when testing multiple distributions, as the best distribution is not known *a priori*.
+
+``` {r parsnip, eval=FALSE}
+# We created a function to return NULL if issues arise in model fitting.
+pfit <- purrr::possibly(.f = parsnip::fit)
+
+# Without easysurv, here's how parsnip might be used to fit models:
+parsnip::survival_reg(dist = "weibull") |>
+  parsnip::set_engine("flexsurv") |>
+  parsnip::fit(
+    formula = survival::Surv(time, event) ~ group,
+    data = surv_data
+  )
+
+# But, in easysurv, the fit_models() function uses pfit() to handle errors.
+# This looks a bit like:
+parsnip::survival_reg(dist = "weibull") |>
+  parsnip::set_engine("flexsurv") |>
+  pfit(
+    formula = survival::Surv(time, event) ~ group,
+    data = surv_data
+  )
+```
+
+In the returned object, we track which distributions were attempted, which were successful, and which failed. Any failures are highlighted when the fit_models object is printed. 
+
+```{r fit-models-fail, eval=TRUE, warning=FALSE}
+# Take just two rows of data and expect distributions to fail.
+lacking <- surv_data[3:4, ]
+
+suspected_failure <- fit_models(
+  data = lacking,
+  time = "time",
+  event = "event",
+  dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull")
+)
+print(suspected_failure)
+```
+
+## Fitting models separately
+
+By default, `fit_models()` fits the exponential, gamma, generalized gamma, Gompertz, log-logistic, log-normal, and Weibull distributions using a `flexsurv` engine.
+
+The `predict_by` argument allows you to stratify the analysis by a factor variable. This is useful for comparing survival curves between groups.
+
+
+```{r fit-models, eval=TRUE}
+models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
+)
+
+models
+```
+
+## Fitting models jointly
+
+Alternatively, you can fit all models "jointly" by specifying the treatment group as a covariate, and also setting `predict_by` to the treatment group.
+
+This may not be appropriate given the outcomes of the proportional hazard tests above, but is shown for completeness.
+
+```{r fit-models-joint, eval=TRUE}
+joint_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group",
+  covariates = "group"
+)
+
+joint_models
+```
+
+
+## Fitting spline models
+
+`easysurv` also supports fitting spline models via a `flexsurvspline` engine. This is useful when the relationship between time and the hazard is not linear. The code below fits spline models with 1, 2, and 3 knots all on the hazard scale.
+
+```{r fit-spline, eval=FALSE}
+spline_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group",
+  engine = "flexsurvspline",
+  k = c(1, 2, 3),
+  scale = "hazard"
+)
+```
+
+## Fitting cure models
+
+`easysurv` also supports fitting mixture cure models via a `flexsurvcure` engine. This may be useful when a proportion of the population is assumed to be cured and therefore is much less likely to experience the event of interest. The code below is an example of the syntax.
+
+The output for cure models also includes estimated cure fractions.
+
+```{r fit-cure, eval=FALSE}
+cure_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group",
+  engine = "flexsurvcure"
+)
+```
+
+# Making predictions and plots
+
+Once you have your `fit_models()` object, you can use  `predict_and_plot()` to generate predictions and plots that may help you choose between models.
+
+The `predict_and_plot()` function generates survival and hazard plots for each model, stratified by the `predict_by` variable from the original `fit_models()` call (if `predict_by` was provided).
+
+If you don't provide a `times` argument, the function will predict up to 5 times the maximum observed time in the data, at 100 equally distributed time points, which is often sufficient.
+
+
+``` {r predict-and-plot, eval=TRUE, fig.width=6, fig.height=5}
+# With the "models" object from above...
+preds_and_plots <- predict_and_plot(models)
+
+preds_and_plots
+```
+
+# Exporting your results
+
+`easysurv` provides a simple function, `write_to_xl()` to export your results to a .xlsx file, using the `openxlsx` package.
+
+The function can take outputs from `get_km()`, `test_ph()`, `fit_models()`, and `predict_and_plot()`.
+
+For example, you can export the outputs from the above code chunks to an Excel file with the following code:
+
+
+```{r export, eval=FALSE}
+# Create workbook
+wb <- openxlsx::createWorkbook()
+
+# Write easysurv objects to the workbook
+write_to_xl(wb, km)
+write_to_xl(wb, ph)
+write_to_xl(wb, models)
+write_to_xl(wb, preds_and_plots)
+
+# Save and open the workbook
+openxlsx::saveWorkbook(wb, file = "my_file_name.xlsx", overwrite = TRUE)
+openxlsx::openXL("my_file_name.xlsx")
+```
+
+Note: if you have multiple `fit_models` or `predict_and_plot` objects, you should save these to other workbooks, since `write_to_xl()` may choose the same sheet names and overwrite data from other models.
+
+# Conclusion
+
+And with that, we have a set of standard parametric model outputs in both R and Excel! 
+
+We hope you enjoy using the package!
