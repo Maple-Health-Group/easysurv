@@ -1,18 +1,17 @@
 Type: Package
 Package: easysurv
-Title: Tools to Simplify Survival Data Analysis and Model Fitting
+Title: Simplify Survival Data Analysis and Model Fitting
 Version: 1.2.0
 Authors@R: c(
     person("Niall", "Davison", , "niall.davison@maplehealthgroup.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-9447-0825")),
     person("Brad", "Kievit", , "brad.kievit@maplehealthgroup.com", role = "aut")
   )
-Description: The easysurv package aims to simplify fitting parametric
-    models for extrapolating survival data. It facilitates plotting
-    Kaplan-Meier curves, assessing the proportional hazards assumption,
-    estimating and predicting from parametric survival models using engines 
-    such as flexsurv, flexsurvspline, flexsurvcure, and survival, and exporting 
-    the outputs to Excel.
+Description: Tools to inspect survival data, plot Kaplan-Meier curves, 
+    assess the proportional hazards assumption, fit parametric survival models, 
+    predict and plot survival and hazards, and export the outputs to Excel. 
+    For fitting survival models, the package provides a simple interface to the
+    'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
 License: MIT + file LICENSE
 URL: https://github.com/Maple-Health-Group/easysurv,
     https://maple-health-group.github.io/easysurv/

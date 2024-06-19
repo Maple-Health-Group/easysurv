@@ -12,3 +12,4 @@
 ^data-raw$
 ^.*_cache$
 ^cran-comments\.md$
+^LICENSE\.md$

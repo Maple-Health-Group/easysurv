@@ -4,11 +4,11 @@
 \name{easysurv-package}
 \alias{easysurv}
 \alias{easysurv-package}
-\title{easysurv: Tools to Simplify Survival Data Analysis and Model Fitting}
+\title{easysurv: Simplify Survival Data Analysis and Model Fitting}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-The easysurv package aims to simplify fitting parametric models for extrapolating survival data. It facilitates plotting Kaplan-Meier curves, assessing the proportional hazards assumption, estimating and predicting from parametric survival models using engines such as flexsurv, flexsurvspline, flexsurvcure, and survival, and exporting the outputs to Excel.
+Tools to inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. For fitting survival models, the package provides a simple interface to the 'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
 }
 \seealso{
 Useful links:
