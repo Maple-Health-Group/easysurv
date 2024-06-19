@@ -20,11 +20,16 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID}) [copyright holder]
+\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID})
 
 Authors:
 \itemize{
   \item Brad Kievit \email{brad.kievit@maplehealthgroup.com}
+}
+
+Other contributors:
+\itemize{
+  \item Maple Health Group, LLC [copyright holder, funder]
 }
 
 }
