@@ -94,8 +94,6 @@ quick_start3 <- function(output_file_name = NULL) {
 #' @importFrom cli cli_alert_info
 #' @importFrom usethis write_over
 #' @importFrom usethis edit_file
-#' @importFrom xfun read_utf8
-#' @importFrom whisker whisker.render
 #' @importFrom fs path_package
 #'
 #' @noRd
@@ -131,9 +129,7 @@ quick_start_select <- function(output_file_name = NULL,
   )
 
   # Read the template contents
-  template_contents <- strsplit(
-    whisker::whisker.render(xfun::read_utf8(template_path)), "\n"
-  )[[1]]
+  template_contents <- readLines(template_path, encoding = "UTF-8")
 
   # Use R session’s temporary directory for the output file, per CRAN policy
   output_path <- paste0(tempdir(), "\\", output_file_name)
