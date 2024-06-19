@@ -5,8 +5,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/check-standard.yaml)
+[![R-CMD-check](https://github.com/Maple-Health-Group/easysurv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Maple-Health-Group/easysurv/actions/workflows/test-coverage.yaml)
+
 <!-- badges: end -->
 
 The *easysurv* R package provides tools to simplify survival data
