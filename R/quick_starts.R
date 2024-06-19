@@ -91,6 +91,7 @@ quick_start3 <- function(output_file_name = NULL) {
 #'
 #' @returns A new R script file with example code.
 #'
+#' @importFrom cli cli_alert_info
 #' @importFrom usethis write_over
 #' @importFrom usethis edit_file
 #' @importFrom xfun read_utf8
@@ -108,8 +109,8 @@ quick_start_select <- function(output_file_name = NULL,
     is.null(output_file_name),
     "easysurv_start.R",
     ifelse(!endsWith(output_file_name, ".R"),
-      paste0(output_file_name, ".R"),
-      output_file_name
+           paste0(output_file_name, ".R"),
+           output_file_name
     )
   )
 
@@ -117,8 +118,8 @@ quick_start_select <- function(output_file_name = NULL,
     is.null(template_file_name),
     "quick_template_lung.R",
     ifelse(!endsWith(template_file_name, ".R"),
-      paste0(template_file_name, ".R"),
-      template_file_name
+           paste0(template_file_name, ".R"),
+           template_file_name
     )
   )
 
@@ -134,7 +135,18 @@ quick_start_select <- function(output_file_name = NULL,
     whisker::whisker.render(xfun::read_utf8(template_path)), "\n"
   )[[1]]
 
+  # Use R session’s temporary directory for the output file, per CRAN policy
+  output_path <- paste0(tempdir(), "\\", output_file_name)
+
   # Write the template contents to the output file
-  usethis::write_over(output_file_name, template_contents)
-  usethis::edit_file(output_file_name)
+  cli::cli_alert_info(paste0(
+    "{.strong {.pkg easysurv} template:} Attempting to write a new .R file to ",
+    "a temporary directory."
+  ))
+  usethis::write_over(output_path, template_contents)
+  usethis::edit_file(output_path)
+
+  cli::cli_alert_info(paste0(
+    "Remember to save the file to a permanent location if you wish to keep it."
+  ))
 }
