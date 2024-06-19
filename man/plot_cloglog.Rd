@@ -25,7 +25,7 @@ representing the median survival time. Default is \code{FALSE}.}
 \code{theme_easysurv()}.}
 }
 \value{
-A ggplot object representing the Kaplan-Meier survival curve plot.
+A ggplot object representing the cumulative log log plot.
 }
 \description{
 Generates a Cumulative Log Log survival curve plot using

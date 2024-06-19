@@ -1,5 +1,7 @@
 #' Plot Theme for easysurv Survival and Hazard Plots
 #'
+#' @returns A ggplot2 theme object.
+#'
 #' @importFrom ggplot2 element_blank element_line theme theme_bw
 #'
 #' @export
@@ -20,6 +22,8 @@ theme_easysurv <- function() {
 #' Plot Theme for easysurv Risk Tables
 #'
 #' To be used with `ggsurvfit::add_risktable()`.
+#'
+#' @returns A list containing a ggplot2 theme object.
 #'
 #' @importFrom ggsurvfit theme_risktable_default
 #' @importFrom ggplot2 element_blank element_line theme

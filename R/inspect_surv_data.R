@@ -7,12 +7,17 @@
 #' @param event The column name in `data` containing the event indicator data.
 #' @param group Optional. The column name in `data` containing the group
 #'   indicator data.
-#' @export
+#'
+#' @returns A list containing tibbles that summarise the first few rows of the
+#'   survival data, the sample sizes, the events, and median survival.
+#'
 #' @importFrom dplyr count group_by mutate slice
 #' @importFrom purrr discard
 #' @importFrom stats as.formula
 #' @importFrom survival Surv survfit
 #' @importFrom tibble as_tibble
+#'
+#' @export
 #'
 #' @examples
 #' inspect_surv_data(
@@ -104,9 +109,9 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
 #' @param x An object of class \code{inspect_surv_data}
 #' @param ... Additional arguments
 #'
-#' @importFrom cli cli_alert_warning cat_line cli_h1 cli_h2
-#'
 #' @returns A print summary of the \code{inspect_surv_data} object.
+#'
+#' @importFrom cli cli_alert_warning cat_line cli_h1 cli_h2
 #'
 #' @export
 print.inspect_surv_data <- function(x, ...) {

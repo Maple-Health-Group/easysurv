@@ -63,6 +63,7 @@ plot.fit_models <- function(x,
 #'   \code{theme_easysurv()}.
 #' @param risktable_theme ggplot2 theme for the risk table. Default is
 #'   \code{theme_risktable_easysurv()}.
+#'
 #' @returns A ggplot object representing the Kaplan-Meier survival curve plot.
 #'
 #' @export
@@ -130,7 +131,7 @@ plot_km <- function(fit,
 #' @param plot_theme ggplot2 theme for the plot. Default is
 #'   \code{theme_easysurv()}.
 #'
-#' @returns A ggplot object representing the Kaplan-Meier survival curve plot.
+#' @returns A ggplot object representing the cumulative log log plot.
 #'
 #' @importFrom ggsurvfit add_censor_mark add_risktable add_quantile
 #' @importFrom ggsurvfit theme_ggsurvfit_default theme_risktable_boxed

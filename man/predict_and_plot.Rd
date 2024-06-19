@@ -28,6 +28,10 @@ Default is \code{TRUE}. The subtitle is the name of the group.}
 \item{add_plotly}{A logical indicating whether to add interactive plotly
 outputs for each plot. Default is \code{FALSE}.}
 }
+\value{
+A list of predictions and plots for each model in the
+\code{fit_models} object.
+}
 \description{
 This function generates survival and hazard predictions and plots for each
 model in a \code{fit_models} object. Optionally, interactive \code{plotly}

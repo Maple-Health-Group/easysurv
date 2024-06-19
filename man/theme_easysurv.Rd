@@ -6,6 +6,9 @@
 \usage{
 theme_easysurv()
 }
+\value{
+A ggplot2 theme object.
+}
 \description{
 Plot Theme for easysurv Survival and Hazard Plots
 }

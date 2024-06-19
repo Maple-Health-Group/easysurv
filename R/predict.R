@@ -135,6 +135,9 @@ predict.fit_models <- function(object,
 #' @param add_plotly A logical indicating whether to add interactive plotly
 #'   outputs for each plot. Default is \code{FALSE}.
 #'
+#' @returns A list of predictions and plots for each model in the
+#'   \code{fit_models} object.
+#'
 #' @export
 #'
 #' @importFrom dplyr all_of filter select slice

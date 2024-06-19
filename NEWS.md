@@ -19,6 +19,7 @@
 * Introduced print methods with the `cli` package for key functions to simplify and summarise outputs.
 * Changed primary plotting package from `ggsurvplot` to `ggsurvfit`. `ggsurvplot` generates warning messages when median survival lines are added and generates misaligned risk tables as of `ggplot2` version 3.5.0, while `ggsurvfit` is being actively maintained.
 * To facilitate interpretation of Schoenfeld residual plots, scaled Schoenfeld residuals are now used, and facets are no longer produced per strata. 
+* `plot()` run on the output of `fit_models()` acts as a call to `predict_and_plot()`, generating predictions and plots for the specified model.
 
 
 # easysurv 1.1.0

@@ -16,6 +16,10 @@ inspect_surv_data(data, time, event, group = NULL)
 \item{group}{Optional. The column name in \code{data} containing the group
 indicator data.}
 }
+\value{
+A list containing tibbles that summarise the first few rows of the
+survival data, the sample sizes, the events, and median survival.
+}
 \description{
 Quickly inspect the survival data to ensure it is in the correct format.
 }

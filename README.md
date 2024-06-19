@@ -32,8 +32,11 @@ your integrated development environment (IDE).
 # You will need to have the pak package installed.
 install.packages("pak")
 
-# Then, install easysurv with the following line of code.
+# Then, install easysurv either from GitHub for the latest version:
 pak::pkg_install("Maple-Health-Group/easysurv")
+
+# Or from CRAN for the latest stable version:
+pak::pkg_install("easysurv")
 ```
 
 ## Getting started

@@ -6,6 +6,9 @@
 \usage{
 theme_risktable_easysurv()
 }
+\value{
+A list containing a ggplot2 theme object.
+}
 \description{
 To be used with \code{ggsurvfit::add_risktable()}.
 }

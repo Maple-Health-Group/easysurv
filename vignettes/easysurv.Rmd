@@ -30,8 +30,11 @@ This vignette will guide you through the basic functionalities of the package.
 # First install 'pak' if you haven't already.
 install.packages("pak")
 
-# Then, install easysurv with the following line of code.
+# Then, install easysurv either from GitHub for the latest version:
 pak::pkg_install("Maple-Health-Group/easysurv")
+
+# Or from CRAN for the latest stable version:
+pak::pkg_install("easysurv")
 ```
 
 # Loading the package

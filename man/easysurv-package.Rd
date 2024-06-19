@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-The easysurv package aims to simplify fitting parametric models for extrapolating survival data. It facilitates plotting Kaplan-Meier curves, assessing the proportional hazards assumption, estimating parametric survival models using engines such as flexsurv, flexsurvspline, flexsurvcure, and survival, and exporting the analyses to Excel.
+The easysurv package aims to simplify fitting parametric models for extrapolating survival data. It facilitates plotting Kaplan-Meier curves, assessing the proportional hazards assumption, estimating and predicting from parametric survival models using engines such as flexsurv, flexsurvspline, flexsurvcure, and survival, and exporting the outputs to Excel.
 }
 \seealso{
 Useful links:
@@ -20,7 +20,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID})
+\strong{Maintainer}: Niall Davison \email{niall.davison@maplehealthgroup.com} (\href{https://orcid.org/0000-0002-9447-0825}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{
