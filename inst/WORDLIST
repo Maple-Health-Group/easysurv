@@ -8,6 +8,7 @@ ECOG
 Gompertz
 Kaplan
 Karnofsky
+LLC
 ORCID
 PFS
 RProj
@@ -29,6 +30,7 @@ favour
 flexsurv
 flexsurvcure
 flexsurvspline
+funder
 genf
 gengamma
 ggplot
@@ -55,6 +57,7 @@ survHE
 survfit
 tablemab
 tibble
+tibbles
 vismab
 weibull
 weibullPH
