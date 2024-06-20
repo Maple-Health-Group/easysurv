@@ -4,7 +4,8 @@ I confirm there are no references describing the methods in our package.
 This is a resubmission. In this version I have:
 
 * Removed wrapping of examples in if(FALSE){}. In write_to_xl.Rd,
-we now use \dontrun{} to prevent an Excel file from being saved and launched.
+we now use \dontrun{} to prevent an Excel file from being created, saved and 
+launched.
 
 * Updated DESCRIPTION which erroneously referred to 'flexsurvspline' as a 
 package, but it is a function. The same error was addressed in the README file 

@@ -27,9 +27,9 @@ km_results <- get_km(
 )
 
 wb <- openxlsx::createWorkbook()
-write_to_xl(wb, km_results)
 
 \dontrun{
+write_to_xl(wb, km_results)
 openxlsx::saveWorkbook(wb, "km_results.xlsx", overwrite = TRUE)
 openxlsx::openXL("km_results.xlsx")
 }
