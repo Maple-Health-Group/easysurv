@@ -39,11 +39,13 @@ asciicast::init_knitr_engine(
 
 <!-- badges: end -->
 
-The *easysurv* R package provides tools to simplify survival data analysis and model fitting.
+The `easysurv` R package provides tools to simplify survival data analysis and model fitting.
 
-This includes tools to inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. For fitting survival models, the package provides a simple interface to the `flexsurv`, `flexsurvspline`, `flexsurvcure`, and `survival` packages.
+This includes tools to inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. 
 
-By default, the package uses the `flexsurv` engine and provides a helpful starting point to explore survival extrapolations across frequently used distributions (such as exponential, generalized gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
+For fitting survival models, the package provides a simple interface to `flexsurv::flexsurvreg()`, `flexsurv::flexsurvspline()`, `flexsurvcure::flexsurvcure()`, and `survival::survreg()`.
+
+By default, the package uses the `flexsurv` engine (`flexsurv::flexsurvreg()`) and provides a helpful starting point to explore survival extrapolations across frequently used distributions (such as exponential, generalized gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
 
 ## Installation
 

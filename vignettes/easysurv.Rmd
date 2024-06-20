@@ -73,7 +73,7 @@ Here are some packages & their functions you might use to import your survival d
 * `readxl::read_excel()` for Excel (.xls & .xlsx) files
 * `readr::read_csv()` for .csv files
 
-We're going to use `easy_adtte` as an example data set. Since it's a package that comes loaded with `easysurv`, we don't need any of the above functions.
+We're going to use `easy_adtte` as an example data set. Since it's data that comes loaded with `easysurv`, we don't need any of the above functions.
 
 ```{r data-import, eval=TRUE}
 surv_data <- easy_adtte
@@ -123,7 +123,7 @@ levels(surv_data$group) <- c("Tab+Vis", "Tab->Vis", "Tab", "Vis")
 
 # Exploratory data analysis
 
-`easysurv` provides a simple function, `inspect_surv_data()` to help you explore your data.
+`easysurv` provides a simple function, `inspect_surv_data()`, to help you explore your data.
 
 From this, we can see the first few rows of our data, the number of events and censored observations, sample sizes, and median survival estimates.
 
@@ -143,7 +143,7 @@ inspect_surv_data(
 
 The Kaplan-Meier (KM) estimator is a non-parametric method used to estimate the survival function from time-to-event data.
 
-`easysurv` provides a simple function, `get_km()` to generate KM curves alongside a summary.
+`easysurv` provides a simple function, `get_km()`, to generate KM curves alongside a summary.
 
 ```{r km, eval=TRUE, fig.width=6, fig.height=5}
 km <- get_km(

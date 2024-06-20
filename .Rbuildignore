@@ -13,3 +13,4 @@
 ^.*_cache$
 ^cran-comments\.md$
 ^LICENSE\.md$
+^CRAN-SUBMISSION$

@@ -3,7 +3,7 @@
 \docType{data}
 \name{easy_adtte}
 \alias{easy_adtte}
-\title{Formatted Copy of \code{ggsurvfit::adtte}}
+\title{Formatted Copy of \link[ggsurvfit:adtte]{ggsurvfit::adtte}}
 \format{
 The data set contains the following variables:
 
@@ -30,7 +30,7 @@ The data set contains the following variables:
 }
 }
 \source{
-\url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
+\link[ggsurvfit:adtte]{ggsurvfit::adtte}
 }
 \usage{
 easy_adtte
@@ -38,15 +38,13 @@ easy_adtte
 \description{
 Background
 The example simulated data set is based on large phase III clinical trials in
-breast cancer such as the ALTTO trial
-\verb{https://ascopubs.org/doi/abs/10.1200/JCO.2015.62.1797}.
+breast cancer such as the ALTTO trial \doi{10.1200/JCO.2015.62.1797}.
 The example trial aims to determine if a combination of two therapies
 tablemab (T) plus vismab (V) improves outcomes for metastatic human epidermal
 growth factor 2-positive breast cancer and increases the pathologic complete
 response in the neoadjuvant setting (i.e. treatment given as a first step to
 shrink a tumor before the main treatment or surgery).
-}
-\details{
+
 The trial has four treatment arms, patients with centrally confirmed human
 epidermal growth factor 2-positive early breast cancer were randomly assigned
 to 1 year of adjuvant therapy with V, T, their sequence (T to V), or their

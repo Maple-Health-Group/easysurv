@@ -2,7 +2,7 @@
 % Please edit documentation in R/test_ph.R
 \name{print.test_ph}
 \alias{print.test_ph}
-\title{Print methods for \code{test_ph}}
+\title{Print methods for \code{test_ph()}}
 \usage{
 \method{print}{test_ph}(x, ...)
 }
@@ -15,7 +15,7 @@
 A print summary of the \code{test_ph} object.
 }
 \description{
-Print methods for \code{test_ph}
+Print methods for \code{test_ph()}
 }
 \examples{
 ph_results <- test_ph(

@@ -1,10 +1,10 @@
 # nolint start
-#' Formatted Copy of `ggsurvfit::adtte`
+#' Formatted Copy of [ggsurvfit::adtte]
 #'
+#' @description
 #' Background
 #' The example simulated data set is based on large phase III clinical trials in
-#' breast cancer such as the ALTTO trial
-#' `https://ascopubs.org/doi/abs/10.1200/JCO.2015.62.1797`.
+#' breast cancer such as the ALTTO trial \doi{10.1200/JCO.2015.62.1797}.
 #' The example trial aims to determine if a combination of two therapies
 #' tablemab (T) plus vismab (V) improves outcomes for metastatic human epidermal
 #' growth factor 2-positive breast cancer and increases the pathologic complete
@@ -59,11 +59,11 @@
 #'     \item{DCTREAS}{Discontinuation from study reason}
 #' }
 #'
-#' @source \url{https://github.com/VIS-SIG/Wonderful-Wednesdays/tree/master/data/2020/2020-04-08}
+#' @source [ggsurvfit::adtte]
 "easy_adtte"
 # nolint end
 
-#' Formatted Copy of `survival::lung`
+#' Formatted Copy of [survival::lung]
 #'
 #' This is a copy of the lung data set exported by the survival
 #' package. This data set, however, has column labels assigned and time in
@@ -84,10 +84,10 @@
 #'     \item{wt.loss}{Weight loss, lbs}
 #' }
 #'
-#' @source `survival::lung`
+#' @source [survival::lung]
 "easy_lung"
 
-#' Formatted Copy of `flexsurv::bc`
+#' Formatted Copy of [flexsurv::bc]
 #'
 #' This is a copy of the bc data set exported by the flexsurv
 #' package. This data set, however, has column labels assigned.
@@ -101,5 +101,5 @@
 #'     \item{recyrs}{Time of censoring or death in years}
 #' }
 #'
-#' @source `flexsurv::bc`
+#' @source [flexsurv::bc]
 "easy_bc"

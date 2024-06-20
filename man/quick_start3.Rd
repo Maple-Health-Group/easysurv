@@ -16,12 +16,10 @@ A new R script file with example code.
 \description{
 This function launches an example script for starting survival analysis
 using the easysurv package. The script uses simulated phase III breast
-cancer trial data provided from the authors of the ggsurvfit package.
-The code is inspired by \code{usethis::use_template()}
+cancer trial data available from the ggsurvfit package.
+The code is inspired by \code{\link[usethis:use_template]{usethis::use_template()}}
 but modified to work outside the context of an .RProj or package.
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 quick_start3()
-\dontshow{\}) # examplesIf}
 }

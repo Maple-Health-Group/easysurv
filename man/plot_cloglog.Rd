@@ -12,7 +12,7 @@ plot_cloglog(
 )
 }
 \arguments{
-\item{fit}{A \code{\link[survival]{survfit}} object representing the
+\item{fit}{A \link[survival:survfit]{survival::survfit} object representing the
 survival data.}
 
 \item{median_line}{Logical value indicating whether to include a line
@@ -29,8 +29,7 @@ A ggplot object representing the cumulative log log plot.
 }
 \description{
 Generates a Cumulative Log Log survival curve plot using
-\code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
-This function provides sensible defaults while allowing for customisation.
+\code{\link[ggsurvfit:ggsurvfit]{ggsurvfit::ggsurvfit()}} with customizable options.
 }
 \examples{
 library(ggsurvfit)

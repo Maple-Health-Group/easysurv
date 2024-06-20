@@ -104,7 +104,7 @@ inspect_surv_data <- function(data, time, event, group = NULL) {
   out
 }
 
-#' Print methods for \code{inspect_surv_data}
+#' Print methods for \code{inspect_surv_data()}
 #'
 #' @param x An object of class \code{inspect_surv_data}
 #' @param ... Additional arguments

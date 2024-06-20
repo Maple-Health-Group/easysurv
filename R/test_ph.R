@@ -135,7 +135,7 @@ test_ph <- function(data,
 }
 
 
-#' Print methods for \code{test_ph}
+#' Print methods for \code{test_ph()}
 #'
 #' @param x An object of class \code{test_ph}
 #' @param ... Additional arguments

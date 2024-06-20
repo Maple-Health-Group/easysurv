@@ -339,7 +339,7 @@ predict_and_plot <- function(fit_models,
 }
 
 
-#' Print methods for \code{predict_and_plot}
+#' Print methods for \code{predict_and_plot()}
 #'
 #' @param x An object of class \code{predict_and_plot}
 #' @param ... Additional arguments

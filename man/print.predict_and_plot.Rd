@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict.R
 \name{print.predict_and_plot}
 \alias{print.predict_and_plot}
-\title{Print methods for \code{predict_and_plot}}
+\title{Print methods for \code{predict_and_plot()}}
 \usage{
 \method{print}{predict_and_plot}(x, ...)
 }
@@ -15,7 +15,7 @@
 A print summary of the \code{predict_and_plot} object.
 }
 \description{
-Print methods for \code{predict_and_plot}
+Print methods for \code{predict_and_plot()}
 }
 \examples{
 models <- fit_models(

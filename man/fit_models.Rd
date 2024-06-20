@@ -13,7 +13,7 @@ fit_models(
   dists = c("exp", "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull"),
   engine = "flexsurv",
   k = c(1, 2, 3),
-  scale = c("hazard"),
+  scale = "hazard",
   add_time_0 = TRUE,
   ...
 )
@@ -36,25 +36,33 @@ covariates to be included in the model.}
 \item{dists}{(Optional) A character vector specifying the distribution(s) to
 be fitted.
 
-For flexsurv, options are "exp", "exponential", "gamma", "genf",
-"genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
-"lognormal", "weibull", "weibullPH"
+When the engine parameter is set to "flexsurv", options are "exp",
+"exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
+"gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH".
 
-For flexsurvcure, options are "exp", "gamma", "gengamma", "gompertz",
-"llogis", "lnorm", "weibull".
+When the engine parameter is set to "flexsurvcure", options are "exp",
+"gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull".
 
-For flexsurvspline, dists are ignored in favour of k and scale.
+When the engine parameter is set to "flexsurvspline", dists are ignored in
+favor of k and scale parameters.
 
-For survival, options are "exponential", "extreme", "gaussian",
-"loggaussian" (same as lognormal), "logistic", "lognormal", "rayleigh",
-"weibull".
+When the engine parameter is set to "survival", options are "exponential",
+"extreme", "gaussian", "loggaussian" (same as lognormal), "logistic",
+"lognormal", "rayleigh", "weibull".
 
 Default is \code{c("exp", "gamma", "gengamma", "gompertz",
   "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.}
 
 \item{engine}{(Optional) The survival analysis engine to be used.
 Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
-Default is "flexsurv".}
+Default is "flexsurv".
+
+\itemize{
+\item "flexsurv" uses \code{\link[flexsurv:flexsurvreg]{flexsurv::flexsurvreg()}}.
+\item "flexsurvspline" uses \code{\link[flexsurv:flexsurvspline]{flexsurv::flexsurvspline()}}.
+\item "flexsurvcure" uses \code{\link[flexsurvcure:flexsurvcure]{flexsurvcure::flexsurvcure()}}.
+\item "survival" uses \code{\link[survival:survreg]{survival::survreg()}}.
+}}
 
 \item{k}{(Optional) A numeric vector specifying the number of knots for
 spline-based models. Default is \code{c(1, 2, 3)} to test different
@@ -64,7 +72,7 @@ numbers.}
 for spline-based models. Options are "hazard", "odds", and "normal".
 Default is \code{"hazard"}.}
 
-\item{add_time_0}{Optional. Uses \code{survival::survfit0()} to add a starting
+\item{add_time_0}{Optional. Uses \code{\link[survival:survfit0]{survival::survfit0()}} to add a starting
 time of 0 to the KM survfit object. This may be useful for plotting the KM
 at a subsequent stage (in surv_plots). Default is TRUE.}
 
@@ -77,7 +85,8 @@ distributions attempted, goodness of fit, fit averages, and cure fractions
 }
 \description{
 Fits survival models to the provided data using the specified engine and
-returns various outputs including model parameters, predictions, and plots.
+returns various outputs including model parameters, goodness of fit, and
+estimates of median survival.
 }
 \examples{
 models <- fit_models(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/inspect_surv_data.R
 \name{print.inspect_surv_data}
 \alias{print.inspect_surv_data}
-\title{Print methods for \code{inspect_surv_data}}
+\title{Print methods for \code{inspect_surv_data()}}
 \usage{
 \method{print}{inspect_surv_data}(x, ...)
 }
@@ -15,5 +15,5 @@
 A print summary of the \code{inspect_surv_data} object.
 }
 \description{
-Print methods for \code{inspect_surv_data}
+Print methods for \code{inspect_surv_data()}
 }

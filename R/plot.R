@@ -46,10 +46,10 @@ plot.fit_models <- function(x,
 #' Plot Kaplan-Meier Data
 #'
 #' Generates a Kaplan-Meier survival curve plot using
-#' \code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
-#' This function provides sensible defaults while allowing for customisation.
+#' [ggsurvfit::ggsurvfit()] with customizable options.
+#' This function provides sensible defaults while allowing for customization.
 #'
-#' @param fit A \code{\link[survival]{survfit}} object representing the
+#' @param fit A [survival::survfit] object representing the
 #'   survival data.
 #' @param risktable Logical value indicating whether to include a risk table
 #'   below the plot. Default is \code{TRUE}.
@@ -119,10 +119,9 @@ plot_km <- function(fit,
 #' Cumulative Log Log Plot
 #'
 #' Generates a Cumulative Log Log survival curve plot using
-#' \code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
-#' This function provides sensible defaults while allowing for customisation.
+#' [ggsurvfit::ggsurvfit()] with customizable options.
 #'
-#' @param fit A \code{\link[survival]{survfit}} object representing the
+#' @param fit A [survival::survfit] object representing the
 #'   survival data.
 #' @param median_line Logical value indicating whether to include a line
 #'   representing the median survival time. Default is \code{FALSE}.
@@ -203,7 +202,7 @@ plot_cloglog <- function(fit,
 #' @param point_alpha Transparency of the points representing residuals. Default
 #'   is `1`.
 #' @param plot_theme A ggplot2 theme for the plot. Default is
-#' `ggplot2::theme_bw()`.
+#' [ggplot2::theme_bw()].
 #'
 #' @returns A ggplot object representing the plot of Schoenfeld residuals.
 #'

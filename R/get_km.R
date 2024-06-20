@@ -34,8 +34,11 @@
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
-#'   group = "group"
+#'   group = "group",
+#'   risktable_symbols = FALSE
 #' )
+#'
+#' km_results
 get_km <- function(data,
                    time,
                    event,
@@ -199,7 +202,7 @@ get_km <- function(data,
 }
 
 
-#' Print methods for \code{get_km}
+#' Print methods for \code{get_km()}
 #'
 #' @param x An object of class \code{get_km}
 #' @param ... Additional arguments

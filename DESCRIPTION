@@ -11,8 +11,9 @@ Authors@R: c(
 Description: Inspect survival data, plot Kaplan-Meier curves, assess the
     proportional hazards assumption, fit parametric survival models,
     predict and plot survival and hazards, and export the outputs to
-    Excel.  A simple interface for fitting survival models using the
-    'flexsurv', 'flexsurvspline', 'flexsurvcure', and 'survival' packages.
+    Excel.  A simple interface for fitting survival models using 
+    'flexsurv::flexsurvreg()', 'flexsurv::flexsurvspline()', 
+    'flexsurvcure::flexsurvcure()', and 'survival::survreg()'.
 License: MIT + file LICENSE
 URL: https://github.com/Maple-Health-Group/easysurv,
     https://maple-health-group.github.io/easysurv/
@@ -27,7 +28,6 @@ Imports:
     dplyr,
     flexsurv,
     flexsurvcure,
-    fs,
     ggplot2,
     ggsurvfit,
     openxlsx,

@@ -21,14 +21,13 @@ bc
 bdat
 coef
 csv
-customisable
-customisation
+customizable
 dists
 dta
 easysurv's
-favour
 flexsurv
 flexsurvcure
+flexsurvreg
 flexsurvspline
 funder
 genf
@@ -55,6 +54,7 @@ summarise
 surv
 survHE
 survfit
+survreg
 tablemab
 tibble
 tibbles

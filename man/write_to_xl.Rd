@@ -18,18 +18,19 @@ An Excel workbook with the easysurv output.
 Export easysurv output to Excel via \code{openxlsx}
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 km_results <- get_km(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
-  group = "group"
+  group = "group",
+  risktable_symbols = FALSE
 )
 
 wb <- openxlsx::createWorkbook()
 write_to_xl(wb, km_results)
 
+\dontrun{
 openxlsx::saveWorkbook(wb, "km_results.xlsx", overwrite = TRUE)
 openxlsx::openXL("km_results.xlsx")
-\dontshow{\}) # examplesIf}
+}
 }

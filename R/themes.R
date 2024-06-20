@@ -21,7 +21,7 @@ theme_easysurv <- function() {
 
 #' Plot Theme for easysurv Risk Tables
 #'
-#' To be used with `ggsurvfit::add_risktable()`.
+#' To be used with [ggsurvfit::add_risktable()].
 #'
 #' @returns A list containing a ggplot2 theme object.
 #'

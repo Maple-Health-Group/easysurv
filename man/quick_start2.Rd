@@ -17,11 +17,9 @@ A new R script file with example code.
 This function launches an example script for starting survival analysis
 using the easysurv package. The script uses a modified version of the bc data
 set exported from the flexsurv package. The code is inspired by
-\code{usethis::use_template()} but modified to work outside the context of an
+\code{\link[usethis:use_template]{usethis::use_template()}} but modified to work outside the context of an
 .RProj or package.
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 quick_start2()
-\dontshow{\}) # examplesIf}
 }

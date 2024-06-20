@@ -3,7 +3,7 @@
 \docType{data}
 \name{easy_lung}
 \alias{easy_lung}
-\title{Formatted Copy of \code{survival::lung}}
+\title{Formatted Copy of \link[survival:lung]{survival::lung}}
 \format{
 The data set contains the following variables:
 
@@ -21,7 +21,7 @@ The data set contains the following variables:
 }
 }
 \source{
-\code{survival::lung}
+\link[survival:lung]{survival::lung}
 }
 \usage{
 easy_lung

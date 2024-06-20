@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_km.R
 \name{print.get_km}
 \alias{print.get_km}
-\title{Print methods for \code{get_km}}
+\title{Print methods for \code{get_km()}}
 \usage{
 \method{print}{get_km}(x, ...)
 }
@@ -15,7 +15,7 @@
 The summary of the Kaplan-Meier estimates, printed via the console.
 }
 \description{
-Print methods for \code{get_km}
+Print methods for \code{get_km()}
 }
 \examples{
 km_results <- get_km(

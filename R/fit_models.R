@@ -1,7 +1,8 @@
 #' Fit Survival Models
 #'
 #' Fits survival models to the provided data using the specified engine and
-#' returns various outputs including model parameters, predictions, and plots.
+#' returns various outputs including model parameters, goodness of fit, and
+#' estimates of median survival.
 #'
 #' @param data A data frame containing the survival data.
 #' @param time The name of the column in \code{data} containing the
@@ -15,18 +16,19 @@
 #' @param dists (Optional) A character vector specifying the distribution(s) to
 #'   be fitted.
 #'
-#'   For flexsurv, options are "exp", "exponential", "gamma", "genf",
-#'   "genf.orig", "gengamma", "gengamma.orig", "gompertz", "llogis", "lnorm",
-#'   "lognormal", "weibull", "weibullPH"
+#'   When the engine parameter is set to "flexsurv", options are "exp",
+#'   "exponential", "gamma", "genf", "genf.orig", "gengamma", "gengamma.orig",
+#'   "gompertz", "llogis", "lnorm", "lognormal", "weibull", "weibullPH".
 #'
-#'   For flexsurvcure, options are "exp", "gamma", "gengamma", "gompertz",
-#'   "llogis", "lnorm", "weibull".
+#'   When the engine parameter is set to "flexsurvcure", options are "exp",
+#'   "gamma", "gengamma", "gompertz", "llogis", "lnorm", "weibull".
 #'
-#'   For flexsurvspline, dists are ignored in favour of k and scale.
+#'   When the engine parameter is set to "flexsurvspline", dists are ignored in
+#'   favor of k and scale parameters.
 #'
-#'   For survival, options are "exponential", "extreme", "gaussian",
-#'   "loggaussian" (same as lognormal), "logistic", "lognormal", "rayleigh",
-#'   "weibull".
+#'   When the engine parameter is set to "survival", options are "exponential",
+#'   "extreme", "gaussian", "loggaussian" (same as lognormal), "logistic",
+#'   "lognormal", "rayleigh", "weibull".
 #'
 #'   Default is \code{c("exp", "gamma", "gengamma", "gompertz",
 #'   "llogis", "lnorm", "weibull")} which applies to flexsurv-related engines.
@@ -34,13 +36,21 @@
 #' @param engine (Optional) The survival analysis engine to be used.
 #'   Options are "flexsurv", "flexsurvcure", "flexsurvspline", and "survival".
 #'   Default is "flexsurv".
+#'
+#'   \itemize{
+#'   \item "flexsurv" uses [flexsurv::flexsurvreg()].
+#'   \item "flexsurvspline" uses [flexsurv::flexsurvspline()].
+#'   \item "flexsurvcure" uses [flexsurvcure::flexsurvcure()].
+#'   \item "survival" uses [survival::survreg()].
+#'   }
+#'
 #' @param k (Optional) A numeric vector specifying the number of knots for
 #'   spline-based models. Default is \code{c(1, 2, 3)} to test different
 #'   numbers.
 #' @param scale (Optional) A character vector specifying the scale parameter(s)
 #'   for spline-based models. Options are "hazard", "odds", and "normal".
 #'   Default is \code{"hazard"}.
-#' @param add_time_0 Optional. Uses `survival::survfit0()` to add a starting
+#' @param add_time_0 Optional. Uses [survival::survfit0()] to add a starting
 #'   time of 0 to the KM survfit object. This may be useful for plotting the KM
 #'   at a subsequent stage (in surv_plots). Default is TRUE.
 #' @param ... Additional arguments just to catch them and avoid errors.
@@ -87,7 +97,7 @@ fit_models <- function(data,
                        ),
                        engine = "flexsurv",
                        k = c(1, 2, 3),
-                       scale = c("hazard"),
+                       scale = "hazard",
                        add_time_0 = TRUE,
                        ...) {
   # Create key objects ----
@@ -319,7 +329,7 @@ fit_models <- function(data,
   out
 }
 
-#' Print methods for \code{fit_models}
+#' Print methods for \code{fit_models()}
 #'
 #' @param x An object of class \code{fit_models}
 #' @param ... Additional arguments

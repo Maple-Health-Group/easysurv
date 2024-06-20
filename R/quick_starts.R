@@ -3,7 +3,7 @@
 #' This function launches an example script for starting survival analysis
 #' using the easysurv package. The script uses a modified version of the
 #' lung data set exported from the survival package. The code is inspired by
-#' \code{usethis::use_template()} but modified to work outside the context of
+#' [usethis::use_template()] but modified to work outside the context of
 #' an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
@@ -13,7 +13,7 @@
 #'
 #' @export
 #'
-#' @examplesIf FALSE
+#' @examples
 #' quick_start()
 quick_start <- function(output_file_name = NULL) {
   # Run the quick_start selection function
@@ -28,7 +28,7 @@ quick_start <- function(output_file_name = NULL) {
 #' This function launches an example script for starting survival analysis
 #' using the easysurv package. The script uses a modified version of the bc data
 #' set exported from the flexsurv package. The code is inspired by
-#' \code{usethis::use_template()} but modified to work outside the context of an
+#' [usethis::use_template()] but modified to work outside the context of an
 #' .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
@@ -38,7 +38,7 @@ quick_start <- function(output_file_name = NULL) {
 #'
 #' @export
 #'
-#' @examplesIf FALSE
+#' @examples
 #' quick_start2()
 quick_start2 <- function(output_file_name = NULL) {
   # Run the quick_start selection function
@@ -52,8 +52,8 @@ quick_start2 <- function(output_file_name = NULL) {
 #'
 #' This function launches an example script for starting survival analysis
 #' using the easysurv package. The script uses simulated phase III breast
-#' cancer trial data provided from the authors of the ggsurvfit package.
-#' The code is inspired by \code{usethis::use_template()}
+#' cancer trial data available from the ggsurvfit package.
+#' The code is inspired by [usethis::use_template()]
 #' but modified to work outside the context of an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
@@ -63,7 +63,7 @@ quick_start2 <- function(output_file_name = NULL) {
 #'
 #' @export
 #'
-#' @examplesIf FALSE
+#' @examples
 #' quick_start3()
 quick_start3 <- function(output_file_name = NULL) {
   # Run the quick_start selection function
@@ -76,12 +76,12 @@ quick_start3 <- function(output_file_name = NULL) {
 # Helper functions ----
 
 #' Select an Example Script to Start Your Survival Analysis using
-#' "quick_start()" functions
+#' `quick_start()` functions
 #'
-#' This is a back-end function that is called by any of the "quick_start()"
+#' This is a back-end function that is called by any of the `quick_start()`
 #' functions, which launches an example script for starting survival analysis
 #' using the easysurv package. The code is inspired by
-#' \code{usethis::use_template()} but modified to work outside the context of
+#' [usethis::use_template()] but modified to work outside the context of
 #' an .RProj or package.
 #'
 #' @param output_file_name Optional. A file name to use for the script. Defaults
@@ -91,15 +91,11 @@ quick_start3 <- function(output_file_name = NULL) {
 #'
 #' @returns A new R script file with example code.
 #'
-#' @importFrom cli cli_alert_info
+#' @importFrom cli cli_alert_info cli_abort
 #' @importFrom usethis write_over
 #' @importFrom usethis edit_file
-#' @importFrom fs path_package
 #'
 #' @noRd
-#'
-#' @examplesIf FALSE
-#' quick_start_select()
 quick_start_select <- function(output_file_name = NULL,
                                template_file_name = NULL) {
   # Validate and format the output file name
@@ -122,11 +118,14 @@ quick_start_select <- function(output_file_name = NULL,
   )
 
   # Define the template path
-  template_path <- fs::path_package(
-    package = "easysurv",
-    "templates",
-    template_file_name
-  )
+  template_path <- system.file("templates",
+                               template_file_name,
+                               package = "easysurv",
+                               mustWork = FALSE)
+
+  if (nchar(template_path) == 0) {
+    cli::cli_abort("Template file not found.")
+  }
 
   # Read the template contents
   template_contents <- readLines(template_path, encoding = "UTF-8")

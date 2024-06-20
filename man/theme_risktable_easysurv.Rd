@@ -10,7 +10,7 @@ theme_risktable_easysurv()
 A list containing a ggplot2 theme object.
 }
 \description{
-To be used with \code{ggsurvfit::add_risktable()}.
+To be used with \code{\link[ggsurvfit:add_risktable]{ggsurvfit::add_risktable()}}.
 }
 \examples{
 library(ggsurvfit)

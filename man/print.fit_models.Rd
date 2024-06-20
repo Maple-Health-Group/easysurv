@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_models.R
 \name{print.fit_models}
 \alias{print.fit_models}
-\title{Print methods for \code{fit_models}}
+\title{Print methods for \code{fit_models()}}
 \usage{
 \method{print}{fit_models}(x, ...)
 }
@@ -15,7 +15,7 @@
 A print summary of the \code{fit_models} object.
 }
 \description{
-Print methods for \code{fit_models}
+Print methods for \code{fit_models()}
 }
 \examples{
 models <- fit_models(

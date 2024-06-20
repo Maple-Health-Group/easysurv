@@ -13,19 +13,22 @@
 #'
 #' @export
 #'
-#' @examplesIf FALSE
+#' @examples
 #' km_results <- get_km(
 #'   data = easysurv::easy_bc,
 #'   time = "recyrs",
 #'   event = "censrec",
-#'   group = "group"
+#'   group = "group",
+#'   risktable_symbols = FALSE
 #' )
 #'
 #' wb <- openxlsx::createWorkbook()
 #' write_to_xl(wb, km_results)
 #'
+#' \dontrun{
 #' openxlsx::saveWorkbook(wb, "km_results.xlsx", overwrite = TRUE)
 #' openxlsx::openXL("km_results.xlsx")
+#' }
 write_to_xl <- function(wb, object) {
   class_names <- c(
     "get_km",

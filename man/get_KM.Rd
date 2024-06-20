@@ -48,6 +48,9 @@ km_results <- get_km(
   data = easysurv::easy_bc,
   time = "recyrs",
   event = "censrec",
-  group = "group"
+  group = "group",
+  risktable_symbols = FALSE
 )
+
+km_results
 }

@@ -3,7 +3,7 @@
 \docType{data}
 \name{easy_bc}
 \alias{easy_bc}
-\title{Formatted Copy of \code{flexsurv::bc}}
+\title{Formatted Copy of \link[flexsurv:bc]{flexsurv::bc}}
 \format{
 The data set contains the following variables:
 
@@ -15,7 +15,7 @@ The data set contains the following variables:
 }
 }
 \source{
-\code{flexsurv::bc}
+\link[flexsurv:bc]{flexsurv::bc}
 }
 \usage{
 easy_bc

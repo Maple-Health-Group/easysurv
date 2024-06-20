@@ -15,7 +15,7 @@ plot_km(
 )
 }
 \arguments{
-\item{fit}{A \code{\link[survival]{survfit}} object representing the
+\item{fit}{A \link[survival:survfit]{survival::survfit} object representing the
 survival data.}
 
 \item{risktable}{Logical value indicating whether to include a risk table
@@ -41,8 +41,8 @@ A ggplot object representing the Kaplan-Meier survival curve plot.
 }
 \description{
 Generates a Kaplan-Meier survival curve plot using
-\code{\link[ggsurvfit]{ggsurvfit}} with customisable options.
-This function provides sensible defaults while allowing for customisation.
+\code{\link[ggsurvfit:ggsurvfit]{ggsurvfit::ggsurvfit()}} with customizable options.
+This function provides sensible defaults while allowing for customization.
 }
 \examples{
 library(ggsurvfit)

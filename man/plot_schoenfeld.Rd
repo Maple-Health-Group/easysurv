@@ -68,7 +68,7 @@ the smooth line. Default is \code{TRUE}.}
 is \code{1}.}
 
 \item{plot_theme}{A ggplot2 theme for the plot. Default is
-\code{ggplot2::theme_bw()}.}
+\code{\link[ggplot2:ggtheme]{ggplot2::theme_bw()}}.}
 }
 \value{
 A ggplot object representing the plot of Schoenfeld residuals.
