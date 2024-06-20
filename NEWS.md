@@ -1,3 +1,16 @@
+# easysurv 2.0.1
+
+* Removed wrapping of examples in `if(FALSE){}`. In write_to_xl.Rd,
+we now use `\dontrun{}` to prevent an Excel file from being created, saved and 
+launched.
+* Updated the Description field in DESCRIPTION, correcting the erroneous 
+reference to 'flexsurvspline' as a package; it is a function. The same error was 
+addressed in the README file and in `fit_models()` documentation.
+* Removed dependency on the `fs` package. `fs::path_package()` was replaced with
+`system.file()`.
+* Wrapped external functions in square brackets in `roxygen2` documentation to
+support auto-linking to external documentation.
+
 # easysurv 2.0.0
 
 ## Major changes
