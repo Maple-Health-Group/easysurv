@@ -12,7 +12,7 @@ statistics, plots, and additional outputs."><meta property="og:image" content="h
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -118,8 +118,35 @@ plots.</p>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="fu">easysurv</span><span class="fu">::</span><span class="va"><a href="easy_bc.html">easy_bc</a></span>,</span></span>
 <span class="r-in"><span>  time <span class="op">=</span> <span class="st">"recyrs"</span>,</span></span>
 <span class="r-in"><span>  event <span class="op">=</span> <span class="st">"censrec"</span>,</span></span>
-<span class="r-in"><span>  group <span class="op">=</span> <span class="st">"group"</span></span></span>
+<span class="r-in"><span>  group <span class="op">=</span> <span class="st">"group"</span>,</span></span>
+<span class="r-in"><span>  risktable_symbols <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">km_results</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Kaplan-Meier Data</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The get_km function has produced the following outputs:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: bold;">km</span>: A `survival::survfit()` object for Kaplan-Meier estimates.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: bold;">km_for_excel</span>: A list of stepped Kaplan-Meier data for external plotting.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: bold;">km_per_group</span>: A list of Kaplan-Meier estimates for each group.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: bold;">km_plot</span>: A Kaplan-Meier plot.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: bold;">km_summary</span>: A summary table of the Kaplan-Meier estimates.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">km Summary</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         group records events    rmean se(rmean)   median  0.95LCL  0.95UCL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Good     Good     229     51 5.934330 0.1616003       NA       NA       NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Medium Medium     229    103 4.600852 0.1856699 5.254795 4.115068 5.572603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Poor     Poor     228    145 3.101736 0.1772520 2.183562 1.978082 2.619178</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        Median follow-up</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Good           4.452055</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Medium         4.712329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Poor           4.115068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">"km_plot"</span> has been printed.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → For more information, run `View()` on saved `get_km()` output.</span>
+<span class="r-plt img"><img src="get_KM-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

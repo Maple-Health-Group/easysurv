@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -155,8 +155,8 @@ files</li>
 <code>readr::read_csv()</code> for .csv files</li>
 </ul>
 <p>We’re going to use <code>easy_adtte</code> as an example data set.
-Since it’s a package that comes loaded with <code>easysurv</code>, we
-don’t need any of the above functions.</p>
+Since it’s data that comes loaded with <code>easysurv</code>, we don’t
+need any of the above functions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv_data</span> <span class="op">&lt;-</span> <span class="va">easy_adtte</span></span>
 <span></span>
@@ -256,7 +256,7 @@ However, labelled data is easier to interpret.</p>
 <h2 id="exploratory-data-analysis">Exploratory data analysis<a class="anchor" aria-label="anchor" href="#exploratory-data-analysis"></a>
 </h2>
 <p><code>easysurv</code> provides a simple function,
-<code><a href="../reference/inspect_surv_data.html">inspect_surv_data()</a></code> to help you explore your data.</p>
+<code><a href="../reference/inspect_surv_data.html">inspect_surv_data()</a></code>, to help you explore your data.</p>
 <p>From this, we can see the first few rows of our data, the number of
 events and censored observations, sample sizes, and median survival
 estimates.</p>
@@ -358,7 +358,7 @@ any potential issues.</p>
 <p>The Kaplan-Meier (KM) estimator is a non-parametric method used to
 estimate the survival function from time-to-event data.</p>
 <p><code>easysurv</code> provides a simple function,
-<code><a href="../reference/get_KM.html">get_km()</a></code> to generate KM curves alongside a summary.</p>
+<code><a href="../reference/get_KM.html">get_km()</a></code>, to generate KM curves alongside a summary.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">km</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_KM.html">get_km</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">surv_data</span>,</span>
