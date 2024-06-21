@@ -1,3 +1,5 @@
+# easysurv (development version)
+
 # easysurv 2.0.1
 
 * Removed wrapping of examples in `if(FALSE){}`. In write_to_xl.Rd,
