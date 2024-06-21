@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to Excel. A simple interface for fitting survival models using 'flexsurv::flexsurvreg()', 'flexsurv::flexsurvspline()', 'flexsurvcure::flexsurvcure()', and 'survival::survreg()'.
+Inspect survival data, plot Kaplan-Meier curves, assess the proportional hazards assumption, fit parametric survival models, predict and plot survival and hazards, and export the outputs to 'Excel'. A simple interface for fitting survival models using flexsurv::flexsurvreg(), flexsurv::flexsurvspline(), flexsurvcure::flexsurvcure(), and survival::survreg().
 }
 \seealso{
 Useful links:
