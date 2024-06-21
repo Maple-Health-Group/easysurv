@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,13 @@
       <small>Source: <a href="https://github.com/Maple-Health-Group/easysurv/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.1" id="easysurv-201">easysurv 2.0.1<a class="anchor" aria-label="anchor" href="#easysurv-201"></a></h2>
+<ul><li>Removed wrapping of examples in <code>if(FALSE){}</code>. In write_to_xl.Rd, we now use <code>\dontrun{}</code> to prevent an Excel file from being created, saved and launched.</li>
+<li>Updated the Description field in DESCRIPTION, correcting the erroneous reference to ‘flexsurvspline’ as a package; it is a function. The same error was addressed in the README file and in <code><a href="../reference/fit_models.html">fit_models()</a></code> documentation.</li>
+<li>Removed dependency on the <code>fs</code> package. <code><a href="https://fs.r-lib.org/reference/path_package.html" class="external-link">fs::path_package()</a></code> was replaced with <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code>.</li>
+<li>Wrapped external functions in square brackets in <code>roxygen2</code> documentation to support auto-linking to external documentation.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="easysurv-200">easysurv 2.0.0<a class="anchor" aria-label="anchor" href="#easysurv-200"></a></h2>
 <div class="section level3">
