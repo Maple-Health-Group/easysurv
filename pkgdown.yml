@@ -3,7 +3,7 @@ pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   easysurv: easysurv.html
-last_built: 2024-06-21T11:30Z
+last_built: 2024-06-21T11:35Z
 urls:
   reference: https://maple-health-group.github.io/easysurv/reference
   article: https://maple-health-group.github.io/easysurv/articles
