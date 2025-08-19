@@ -29,7 +29,7 @@ Imports:
     flexsurv,
     flexsurvcure,
     ggplot2,
-    ggsurvfit,
+    ggsurvfit (>= 1.1.0),
     openxlsx,
     parsnip,
     plotly,
@@ -55,4 +55,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

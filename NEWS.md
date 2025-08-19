@@ -1,6 +1,6 @@
-# easysurv (development version)
+# easysurv 2.0.2
 
-* In package description, removed the single quotes around the function names and added them around 'Excel' (per CRAN request).
+* Fix: plot_schoenfeld() now respects point_* aesthetics (col, size, shape, alpha). (#24)
 
 # easysurv 2.0.1
 
