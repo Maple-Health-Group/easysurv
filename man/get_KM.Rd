@@ -52,7 +52,5 @@ km_results <- get_km(
   risktable_symbols = FALSE
 )
 
-if (interactive() || identical(Sys.getenv("IN_PKGDOWN"), "true")) {
-  km_results
-}
+km_results
 }

@@ -29,7 +29,7 @@ Imports:
     flexsurv,
     flexsurvcure,
     ggplot2,
-    ggsurvfit (>= 1.1.0),
+    ggsurvfit (>= 1.2.0),
     openxlsx,
     parsnip,
     plotly,
