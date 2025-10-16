@@ -1,111 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/404.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/SECURITY.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/articles/easysurv.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/index.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/easy_adtte.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/easy_bc.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/easy_lung.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/easysurv-package.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/fit_models.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/get_KM.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/get_schoenfeld.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/inspect_surv_data.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/plot.fit_models.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/plot_KM.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/plot_cloglog.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/plot_schoenfeld.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/predict.fit_models.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/predict_and_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/print.fit_models.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/print.get_km.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/print.inspect_surv_data.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/print.predict_and_plot.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/print.test_ph.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/quick_start.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/quick_start2.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/quick_start3.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/test_PH.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/theme_easysurv.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/theme_risktable_easysurv.html</loc>
-  </url>
-  <url>
-    <loc>https://maple-health-group.github.io/easysurv/reference/write_to_xl.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://maple-health-group.github.io/easysurv/404.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/LICENSE-text.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/LICENSE.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/SECURITY.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/articles/easysurv.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/articles/index.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/authors.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/index.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/news/index.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/easy_adtte.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/easy_bc.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/easy_lung.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/easysurv-package.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/fit_models.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/get_KM.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/get_schoenfeld.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/index.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/inspect_surv_data.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/plot.fit_models.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/plot_KM.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/plot_cloglog.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/plot_schoenfeld.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/predict.fit_models.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/predict_and_plot.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/print.fit_models.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/print.get_km.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/print.inspect_surv_data.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/print.predict_and_plot.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/print.test_ph.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/quick_start.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/quick_start2.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/quick_start3.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/test_PH.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/theme_easysurv.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/theme_risktable_easysurv.html</loc></url>
+<url><loc>https://maple-health-group.github.io/easysurv/reference/write_to_xl.html</loc></url>
 </urlset>
+
