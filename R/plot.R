@@ -242,7 +242,11 @@ plot_schoenfeld <- function(residuals,
   )
 
   gg_zph <- ggplot2::ggplot(residuals, ggplot2::aes(x = time, y = residual)) +
-    ggplot2::geom_point() +
+    ggplot2::geom_point(
+      color = point_col,
+      size = point_size,
+      shape = point_shape,
+      alpha = point_alpha) +
     ggplot2::facet_wrap(~variable, nrow = 2, scales = "free_y") +
     ggplot2::xlab(trans_string) +
     ggplot2::ylab(expression(beta(t)))
