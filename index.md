@@ -24,8 +24,9 @@ gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
-consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
-your integrated development environment (IDE).
+consider using an integrated development environment (IDE) such as
+[RStudio](https://posit.co/products/open-source/rstudio) or
+[Positron](https://positron.posit.co).
 
 ``` r
 

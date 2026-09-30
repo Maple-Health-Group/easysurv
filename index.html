@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">easysurv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>If you haven’t already, install <a href="https://www.r-project.org" class="external-link">R</a> and consider using <a href="https://posit.co/download/rstudio-desktop/" class="external-link">RStudio</a> as your integrated development environment (IDE).</p>
+<p>If you haven’t already, install <a href="https://www.r-project.org" class="external-link">R</a> and consider using an integrated development environment (IDE) such as <a href="https://posit.co/products/open-source/rstudio" class="external-link">RStudio</a> or <a href="https://positron.posit.co" class="external-link">Positron</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># You will need to have the pak package installed.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
@@ -134,7 +134,7 @@
 <span>  event <span class="op">=</span> <span class="st">"event"</span>,</span>
 <span>  group <span class="op">=</span> <span class="st">"group"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//inspect-a-dark.svg"><img src="reference/figures//inspect-a.svg" width="100%"></source></picture></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//inspect-a-dark.svg"><img src="reference/figures//inspect-a.svg" alt="" width="100%"></source></picture></p>
 </div>
 <div class="section level3">
 <h3 id="get_km">
@@ -149,8 +149,8 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">km_check</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/get-KM-r-1.png" width="100%"></p>
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//get-KM-a-dark.svg"><img src="reference/figures//get-KM-a.svg" width="100%"></source></picture></p>
+<p><img src="reference/figures/get-KM-r-1.png" alt="" width="100%"></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//get-KM-a-dark.svg"><img src="reference/figures//get-KM-a.svg" alt="" width="100%"></source></picture></p>
 </div>
 <div class="section level3">
 <h3 id="test_ph">
@@ -165,8 +165,8 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ph_check</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/test-PH-r-1.png" width="100%"><img src="reference/figures/test-PH-r-2.png" width="100%"></p>
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//test-PH-a-dark.svg"><img src="reference/figures//test-PH-a.svg" width="100%"></source></picture></p>
+<p><img src="reference/figures/test-PH-r-1.png" alt="" width="100%"><img src="reference/figures/test-PH-r-2.png" alt="" width="100%"></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//test-PH-a-dark.svg"><img src="reference/figures//test-PH-a.svg" alt="" width="100%"></source></picture></p>
 </div>
 <div class="section level3">
 <h3 id="fit_models">
@@ -181,7 +181,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">separate_models</span><span class="op">)</span></span></code></pre></div>
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//fit-models-a-dark.svg"><img src="reference/figures//fit-models-a.svg" width="100%"></source></picture></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//fit-models-a-dark.svg"><img src="reference/figures//fit-models-a.svg" alt="" width="100%"></source></picture></p>
 </div>
 <div class="section level3">
 <h3 id="predict_and_plot">
@@ -191,8 +191,8 @@
 <code class="sourceCode R"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/predict_and_plot.html">predict_and_plot</a></span><span class="op">(</span>fit_models <span class="op">=</span> <span class="va">separate_models</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plots</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/plot-models-r-1.png" width="100%"><img src="reference/figures/plot-models-r-2.png" width="100%"><img src="reference/figures/plot-models-r-3.png" width="100%"><img src="reference/figures/plot-models-r-4.png" width="100%"></p>
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//plot-models-a-dark.svg"><img src="reference/figures//plot-models-a.svg" width="100%"></source></picture></p>
+<p><img src="reference/figures/plot-models-r-1.png" alt="" width="100%"><img src="reference/figures/plot-models-r-2.png" alt="" width="100%"><img src="reference/figures/plot-models-r-3.png" alt="" width="100%"><img src="reference/figures/plot-models-r-4.png" alt="" width="100%"></p>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="reference/figures//plot-models-a-dark.svg"><img src="reference/figures//plot-models-a.svg" alt="" width="100%"></source></picture></p>
 </div>
 </div>
 </div>

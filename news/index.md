@@ -1,6 +1,6 @@
 # Changelog
 
-## easysurv (development version)
+## easysurv 2.0.3
 
 - Fix:
   [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
