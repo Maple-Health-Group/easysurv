@@ -31,8 +31,9 @@ log-normal and Weibull).
 ## Installation
 
 If you haven’t already, install [R](https://www.r-project.org) and
-consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
-your integrated development environment (IDE).
+consider using an integrated development environment (IDE) such as
+[RStudio](https://posit.co/products/open-source/rstudio) or
+[Positron](https://positron.posit.co).
 
 ``` r
 # You will need to have the pak package installed.
@@ -97,7 +98,7 @@ inspect_surv_data(
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="man/figures//inspect-a-dark.svg">
-<img src="man/figures//inspect-a.svg" width="100%" /> </picture>
+<img src="man/figures//inspect-a.svg" alt="" width="100%" /> </picture>
 
 ### `get_km()`
 
@@ -112,11 +113,11 @@ km_check <- get_km(
 print(km_check)
 ```
 
-<img src="man/figures/get-KM-r-1.png" width="100%" />
+<img src="man/figures/get-KM-r-1.png" alt="" width="100%" />
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="man/figures//get-KM-a-dark.svg">
-<img src="man/figures//get-KM-a.svg" width="100%" /> </picture>
+<img src="man/figures//get-KM-a.svg" alt="" width="100%" /> </picture>
 
 ### `test_ph()`
 
@@ -131,11 +132,11 @@ ph_check <- test_ph(
 print(ph_check)
 ```
 
-<img src="man/figures/test-PH-r-1.png" width="100%" /><img src="man/figures/test-PH-r-2.png" width="100%" />
+<img src="man/figures/test-PH-r-1.png" alt="" width="100%" /><img src="man/figures/test-PH-r-2.png" alt="" width="100%" />
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="man/figures//test-PH-a-dark.svg">
-<img src="man/figures//test-PH-a.svg" width="100%" /> </picture>
+<img src="man/figures//test-PH-a.svg" alt="" width="100%" /> </picture>
 
 ### `fit_models()`
 
@@ -152,7 +153,8 @@ print(separate_models)
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="man/figures//fit-models-a-dark.svg">
-<img src="man/figures//fit-models-a.svg" width="100%" /> </picture>
+<img src="man/figures//fit-models-a.svg" alt="" width="100%" />
+</picture>
 
 ### `predict_and_plot()`
 
@@ -162,8 +164,9 @@ plots <- predict_and_plot(fit_models = separate_models)
 print(plots)
 ```
 
-<img src="man/figures/plot-models-r-1.png" width="100%" /><img src="man/figures/plot-models-r-2.png" width="100%" /><img src="man/figures/plot-models-r-3.png" width="100%" /><img src="man/figures/plot-models-r-4.png" width="100%" />
+<img src="man/figures/plot-models-r-1.png" alt="" width="100%" /><img src="man/figures/plot-models-r-2.png" alt="" width="100%" /><img src="man/figures/plot-models-r-3.png" alt="" width="100%" /><img src="man/figures/plot-models-r-4.png" alt="" width="100%" />
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="man/figures//plot-models-a-dark.svg">
-<img src="man/figures//plot-models-a.svg" width="100%" /> </picture>
+<img src="man/figures//plot-models-a.svg" alt="" width="100%" />
+</picture>
