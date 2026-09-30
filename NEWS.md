@@ -1,3 +1,5 @@
+# easysurv (development version)
+
 # easysurv 2.0.2
 
 * Fix: plot_schoenfeld() now respects point_* aesthetics (col, size, shape, alpha). (#24)
