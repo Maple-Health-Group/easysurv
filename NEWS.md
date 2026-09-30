@@ -1,4 +1,4 @@
-# easysurv (development version)
+# easysurv 2.0.3
 
 * Fix: `predict_and_plot()` no longer errors when all strata have the same number of Kaplan-Meier time points (e.g. reconstructed IPD with equal arm sizes and no tied times). The Kaplan-Meier group column was built with `mapply()`, which returned a matrix rather than a vector in this case. (#27)
 
