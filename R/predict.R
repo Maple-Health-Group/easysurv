@@ -190,13 +190,10 @@ predict_and_plot <- function(fit_models,
     if (is.null(km_survfit[["strata"]])) {
       group_vec <- rep(1, length(km_survfit[["time"]]))
     } else {
-      group_vec <- mapply(
-        rep,
-        seq_along(names(km_survfit[["strata"]])),
-        km_survfit[["strata"]]
-      ) |>
-        unlist() |>
-        unname()
+      group_vec <- rep(
+        seq_along(km_survfit[["strata"]]),
+        times = km_survfit[["strata"]]
+      )
     }
 
     km_df <- data.frame(
