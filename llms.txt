@@ -1,0 +1,299 @@
+# easysurv
+
+The `easysurv` R package provides tools to simplify survival data
+analysis and model fitting.
+
+This includes tools to inspect survival data, plot Kaplan-Meier curves,
+assess the proportional hazards assumption, fit parametric survival
+models, predict and plot survival and hazards, and export the outputs to
+Excel.
+
+For fitting survival models, the package provides a simple interface to
+[`flexsurv::flexsurvreg()`](http://chjackson.github.io/flexsurv-dev/reference/flexsurvreg.md),
+[`flexsurv::flexsurvspline()`](http://chjackson.github.io/flexsurv-dev/reference/flexsurvspline.md),
+[`flexsurvcure::flexsurvcure()`](https://rdrr.io/pkg/flexsurvcure/man/flexsurvcure.html),
+and
+[`survival::survreg()`](https://rdrr.io/pkg/survival/man/survreg.html).
+
+By default, the package uses the `flexsurv` engine
+([`flexsurv::flexsurvreg()`](http://chjackson.github.io/flexsurv-dev/reference/flexsurvreg.md))
+and provides a helpful starting point to explore survival extrapolations
+across frequently used distributions (such as exponential, generalized
+gamma, gamma, Gompertz, log-logistic, log-normal and Weibull).
+
+## Installation
+
+If you haven’t already, install [R](https://www.r-project.org) and
+consider using [RStudio](https://posit.co/download/rstudio-desktop/) as
+your integrated development environment (IDE).
+
+``` r
+
+# You will need to have the pak package installed.
+install.packages("pak")
+
+# Then, install easysurv either from GitHub for the latest version:
+pak::pkg_install("Maple-Health-Group/easysurv")
+
+# Or from CRAN for the latest stable version:
+pak::pkg_install("easysurv")
+```
+
+## Getting started
+
+``` r
+
+# Attach the easysurv library
+library(easysurv)
+
+# Open an example script
+quick_start()
+## Note: The default file name is "easysurv_start.R", but you can define your own, e.g.
+## quick_start("my_file_name.R")
+
+# Access help files
+help(package = "easysurv")
+```
+
+## Examples
+
+### Start by tidying your data…
+
+``` r
+
+# Load the easy_lung data from the easysurv package
+# Recode the "status" variable to create an event indicator (0/1)
+surv_data <- easy_lung |>
+  dplyr::mutate(
+    time = time,
+    event = status - 1,
+    group = sex,
+    .after = time
+  ) |>
+  dplyr::select(-c(inst, ph.karno, pat.karno)) # remove some unused columns
+
+# Make the group variable a factor and assign level labels.
+surv_data <- surv_data |>
+  dplyr::mutate_at("group", as.factor)
+levels(surv_data$group) <- c("Male", "Female")
+```
+
+### … then enjoy the easysurv functions!
+
+### `inspect_surv_data()`
+
+``` r
+
+inspect_surv_data(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+```
+
+![](reference/figures//inspect-a.svg)
+
+### `get_km()`
+
+``` r
+
+km_check <- get_km(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+print(km_check)
+```
+
+![](reference/figures/get-KM-r-1.png)
+
+![](reference/figures//get-KM-a.svg)
+
+### `test_ph()`
+
+``` r
+
+ph_check <- test_ph(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  group = "group"
+)
+
+print(ph_check)
+```
+
+![](reference/figures/test-PH-r-1.png)![](reference/figures/test-PH-r-2.png)
+
+![](reference/figures//test-PH-a.svg)
+
+### `fit_models()`
+
+``` r
+
+separate_models <- fit_models(
+  data = surv_data,
+  time = "time",
+  event = "event",
+  predict_by = "group"
+)
+
+print(separate_models)
+```
+
+![](reference/figures//fit-models-a.svg)
+
+### `predict_and_plot()`
+
+``` r
+
+plots <- predict_and_plot(fit_models = separate_models)
+
+print(plots)
+```
+
+![](reference/figures/plot-models-r-1.png)![](reference/figures/plot-models-r-2.png)![](reference/figures/plot-models-r-3.png)![](reference/figures/plot-models-r-4.png)
+
+![](reference/figures//plot-models-a.svg)
+
+# Package index
+
+## Quick Start
+
+These functions launch template scripts to help you get started.
+
+- [`quick_start()`](https://maple-health-group.github.io/easysurv/reference/quick_start.md)
+  : Launch Example Survival Analysis Script using the easy_lung Data Set
+- [`quick_start2()`](https://maple-health-group.github.io/easysurv/reference/quick_start2.md)
+  : Launch Example Survival Analysis Script using the easy_bc Data Set
+- [`quick_start3()`](https://maple-health-group.github.io/easysurv/reference/quick_start3.md)
+  : Launch Example Survival Analysis Script using the easy_adtte Data
+  Set
+
+## Example data sets
+
+These example data sets are provided to help you explore package
+functionality.
+
+- [`easy_adtte`](https://maple-health-group.github.io/easysurv/reference/easy_adtte.md)
+  :
+
+  Formatted Copy of
+  [ggsurvfit::adtte](http://www.danieldsjoberg.com/ggsurvfit/reference/adtte.md)
+
+- [`easy_bc`](https://maple-health-group.github.io/easysurv/reference/easy_bc.md)
+  :
+
+  Formatted Copy of
+  [flexsurv::bc](http://chjackson.github.io/flexsurv-dev/reference/bc.md)
+
+- [`easy_lung`](https://maple-health-group.github.io/easysurv/reference/easy_lung.md)
+  :
+
+  Formatted Copy of
+  [survival::lung](https://rdrr.io/pkg/survival/man/lung.html)
+
+## Main functions
+
+These functions are used to perform survival analysis.
+
+- [`inspect_surv_data()`](https://maple-health-group.github.io/easysurv/reference/inspect_surv_data.md)
+  : Inspect Survival Data
+
+- [`get_km()`](https://maple-health-group.github.io/easysurv/reference/get_KM.md)
+  : Generate Kaplan-Meier estimates
+
+- [`test_ph()`](https://maple-health-group.github.io/easysurv/reference/test_PH.md)
+  : Test Proportional Hazards Assumption
+
+- [`fit_models()`](https://maple-health-group.github.io/easysurv/reference/fit_models.md)
+  : Fit Survival Models
+
+- [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
+  : Predict and Plot Fitted Models
+
+- [`predict(`*`<fit_models>`*`)`](https://maple-health-group.github.io/easysurv/reference/predict.fit_models.md)
+  :
+
+  Predict method for `fit_models`
+
+- [`plot(`*`<fit_models>`*`)`](https://maple-health-group.github.io/easysurv/reference/plot.fit_models.md)
+  :
+
+  Plot method for `fit_models`
+
+## Print functions
+
+These functions are used to print various stages of survival analysis.
+
+- [`print(`*`<inspect_surv_data>`*`)`](https://maple-health-group.github.io/easysurv/reference/print.inspect_surv_data.md)
+  :
+
+  Print methods for
+  [`inspect_surv_data()`](https://maple-health-group.github.io/easysurv/reference/inspect_surv_data.md)
+
+- [`print(`*`<get_km>`*`)`](https://maple-health-group.github.io/easysurv/reference/print.get_km.md)
+  :
+
+  Print methods for
+  [`get_km()`](https://maple-health-group.github.io/easysurv/reference/get_KM.md)
+
+- [`print(`*`<test_ph>`*`)`](https://maple-health-group.github.io/easysurv/reference/print.test_ph.md)
+  :
+
+  Print methods for
+  [`test_ph()`](https://maple-health-group.github.io/easysurv/reference/test_PH.md)
+
+- [`print(`*`<fit_models>`*`)`](https://maple-health-group.github.io/easysurv/reference/print.fit_models.md)
+  :
+
+  Print methods for
+  [`fit_models()`](https://maple-health-group.github.io/easysurv/reference/fit_models.md)
+
+- [`print(`*`<predict_and_plot>`*`)`](https://maple-health-group.github.io/easysurv/reference/print.predict_and_plot.md)
+  :
+
+  Print methods for
+  [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
+
+## Individual plot functions
+
+These functions are used to plot various stages of survival analysis.
+
+- [`plot_cloglog()`](https://maple-health-group.github.io/easysurv/reference/plot_cloglog.md)
+  : Cumulative Log Log Plot
+- [`plot_km()`](https://maple-health-group.github.io/easysurv/reference/plot_KM.md)
+  : Plot Kaplan-Meier Data
+- [`plot_schoenfeld()`](https://maple-health-group.github.io/easysurv/reference/plot_schoenfeld.md)
+  : Plot Schoenfeld Residuals
+
+## Themes
+
+These functions are used to apply themes to plots.
+
+- [`theme_easysurv()`](https://maple-health-group.github.io/easysurv/reference/theme_easysurv.md)
+  : Plot Theme for easysurv Survival and Hazard Plots
+- [`theme_risktable_easysurv()`](https://maple-health-group.github.io/easysurv/reference/theme_risktable_easysurv.md)
+  : Plot Theme for easysurv Risk Tables
+
+## Other functions
+
+These functions are used to perform other tasks.
+
+- [`get_schoenfeld()`](https://maple-health-group.github.io/easysurv/reference/get_schoenfeld.md)
+  : Extract Schoenfeld Residuals
+
+- [`write_to_xl()`](https://maple-health-group.github.io/easysurv/reference/write_to_xl.md)
+  :
+
+  Export easysurv output to Excel via `openxlsx`
+
+# Articles
+
+### All vignettes
+
+- [Explore
+  easysurv](https://maple-health-group.github.io/easysurv/articles/easysurv.md):

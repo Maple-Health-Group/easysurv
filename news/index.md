@@ -1,0 +1,113 @@
+# Changelog
+
+## easysurv (development version)
+
+- Fix:
+  [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
+  no longer errors when all strata have the same number of Kaplan-Meier
+  time points (e.g. reconstructed IPD with equal arm sizes and no tied
+  times). The Kaplan-Meier group column was built with
+  [`mapply()`](https://rdrr.io/r/base/mapply.html), which returned a
+  matrix rather than a vector in this case.
+  ([\#27](https://github.com/Maple-Health-Group/easysurv/issues/27))
+
+## easysurv 2.0.2
+
+CRAN release: 2025-10-08
+
+- Fix: plot_schoenfeld() now respects point\_\* aesthetics (col, size,
+  shape, alpha).
+  ([\#24](https://github.com/Maple-Health-Group/easysurv/issues/24))
+- Increment package dependency on `ggsurvfit` to v1.2.0 to address
+  updates made in `ggplot2` v4.0.0.
+
+## easysurv 2.0.1
+
+CRAN release: 2024-06-21
+
+- Removed wrapping of examples in `if(FALSE){}`. In write_to_xl.Rd, we
+  now use `\dontrun{}` to prevent an Excel file from being created,
+  saved and launched.
+- Updated the Description field in DESCRIPTION, correcting the erroneous
+  reference to ‘flexsurvspline’ as a package; it is a function. The same
+  error was addressed in the README file and in
+  [`fit_models()`](https://maple-health-group.github.io/easysurv/reference/fit_models.md)
+  documentation.
+- Removed dependency on the `fs` package.
+  [`fs::path_package()`](https://fs.r-lib.org/reference/path_package.html)
+  was replaced with
+  [`system.file()`](https://rdrr.io/r/base/system.file.html).
+- Wrapped external functions in square brackets in `roxygen2`
+  documentation to support auto-linking to external documentation.
+
+## easysurv 2.0.0
+
+### Major changes
+
+- Transitioned to a `tidymodels` framework for survival analysis.
+  Several updates were required to reflect this change including to
+  function names, arguments, supporting documentation, and templates.
+  - The `tidymodels` framework is a collection of R packages for
+    modeling and machine learning using `tidyverse` principles. From the
+    `tidymodels` framework, we take advantage of the `parsnip` and
+    `censored` packages to specify models and predict survival outputs.
+  - The `parsnip` package provides an interface to many different
+    modeling packages, allowing for a consistent syntax for fitting
+    models and making predictions.
+  - The `censored` package is a `parsnip` extension that provides
+    engines for various models to handle censored data in survival
+    analysis.
+- New functions!
+  - [`inspect_surv_data()`](https://maple-health-group.github.io/easysurv/reference/inspect_surv_data.md)
+    allows quick inspection of survival data.
+  - [`get_km()`](https://maple-health-group.github.io/easysurv/reference/get_KM.md)
+    replaces `quick_KM()` as the function to fit Kaplan-Meier curves.
+  - [`test_ph()`](https://maple-health-group.github.io/easysurv/reference/test_PH.md)
+    replaces `quick_PH()` as the function to test the proportional
+    hazards assumption.
+  - [`fit_models()`](https://maple-health-group.github.io/easysurv/reference/fit_models.md)
+    allows for additional covariates to be specified in model fitting.
+  - [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
+    separates the generation of predictions and associated plots from
+    the main model fitting function.
+
+### Other improvements and bug fixes
+
+- No longer requires any additional font installation.
+- Introduced print methods with the `cli` package for key functions to
+  simplify and summarise outputs.
+- Changed primary plotting package from `ggsurvplot` to `ggsurvfit`.
+  `ggsurvplot` generates warning messages when median survival lines are
+  added and generates misaligned risk tables as of `ggplot2` version
+  3.5.0, while `ggsurvfit` is being actively maintained.
+- To facilitate interpretation of Schoenfeld residual plots, scaled
+  Schoenfeld residuals are now used, and facets are no longer produced
+  per strata.
+- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) run on the
+  output of
+  [`fit_models()`](https://maple-health-group.github.io/easysurv/reference/fit_models.md)
+  acts as a call to
+  [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md),
+  generating predictions and plots for the specified model.
+
+## easysurv 1.1.0
+
+- `plot_fits()` now uses flexsurv to generate survival predictions in
+  plots, which matches the prediction method in `predict_fits()`. The
+  original prediction method (via survHE) can be used instead by setting
+  the new argument `plot_predictions = "survHE"` for `plot_fits()` and
+  any functions that use `plot_fits()` (e.g., `quick_fit_select()`,
+  `quick_fit()`).
+- `predict_fits()` now outputs a list object that includes 95%
+  confidence intervals for the predicted survival probabilities. CIs can
+  be excluded by setting `include_ci = FALSE`. The `include_ci` argument
+  is available for all functions that use `predict_fits()` or objects
+  generated by `predict_fits()` (e.g., `quick_fit_select()`,
+  `quick_fit()`).
+- A dependency on the `cli` package has been added to support aesthetic
+  and informative warning messages, such as in the `quick_to_XL()`
+  function.
+
+## easysurv 1.0.0
+
+- Initial GitHub release.
