@@ -2,6 +2,8 @@
 
 ## easysurv 2.0.3
 
+CRAN release: 2026-09-30
+
 - Fix:
   [`predict_and_plot()`](https://maple-health-group.github.io/easysurv/reference/predict_and_plot.md)
   no longer errors when all strata have the same number of Kaplan-Meier

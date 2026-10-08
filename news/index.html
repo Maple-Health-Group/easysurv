@@ -29,11 +29,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/Maple-Health-Group/easysurv/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/Maple-Health-Group/easysurv/blob/v2.0.3/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.3" id="easysurv-203">easysurv 2.0.3<a class="anchor" aria-label="anchor" href="#easysurv-203"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.0.3" id="easysurv-203">easysurv 2.0.3<a class="anchor" aria-label="anchor" href="#easysurv-203"></a></h2><p class="text-muted">CRAN release: 2026-09-30</p>
 <ul><li>Fix: <code><a href="../reference/predict_and_plot.html">predict_and_plot()</a></code> no longer errors when all strata have the same number of Kaplan-Meier time points (e.g. reconstructed IPD with equal arm sizes and no tied times). The Kaplan-Meier group column was built with <code><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply()</a></code>, which returned a matrix rather than a vector in this case. (<a href="https://github.com/Maple-Health-Group/easysurv/issues/27" class="external-link">#27</a>)</li>
 </ul></div>
     <div class="section level2">

@@ -29,7 +29,7 @@ A new R script file with example code.
 ``` r
 quick_start()
 #> ℹ easysurv template: Attempting to write a new .R file to a temporary directory.
-#> ✔ Writing /tmp/RtmpvR5d5p/easysurv_start.R.
-#> ☐ Edit /tmp/RtmpvR5d5p/easysurv_start.R.
+#> ✔ Writing /tmp/RtmpJEmiGw/easysurv_start.R.
+#> ☐ Edit /tmp/RtmpJEmiGw/easysurv_start.R.
 #> ℹ Remember to save the file to a permanent location if you wish to keep it.
 ```
